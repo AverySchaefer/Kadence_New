@@ -1,4 +1,4 @@
 # Kadence_New
 NEW Repository for the mobile application Kadence
 
-Developers: Raymond Xie
+Developers: Raymond Xie, Colston Streit
