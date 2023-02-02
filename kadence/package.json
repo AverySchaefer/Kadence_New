@@ -21,6 +21,10 @@
     "react-dom": "18.2.0"
   },
   "devDependencies": {
-    "@capacitor/cli": "^4.6.2"
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-import-resolver-alias": "^1.1.2",
+    "@capacitor/cli": "^4.6.2",
+    "prettier": "2.8.3"
   }
 }

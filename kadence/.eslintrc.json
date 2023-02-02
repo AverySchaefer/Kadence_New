@@ -1,3 +1,21 @@
 {
-  "extends": "next/core-web-vitals"
+  "rules": {
+    "comma-dangle": "off",
+    "class-methods-use-this": "off",
+    "linebreak-style": "off",
+    "no-console": "off",
+    "no-plusplus": "off",
+    "no-underscore-dangle": "off"
+  },
+  "extends": [
+    "eslint:recommended",
+    "airbnb-base",
+    "prettier",
+    "next/core-web-vitals"
+  ],
+  "settings": {
+    "import/resolver": {
+      "alias": [["@/styles", "./styles"]]
+    }
+  }
 }
