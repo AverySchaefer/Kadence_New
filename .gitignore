@@ -1,2 +1,3 @@
-# vscode in all subdirs
+# vscode and android studio files in all subdirs
 **/.vscode/*
+**/.idea/*
