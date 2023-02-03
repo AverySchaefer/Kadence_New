@@ -6,9 +6,12 @@ const config: CapacitorConfig = {
   webDir: 'out',
   bundledWebRuntime: false,
   server: {
-		url: 'http://10.186.46.40:3000',
-		cleartext: true
-	}
+    // Make a copy of this file called
+    // capacitor.config.ts and
+    // insert your IP address here
+    url: 'http://###.###.###.###:3000',
+    cleartext: true,
+  },
 };
 
 export default config;
