@@ -15,7 +15,10 @@
   ],
   "settings": {
     "import/resolver": {
-      "alias": [["@/styles", "./styles"]]
+      "alias": [
+        ["@/styles", "./styles"],
+        ["@/components", "./components"]
+      ]
     }
   }
 }

@@ -25,10 +25,6 @@
   border-right: calc(var(--arrow-size) * 1.5) solid white;
 }
 
-.main {
-  margin-top: var(--nav-height);
-}
-
 .navWrapper {
   position: fixed;
   width: 100%;
@@ -44,4 +40,115 @@
   height: 75%;
   aspect-ratio: 1 / 1;
   background-color: white;
+}
+
+.main {
+  position: fixed;
+  top: var(--nav-height);
+  bottom: var(--nav-height);
+  width: 100%;
+  overflow: scroll;
+  height: calc(100% - 2 * var(--nav-height));
+  background-color: #333;
+}
+
+.sticky {
+  height: 100%;
+  position: sticky;
+  top: calc(0 * var(--nav-height));
+  background-color: #333;
+  padding: 0.5rem;
+  color: white;
+}
+
+.settingsSection > * {
+  padding: 0.5rem;
+}
+
+.settingsSection > *:nth-child(2n + 1) {
+  background-color: #777;
+}
+
+.settingsSection > *:nth-child(2n) {
+  background-color: #aaa;
+}
+
+.sliderContainer {
+  padding-block: 0.5rem;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.sliderContainer input {
+  box-sizing: content-box;
+  width: 65%;
+  margin-inline: 5px;
+}
+
+.sliderLabel {
+  font-size: 0.75em;
+  display: inline-block;
+  text-align: center;
+  width: 12ch;
+}
+
+.flexWrapper {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.flexWrapper > *:nth-child(2) {
+  margin-left: auto;
+}
+
+.flexWrapper select,
+.flexWrapper input[type='number'],
+.flexWrapper button {
+  margin-left: auto;
+  width: 15ch;
+  text-align: center;
+}
+
+.flexWrapperVert {
+  padding: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.subsetting {
+  font-size: 0.9em;
+  padding: 0.5rem;
+}
+
+.sublistContainer {
+  padding: 0.25rem;
+  font-size: 0.75em;
+}
+
+.sublistULContainer {
+  margin-inline: auto;
+  list-style-type: none;
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  column-gap: 0.5rem;
+}
+
+.sublistDelete {
+  font-size: inherit;
+  background-color: transparent;
+  border: none;
+  color: red;
+  font-weight: bold;
+}
+
+.sublistAdd {
+  font-size: inherit;
+  background-color: transparent;
+  border: none;
 }
