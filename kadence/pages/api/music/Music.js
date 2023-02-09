@@ -1,5 +1,5 @@
 import nextConnect from 'next-connect';
-import middleware from '../../middleware/database';
+import middleware from '../../../middleware/database';
 
 const handler = nextConnect();
 
@@ -7,7 +7,7 @@ handler.use(middleware);
 
 handler.get(async (req, res) => {
 
-    let doc = await req.db.collection('Devices').findOne()
+    let doc = await req.db.collection('Music').findOne()
     console.log(doc);
     res.json(doc);
 });
