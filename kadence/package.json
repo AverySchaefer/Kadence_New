@@ -11,13 +11,17 @@
   },
   "dependencies": {
     "@capacitor/android": "^4.6.2",
+    "@capacitor/cli": "^4.6.3",
     "@capacitor/core": "^4.6.2",
     "@capacitor/ios": "^4.6.2",
-    "@capacitor/cli": "^4.6.3",
     "@next/font": "13.1.6",
     "eslint": "8.33.0",
     "eslint-config-next": "13.1.6",
+    "mongo": "^0.1.0",
+    "mongodb": "^5.0.0",
+    "mongoose": "^6.5.3",
     "next": "13.1.6",
+    "next-connect": "^0.13.0",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
