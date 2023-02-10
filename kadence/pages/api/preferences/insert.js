@@ -7,6 +7,7 @@ handler.use(middleware);
 
 handler.post(async (req, res) => {
     const doc = {
+        uid: req.body.uid,
         allowExplicit: req.body.allowExplicit,
         lyricalInstrumental: req.body.lyricalInstrumental,
         lyricalLanguage: req.body.lyricalLanguage,
