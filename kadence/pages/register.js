@@ -33,7 +33,9 @@ export default function Register() {
           <Link className={styles.note} href="../login">
             Already have an account? Login here!
           </Link>
-          <Button type="submit">Register</Button>
+          <Button type="submit">
+            <Link href="/home">Register</Link>
+          </Button>
         </form>
       </main>
     </>

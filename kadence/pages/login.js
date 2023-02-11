@@ -5,10 +5,17 @@ import styles from '@/styles/Register.module.css';
 import Textbox from '@/components/Textbox';
 import Button from '@/components/Button';
 import { Inter } from '@next/font/google';
+import { useRouter } from 'next/router';
 
 const inter = Inter({ subsets: ['latin'] });
 
-export default function Register() {
+function Register() {
+  const router = useRouter();
+  const handleClick = () => {
+    console.log('Login button clicked');
+    router.push('/home');
+  };
+
   return (
     <>
       <Head>
@@ -32,9 +39,13 @@ export default function Register() {
           <Link className={styles.note} href="/register">
             {"Don't have an account? Register here!"}
           </Link>
-          <Button type="submit">Login</Button>
+          <Button type="submit" onClick={handleClick}>
+            Login
+          </Button>
         </form>
       </main>
     </>
   );
 }
+
+export default Register;
