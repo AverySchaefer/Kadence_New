@@ -1,0 +1,28 @@
+import nextConnect from 'next-connect';
+import middleware from '../../../middleware/database';
+
+const handler = nextConnect();
+
+handler.use(middleware);
+
+handler.get(async (req, res) => {
+    let username = req.body.username;
+    let enteredPW = req.body.enteredPW;
+
+    let doc = await req.db.collection('Users').findOne({username: username})
+
+    if (doc == null) {
+        console.log("Login Unsuccessful");
+        res.status(400).send("Login unsuccessful, account could not be located");
+    }
+
+    if (enteredPW == doc.body.password) {
+        console.log("Login Successful");
+        res.status(200).send("Login Successful!");
+    } else {
+        console.log("Login Unsuccessful");
+        res.status(401).send("Login unsuccessful, password incorrect");
+    }
+});
+
+export default handler;
