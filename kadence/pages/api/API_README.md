@@ -2,7 +2,7 @@
 
 ## USERS (`/api/users/~`)
 
-### `/api/users/login`      GET
+### GET     `/api/users/login`
 - Request Body Elements
     - username: STRING
     - enteredPW: STRING
