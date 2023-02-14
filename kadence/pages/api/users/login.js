@@ -9,6 +9,15 @@ handler.get(async (req, res) => {
     let username = req.body.username;
     let enteredPW = req.body.enteredPW;
 
+    if (req.body.username == null) {
+        console.log("No username sent in request");
+        res.status(400).send();
+    }
+    if (req.body.password == null) {
+        console.log("No password sent in request");
+        res.status(400).send();
+    }
+
     let doc = await req.db.collection('Users').findOne({username: username})
 
     if (doc == null) {
