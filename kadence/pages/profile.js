@@ -88,7 +88,7 @@ function BasicTabs() {
         </Stack>
       </TabPanel>
       <TabPanel value={value} index={2}>
-        Devices
+      <Button variant="contained">Connect</Button>
       </TabPanel>
     </Box>
   );
