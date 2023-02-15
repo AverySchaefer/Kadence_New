@@ -6,9 +6,20 @@ const handler = nextConnect();
 handler.use(middleware);
 
 handler.get(async (req, res) => {
-  const doc = await req.db.collection('Devices').findOne();
-  console.log(doc);
-  res.json(doc);
+  if (req.body.uid == null) {
+    console.log("No UID sent in request");
+    res.status(400).send();
+  }
+
+  let result = await req.db.collection('Devices').findOne({uid: req.body.uid})
+
+  if (result == false) {
+      console.log("Request not acknowledged by database");
+      res.status(400).send();
+  } else {
+      console.log("Device Found");
+      res.status(200).json(result);
+  }
 });
 
 export default handler;
