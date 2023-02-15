@@ -11,7 +11,7 @@ function Header({ title, prevLink = null }) {
   return (
     <div className={styles.header}>
       {prevLink && (
-        <Link href={prevLink}>
+        <Link href="/profile">
           <div className={styles.backButton}></div>
         </Link>
       )}
@@ -513,7 +513,7 @@ export default function Settings() {
           </div>
         </section>
       </main>
-      <Header title="Settings" prevLink="/login" />
+      <Header title="Settings" prevLink="/profile" />
       <NavBar>
         <button onClick={submitData}>Save Changes</button>
       </NavBar>

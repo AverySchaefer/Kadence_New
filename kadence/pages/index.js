@@ -33,7 +33,7 @@ export default function Register() {
             {"Don't have an account? Register here!"}
           </Link>
           <Button type="submit">
-            Login
+            <Link href='/home'>Login</Link>
           </Button>
         </form>
       </main>

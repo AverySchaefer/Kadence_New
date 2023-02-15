@@ -6,10 +6,10 @@ import {
   RiHomeSmile2Fill,
   RiSearchEyeFill,
   RiUser5Line,
-  RiUser5Fill,
+  RiUser5Fill
 } from 'react-icons/ri';
 import { BiSearchAlt } from 'react-icons/bi';
-import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
+// import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 
 const BottomNav = (props) => {
   const router = useRouter();
@@ -17,19 +17,16 @@ const BottomNav = (props) => {
   useEffect(() => {
     switch (activeTabs) {
       case 'home':
-        router.push('/');
+        router.push('/home');
         break;
       case 'search':
         router.push('/search');
         break;
-      case 'login':
-        router.push('/login');
-        break;
-      case 'profile':
+        case 'profile':
         router.push('/profile');
         break;
       default:
-        router.push('/');
+        router.push('/home');
         break;
     }
   }, [activeTabs, router]);
@@ -40,13 +37,13 @@ const BottomNav = (props) => {
         {activeTabs === 'home' ? (
           <RiHomeSmile2Fill
             size="35"
-            color="#000"
+            color="#fff"
             onClick={() => setActiveTabs('home')}
           />
         ) : (
           <RiHomeSmile2Line
             size="35"
-            color="#000"
+            color="#fff"
             onClick={() => setActiveTabs('home')}
           />
         )}
@@ -55,29 +52,14 @@ const BottomNav = (props) => {
         {activeTabs === 'search' ? (
           <RiSearchEyeFill
             size="35"
-            color="#000"
+            color="#fff"
             onClick={() => setActiveTabs('search')}
           />
         ) : (
           <BiSearchAlt
             size="35"
-            color="#000"
+            color="#fff"
             onClick={() => setActiveTabs('search')}
-          />
-        )}
-      </div>
-      <div className={`${Styles.bnTab}`}>
-        {activeTabs === 'login' ? (
-          <AiFillHeart
-            size="35"
-            color="#000"
-            onClick={() => setActiveTabs('login')}
-          />
-        ) : (
-          <AiOutlineHeart
-            size="35"
-            color="#000"
-            onClick={() => setActiveTabs('login')}
           />
         )}
       </div>
@@ -85,13 +67,13 @@ const BottomNav = (props) => {
         {activeTabs === 'profile' ? (
           <RiUser5Fill
             size="35"
-            color="#000"
+            color="#fff"
             onClick={() => setActiveTabs('profile')}
           />
         ) : (
           <RiUser5Line
             size="35"
-            color="#000"
+            color="#fff"
             onClick={() => setActiveTabs('profile')}
           />
         )}
