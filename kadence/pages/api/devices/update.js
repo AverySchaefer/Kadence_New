@@ -5,7 +5,7 @@ const handler = nextConnect();
 
 handler.use(middleware);
 
-handler.post(async (req, res) => {
+handler.patch(async (req, res) => {
     const filter = { uid: req.body.uid };
     const options = { upsert: true };
     const doc = {
@@ -13,27 +13,30 @@ handler.post(async (req, res) => {
         deviceList: req.body.deviceList,
         selectedDeviceName: req.body.deviceName,
         selectedDeviceID: req.body.deviceID,
-        tracking: req.body.tracking
+        tracking: req.body.tracking,
     };
 
     if (req.body.uid == null) {
-        console.log("No UID sent in request");
+        console.log('No UID sent in request');
         res.status(400).send();
+        return;
     }
 
-    const result = await req.db.collection('Devices').updateOne(filter, doc, options);
+    const result = await req.db
+        .collection('Devices')
+        .updateOne(filter, doc, options);
     //console.log("A document with the ID: ${result.insertedID} has been updated");
     //res.json(doc);
     if (result.acknowledged == false) {
-        console.log("Request not acknowledged by database");
+        console.log('Request not acknowledged by database');
         res.status(500).send();
     } else if (result.modifiedCount < 1) {
-        console.log("Document could not be located");
+        console.log('Document could not be located');
         res.status(400).send();
     } else {
-        console.log("Device Document Updated");
+        console.log('Device Document Updated');
         res.status(200).send();
     }
-})
+});
 
 export default handler;
