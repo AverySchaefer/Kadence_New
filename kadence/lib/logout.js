@@ -1,5 +1,3 @@
-import { useRouter } from 'next/router';
-
 export default function logout() {
     // TODO: implement logging out (I assume it'll involve
     //       removing some kind of cookie?)
