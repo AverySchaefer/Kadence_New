@@ -62,6 +62,7 @@ function SubList({ addNew, remove, items }) {
 export default function Settings() {
     const [profilePrivate, setProfilePrivate] = useState(true);
     const [waitToSave, setWaitToSave] = useState(true);
+    const [defaultDevice, setDefaultDevice] = useState(null);
 
     const [allowExplicit, setAllowExplicit] = useState(false);
     const [lyricalVsInstrumental, setLyricalVsInstrumental] = useState(80);
@@ -84,6 +85,9 @@ export default function Settings() {
     const [rampDownTime, setRampDownTime] = useState(0);
     const [mood, setMood] = useState('Happy');
     const [zipcode, setZipcode] = useState(69420);
+
+    // TODO: actually get devices from database
+    const devices = ['Device 1', 'Device 2'];
 
     function submitData() {
         const musicPrefData = {
@@ -195,6 +199,25 @@ export default function Settings() {
                                 >
                                     <option value={true}>Yes</option>
                                     <option value={false}>No</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <div className={styles.flexWrapper}>
+                                <b>Default Device: </b>
+                                <select
+                                    className={styles.select}
+                                    onChange={(e) =>
+                                        setWaitToSave(e.target.value === 'true')
+                                    }
+                                    value={waitToSave}
+                                >
+                                    <option value={null}>None</option>
+                                    {devices.map((device) => (
+                                        <option value={device} key={device}>
+                                            {device}
+                                        </option>
+                                    ))}
                                 </select>
                             </div>
                         </div>
