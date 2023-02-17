@@ -7,6 +7,7 @@ import { Inter } from '@next/font/google';
 import logout from '@/lib/logout';
 import { languages, genres, moods } from '@/lib/promptOptions';
 import { removeFromArray, appendToArray } from '@/lib/arrayUtil';
+import NetworkAPI from '@/lib/networkAPI';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -62,7 +63,7 @@ function SubList({ addNew, remove, items }) {
 export default function Settings() {
     const [profilePrivate, setProfilePrivate] = useState(true);
     const [waitToSave, setWaitToSave] = useState(true);
-    const [defaultDevice, setDefaultDevice] = useState(null);
+    const [defaultDevice, setDefaultDevice] = useState('None');
 
     const [allowExplicit, setAllowExplicit] = useState(false);
     const [lyricalVsInstrumental, setLyricalVsInstrumental] = useState(80);
@@ -116,38 +117,22 @@ export default function Settings() {
         };
 
         // Update User object
-        fetch('/api/users/update', {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(userData),
-        })
-            .then((resp) => {
-                console.log('resp', resp);
-                if (resp.ok) {
-                    return resp.json();
-                }
-                throw Error('Something went wrong');
+        NetworkAPI.patch('/api/users/update', userData)
+            .then(({ data }) => {
+                console.log('Successfully updated user', data);
             })
-            .then((json) => console.log('JSON', json));
+            .catch(({ status, error }) => {
+                console.log('Error: ', status, error);
+            });
 
         // Update Music Preferences Object
-        fetch('/api/preferences/update', {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ musicPrefData }),
-        })
-            .then((resp) => {
-                console.log('resp', resp);
-                if (resp.ok) {
-                    return resp.json();
-                }
-                throw Error('Something went wrong');
+        NetworkAPI.patch('/api/preferences/update', musicPrefData)
+            .then(({ data }) => {
+                console.log('Successfully updated preference', data);
             })
-            .then((json) => console.log('JSON', json));
+            .catch(({ status, error }) => {
+                console.log('Error: ', status, error);
+            });
     }
 
     return (
@@ -208,11 +193,11 @@ export default function Settings() {
                                 <select
                                     className={styles.select}
                                     onChange={(e) =>
-                                        setWaitToSave(e.target.value === 'true')
+                                        setDefaultDevice(e.target.value)
                                     }
-                                    value={waitToSave}
+                                    value={defaultDevice}
                                 >
-                                    <option value={null}>None</option>
+                                    <option value={'None'}>None</option>
                                     {devices.map((device) => (
                                         <option value={device} key={device}>
                                             {device}

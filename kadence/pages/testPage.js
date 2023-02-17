@@ -38,7 +38,7 @@ const API = {
             title: 'Get Users',
             url: '/api/users/getUsers',
             method: 'GET',
-            dataReqs: [{ field: 'uid' }],
+            dataReqs: [{ field: 'username' }],
         },
         {
             title: 'Delete',
