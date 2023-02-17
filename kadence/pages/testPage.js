@@ -102,6 +102,12 @@ const API = {
                 { field: 'actions', type: 'array' },
             ],
         },
+        {
+            title: 'Random Error',
+            url: '/register',
+            method: 'GET',
+            dataReqs: [{ field: 'name' }],
+        },
     ],
     prefEndpoints: [
         {
@@ -288,11 +294,68 @@ function parseValue(value, type) {
     }
 }
 
+function getRelevantUIComponent(field, type, handleUpdate) {
+    switch (type) {
+        case 'number':
+        case 'text':
+            return (
+                <TextField
+                    key={field}
+                    autoFocus
+                    margin="dense"
+                    id={field}
+                    label={field}
+                    type={type}
+                    fullWidth
+                    variant="outlined"
+                    onBlur={(e) => handleUpdate(field, e.target.value, type)}
+                />
+            );
+        case 'flag':
+            return (
+                <FormGroup key={field}>
+                    <FormControlLabel
+                        control={
+                            <Switch
+                                defaultChecked
+                                onBlur={(e) =>
+                                    handleUpdate(field, e.target.checked, type)
+                                }
+                            />
+                        }
+                        label={field}
+                    />
+                </FormGroup>
+            );
+        case 'array':
+        case 'songArray':
+            return (
+                <TextField
+                    key={field}
+                    autoFocus
+                    margin="dense"
+                    id={field}
+                    label={field}
+                    type="text"
+                    fullWidth
+                    variant="outlined"
+                    helperText={`Semicolon-Separated List ${
+                        type === 'songArray' ? '("Song" by "Artist")' : ''
+                    }`}
+                    onBlur={(e) => handleUpdate(field, e.target.value, type)}
+                />
+            );
+        default:
+            return '';
+    }
+}
+
 function TestComponent({ title, url, method, dataReqs }) {
     const [dataOpen, setDataOpen] = useState(false);
+    const [receivedOpen, setReceivedOpen] = useState(false);
 
     const handleClickOpen = () => setDataOpen(true);
-    const handleClose = () => setDataOpen(false);
+    const handleClosePrompt = () => setDataOpen(false);
 
     const [state, setState] = useState({});
     function updateField(field, value, type) {
@@ -304,13 +367,29 @@ function TestComponent({ title, url, method, dataReqs }) {
     }
 
     const [sentData, setSentData] = useState(null);
+    const [receivedData, setReceivedData] = useState(null);
+
+    const handleDataReceived = (data) => {
+        setReceivedOpen(true);
+        setReceivedData(data);
+    };
+    const handleCloseReceivedPrompt = () => {
+        setReceivedOpen(false);
+        setReceivedData(null);
+        setSentData(null);
+    };
+
     const handleSend = () => {
         setSentData(state);
-        handleClose();
+        handleClosePrompt();
         // TODO: Show Response
         NetworkAPI._fetch(url, method, state)
-            .then((res) => console.log('Result: ', res))
-            .catch((error) => console.log('Error: ', error));
+            .then((response) => {
+                handleDataReceived(response);
+            })
+            .catch((errorResponse) => {
+                handleDataReceived(errorResponse);
+            });
     };
 
     return (
@@ -319,92 +398,81 @@ function TestComponent({ title, url, method, dataReqs }) {
                 <b>{title}: </b>
                 <button onClick={handleClickOpen}>Run</button>
             </div>
-            <Dialog open={dataOpen} onClose={handleClose}>
+            <Dialog open={dataOpen} onClose={handleClosePrompt}>
                 <DialogTitle>
-                    {method} Request to {url}
+                    Construct {method} Request to {url}
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText>Fill out the request.</DialogContentText>
 
                     {dataReqs.map(({ field, type = 'text' }) => {
-                        switch (type) {
-                            case 'number':
-                            case 'text':
-                                return (
-                                    <TextField
-                                        key={field}
-                                        autoFocus
-                                        margin="dense"
-                                        id={field}
-                                        label={field}
-                                        type={type}
-                                        fullWidth
-                                        variant="outlined"
-                                        onBlur={(e) =>
-                                            updateField(
-                                                field,
-                                                e.target.value,
-                                                type
-                                            )
-                                        }
-                                    />
-                                );
-                            case 'flag':
-                                return (
-                                    <FormGroup key={field}>
-                                        <FormControlLabel
-                                            control={
-                                                <Switch
-                                                    defaultChecked
-                                                    onBlur={(e) =>
-                                                        updateField(
-                                                            field,
-                                                            e.target.checked,
-                                                            type
-                                                        )
-                                                    }
-                                                />
-                                            }
-                                            label={field}
-                                        />
-                                    </FormGroup>
-                                );
-                            case 'array':
-                            case 'songArray':
-                                return (
-                                    <TextField
-                                        key={field}
-                                        autoFocus
-                                        margin="dense"
-                                        id={field}
-                                        label={field}
-                                        type="text"
-                                        fullWidth
-                                        variant="outlined"
-                                        helperText={`Semicolon-Separated List ${
-                                            type === 'songArray'
-                                                ? '("Song" by "Artist")'
-                                                : ''
-                                        }`}
-                                        onBlur={(e) =>
-                                            updateField(
-                                                field,
-                                                e.target.value,
-                                                type
-                                            )
-                                        }
-                                    />
-                                );
-                            default:
-                                return '';
-                        }
+                        return getRelevantUIComponent(field, type, updateField);
                     })}
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose}>Cancel</Button>
+                    <Button onClick={handleClosePrompt}>Cancel</Button>
                     <Button onClick={handleSend}>Send</Button>
                 </DialogActions>
             </Dialog>
+
+            {receivedData !== null && (
+                <Dialog
+                    open={receivedOpen}
+                    maxWidth="lg"
+                    fullWidth
+                    onClose={handleCloseReceivedPrompt}
+                >
+                    <DialogTitle>Request Result</DialogTitle>
+                    <DialogContent>
+                        <div className={inter.className}>
+                            {receivedData.status !== -1 ? (
+                                <div style={{ marginBottom: '1em' }}>
+                                    Status: {receivedData.status}{' '}
+                                    {receivedData.message}
+                                </div>
+                            ) : (
+                                <div style={{ marginBottom: '1em' }}>
+                                    {receivedData.message}
+                                </div>
+                            )}
+
+                            <div>Response Data: </div>
+                            <pre
+                                style={{
+                                    backgroundColor: '#DDD',
+                                    padding: '0.5em',
+                                    overflow: 'scroll',
+                                    fontFamily: 'monospace',
+                                }}
+                            >
+                                {JSON.stringify(
+                                    receivedData.data || receivedData.error,
+                                    null,
+                                    2
+                                )}
+                            </pre>
+                            <div style={{ marginTop: '1em' }}>
+                                Data You Sent:{' '}
+                            </div>
+                            <pre
+                                style={{
+                                    backgroundColor: '#DDD',
+                                    padding: '0.5em',
+                                    overflow: 'scroll',
+                                    fontFamily: 'monospace',
+                                }}
+                            >
+                                {JSON.stringify(sentData, null, 2)}
+                            </pre>
+                        </div>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCloseReceivedPrompt} autoFocus>
+                            Close
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            )}
         </div>
     );
 }

@@ -28,7 +28,7 @@ function fetch_wrapper(url, method = 'GET', data = {}) {
                         reject({
                             status: resp.status,
                             message: resp.statusText,
-                            data: errorMessage,
+                            error: errorMessage,
                         })
                     );
                 }
@@ -36,8 +36,8 @@ function fetch_wrapper(url, method = 'GET', data = {}) {
             .catch((error) => {
                 reject({
                     status: -1,
-                    message: `Something went wrong: ${error.message}`,
-                    data: error,
+                    message: `Error: ${error.message}`,
+                    error: error,
                 });
             });
     });

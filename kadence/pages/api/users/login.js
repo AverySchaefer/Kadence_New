@@ -6,19 +6,23 @@ const handler = nextConnect();
 handler.use(middleware);
 
 handler.get(async (req, res) => {
-    let username = req.body.username;
-    let enteredPW = req.body.enteredPW;
+    const username = req.query.username;
+    const enteredPW = req.query.enteredPW;
+    console.log(username, enteredPW);
 
-    if (req.body.username == null) {
+    if (!username) {
         console.log('No username sent in request');
-        res.status(400).send();
+        res.status(400).send('No username sent in request');
         return;
     }
-    if (req.body.password == null) {
+    if (!enteredPW) {
         console.log('No password sent in request');
-        res.status(400).send();
+        res.status(400).send('No password sent in request');
         return;
     }
+
+    res.json({ yay: 'You did it!' });
+    return;
 
     let doc = await req.db.collection('Users').findOne({ username: username });
 
