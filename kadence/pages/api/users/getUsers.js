@@ -6,19 +6,19 @@ const handler = nextConnect();
 handler.use(middleware);
 
 handler.get(async (req, res) => {
-    if (req.body.uid == null) {
-        console.log('No UID sent in request');
+    if (req.body.username == null) {
+        console.log('No Username sent in request');
         res.status(400).send();
         return;
     }
 
     let result = await req.db
         .collection('Users')
-        .findOne({ uid: req.body.uid });
+        .findOne({ username: req.body.username });
 
-    if (result == false) {
-        console.log('Request not acknowledged by database');
-        res.status(400).send();
+    if (result == null) {
+        console.log('Database item could not be found');
+        res.status(400).json(result);
     } else {
         console.log('Account Found');
         res.status(200).json(result);
