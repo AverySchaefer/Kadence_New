@@ -3,8 +3,8 @@ import Link from 'next/link';
 import { Dialog } from '@capacitor/dialog';
 import styles from '@/styles/Settings.module.css';
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 import { Inter } from '@next/font/google';
-import logout from '@/lib/logout';
 import { languages, genres, moods } from '@/lib/promptOptions';
 import { removeFromArray, appendToArray } from '@/lib/arrayUtil';
 import NetworkAPI from '@/lib/networkAPI';
@@ -89,6 +89,38 @@ export default function Settings() {
 
     // TODO: actually get devices from database
     const devices = ['Device 1', 'Device 2'];
+
+    const router = useRouter();
+
+    function logout() {
+        // TODO: implement logging out (I assume it'll involve
+        //       removing some kind of cookie?)
+        console.log('TODO: log out of account');
+        NetworkAPI.delete('/api/users/logout', {
+            uid: null, // TODO: how to get this?
+        })
+            .then(({ data }) => {
+                router.push('/login');
+            })
+            .catch(({ status, error }) => {
+                console.log('Error logging out: ', status, error);
+            });
+    }
+
+    function deleteAccount() {
+        // TODO: implement logging out (I assume it'll involve
+        //       removing some kind of cookie?)
+        console.log('TODO: delete account');
+        NetworkAPI.delete('/api/users/delete', {
+            uid: null, // TODO: how to get this?
+        })
+            .then(({ data }) => {
+                router.push('/login');
+            })
+            .catch(({ status, error }) => {
+                console.log('Error deleting account: ', status, error);
+            });
+    }
 
     function submitData() {
         const musicPrefData = {
@@ -207,12 +239,21 @@ export default function Settings() {
                             </div>
                         </div>
                         <div>
-                            <div className={styles.flexWrapper}>
+                            <div
+                                className={styles.flexWrapper}
+                                style={{ justifyContent: 'space-around' }}
+                            >
                                 <button
                                     className={styles.logoutButton}
                                     onClick={logout}
                                 >
                                     Log Out
+                                </button>
+                                <button
+                                    className={styles.logoutButton}
+                                    onClick={deleteAccount}
+                                >
+                                    Delete Account
                                 </button>
                             </div>
                         </div>
