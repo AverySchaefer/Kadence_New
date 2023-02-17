@@ -61,7 +61,7 @@ export default function Register() {
                         type="password"
                     />
                     <Textbox
-                        name="password2"
+                        name="confirmedPassword"
                         placeholder="Confirm Password"
                         type="password"
                     />
