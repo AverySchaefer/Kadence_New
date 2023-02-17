@@ -6,7 +6,7 @@ const handler = nextConnect();
 handler.use(middleware);
 
 handler.get(async (req, res) => {
-    if (req.body.uid == null) {
+    if (req.query.uid == null) {
         console.log('No UID sent in request');
         res.status(400).send();
         return;

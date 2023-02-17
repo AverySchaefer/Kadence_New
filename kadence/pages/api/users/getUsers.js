@@ -6,7 +6,7 @@ const handler = nextConnect();
 handler.use(middleware);
 
 handler.get(async (req, res) => {
-    if (req.body.username == null) {
+    if (req.query.username == null) {
         console.log('No Username sent in request');
         res.status(400).send();
         return;
