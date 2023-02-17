@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { Dialog } from '@capacitor/dialog';
 import styles from '@/styles/Settings.module.css';
 import { useState } from 'react';
-import { Butterfly_Kids, Inter } from '@next/font/google';
+import { Inter } from '@next/font/google';
 import logout from '@/lib/logout';
 import { languages, genres, moods } from '@/lib/promptOptions';
 import { removeFromArray, appendToArray } from '@/lib/arrayUtil';

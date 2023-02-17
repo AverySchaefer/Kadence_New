@@ -3,17 +3,11 @@ import styles from '@/styles/Settings.module.css';
 
 import { useState } from 'react';
 import Link from 'next/link';
-import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import Switch from '@mui/material/Switch';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -432,6 +426,11 @@ function TestComponent({ title, url, method, dataReqs }) {
                     <DialogTitle>Request Result</DialogTitle>
                     <DialogContent>
                         <div className={inter.className}>
+                            <div style={{ marginBottom: '1em' }}>
+                                <i>
+                                    {method} Request to {url}
+                                </i>
+                            </div>
                             {receivedData.status !== -1 ? (
                                 <div style={{ marginBottom: '1em' }}>
                                     Status: {receivedData.status}{' '}
