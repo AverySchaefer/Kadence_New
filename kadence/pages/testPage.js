@@ -2,6 +2,7 @@ import { Inter } from '@next/font/google';
 import styles from '@/styles/Settings.module.css';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import Switch from '@mui/material/Switch';
@@ -236,7 +237,7 @@ const API = {
     ],
 };
 
-// Parse Value based on type
+// Parse value based on dataReq type
 function parseValue(value, type) {
     switch (type) {
         case 'number':
@@ -295,6 +296,7 @@ function parseValue(value, type) {
     }
 }
 
+// Get UI component for field based on type
 function getRelevantUIComponent(field, type, handleUpdate) {
     switch (type) {
         case 'number':
@@ -542,9 +544,51 @@ function TestPreferences() {
     );
 }
 
+function NavLinks() {
+    const navLinks = [
+        { name: 'Index', link: '/' },
+        { name: 'Login', link: '/login' },
+        { name: 'Home', link: '/home' },
+        { name: 'Profile', link: '/profile' },
+        { name: 'Register', link: '/register' },
+        { name: 'Search', link: '/search' },
+        { name: 'Settings', link: '/settings' },
+        { name: 'Test Page', link: '/testPage' },
+    ];
+
+    return (
+        <section>
+            <div className={styles.sticky}>
+                <h1>NAV LINKS</h1>
+            </div>
+            <div className={styles.settingsSection}>
+                {navLinks.map(({ name, link }) => {
+                    return (
+                        <Link
+                            key={name}
+                            href={link}
+                            style={{ display: 'block' }}
+                        >
+                            <div
+                                className={styles.flexWrapper}
+                                style={{
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <b>{name}</b>
+                            </div>
+                        </Link>
+                    );
+                })}
+            </div>
+        </section>
+    );
+}
+
 export default function TestPage() {
     return (
         <main className={inter.className}>
+            <NavLinks />
             <TestUsers />
             <TestPreferences />
             <TestDevices />
