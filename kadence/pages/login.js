@@ -4,8 +4,18 @@ import Link from 'next/link';
 import styles from '@/styles/Register.module.css';
 import Textbox from '@/components/Textbox';
 import Button from '@/components/Button';
+import { Inter } from '@next/font/google';
+import { useRouter } from 'next/router';
 
-export default function Register() {
+const inter = Inter({ subsets: ['latin'] });
+
+function Register() {
+  const router = useRouter();
+  const handleClick = () => {
+    console.log('Login button clicked');
+    router.push('/home');
+  };
+
   return (
     <>
       <Head>
@@ -14,7 +24,7 @@ export default function Register() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={styles.main}>
+      <main className={[inter.className, styles.main].join(' ')}>
         <Image
           className={styles.img}
           src="/logo.png"
@@ -27,11 +37,15 @@ export default function Register() {
           <Textbox name="username" placeholder="Username" />
           <Textbox name="password" placeholder="Password" password />
           <Link className={styles.note} href="/register">
-            Don't have an account? Register here!
+            {"Don't have an account? Register here!"}
           </Link>
-          <Button type="submit">Login</Button>
+          <Button type="submit" onClick={handleClick}>
+            Login
+          </Button>
         </form>
       </main>
     </>
   );
 }
+
+export default Register;
