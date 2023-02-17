@@ -526,10 +526,10 @@ export default function Settings() {
                                                 setBlacklistedSongs(
                                                     appendToArray(
                                                         blacklistedSongs,
-                                                        [
-                                                            songName.trim(),
-                                                            value.trim(),
-                                                        ]
+                                                        {
+                                                            name: songName.trim(),
+                                                            artist: value.trim(),
+                                                        }
                                                     )
                                                 );
                                             }

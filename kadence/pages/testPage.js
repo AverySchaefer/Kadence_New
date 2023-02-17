@@ -1,7 +1,7 @@
 import { Inter } from '@next/font/google';
 import styles from '@/styles/Settings.module.css';
 
-import * as React from 'react';
+import { useState } from 'react';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import Switch from '@mui/material/Switch';
@@ -18,6 +18,8 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+
+import NetworkAPI from '../lib/networkAPI';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -231,30 +233,85 @@ const API = {
 function parseValue(value, type) {
     switch (type) {
         case 'number':
-            return;
+            if (value === '') return null;
+            return parseFloat(value);
         case 'text':
-            return;
+            if (value === '') return null;
+            return value;
         case 'flag':
-            return;
+            return value;
         case 'array':
         case 'songArray':
-            return;
+            if (value.trim() === '') return null;
+            // Split on semicolon
+            let tokens = value.split(';');
+            tokens = tokens.map((tok) => tok.trim());
+            if (type === 'array') return tokens;
+            // Split on "by" to get song title and artist separately
+            const result = [];
+            tokens.forEach((tok) => {
+                if (/^".+" by ".+"$/.test(tok)) {
+                    let insideQuotes = false;
+                    let firstQuote = -1;
+                    let lastQuote = -1;
+                    for (let i = 0; i < tok.length; i++) {
+                        if (tok[i] === '"') {
+                            if (insideQuotes) {
+                                lastQuote = i;
+                            } else {
+                                firstQuote = i;
+                            }
+                            insideQuotes = !insideQuotes;
+                        } else if (
+                            i < tok.length - 2 &&
+                            i > 0 &&
+                            !insideQuotes &&
+                            tok[i - 1] === ' ' &&
+                            tok[i] === 'b' &&
+                            tok[i + 1] === 'y' &&
+                            tok[i + 2] === ' '
+                        ) {
+                            const songName = tok
+                                .substring(firstQuote + 1, lastQuote)
+                                .trim();
+                            const remainder = tok.substring(i + 3).trim();
+                            const songArtist = remainder
+                                .substring(1, remainder.length - 1)
+                                .trim();
+                            result.push({ name: songName, artist: songArtist });
+                            break;
+                        }
+                    }
+                }
+            });
+            return result;
     }
 }
 
 function TestComponent({ title, url, method, dataReqs }) {
-    const [open, setOpen] = React.useState(false);
+    const [dataOpen, setDataOpen] = useState(false);
 
-    const handleClickOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+    const handleClickOpen = () => setDataOpen(true);
+    const handleClose = () => setDataOpen(false);
 
+    const [state, setState] = useState({});
+    function updateField(field, value, type) {
+        setState((oldState) => {
+            const copy = { ...oldState };
+            copy[field] = parseValue(value, type);
+            return copy;
+        });
+    }
+
+    const [sentData, setSentData] = useState(null);
     const handleSend = () => {
-        console.log('Sent');
-        // TODO: Show Response
+        setSentData(state);
         handleClose();
+        // TODO: Show Response
+        NetworkAPI._fetch(url, method, state)
+            .then((res) => console.log('Result: ', res))
+            .catch((error) => console.log('Error: ', error));
     };
-
-    const [state, setState] = React.useState({});
 
     return (
         <div>
@@ -262,7 +319,7 @@ function TestComponent({ title, url, method, dataReqs }) {
                 <b>{title}: </b>
                 <button onClick={handleClickOpen}>Run</button>
             </div>
-            <Dialog open={open} onClose={handleClose}>
+            <Dialog open={dataOpen} onClose={handleClose}>
                 <DialogTitle>
                     {method} Request to {url}
                 </DialogTitle>
@@ -283,13 +340,31 @@ function TestComponent({ title, url, method, dataReqs }) {
                                         type={type}
                                         fullWidth
                                         variant="outlined"
+                                        onBlur={(e) =>
+                                            updateField(
+                                                field,
+                                                e.target.value,
+                                                type
+                                            )
+                                        }
                                     />
                                 );
                             case 'flag':
                                 return (
                                     <FormGroup key={field}>
                                         <FormControlLabel
-                                            control={<Switch defaultChecked />}
+                                            control={
+                                                <Switch
+                                                    defaultChecked
+                                                    onBlur={(e) =>
+                                                        updateField(
+                                                            field,
+                                                            e.target.checked,
+                                                            type
+                                                        )
+                                                    }
+                                                />
+                                            }
                                             label={field}
                                         />
                                     </FormGroup>
@@ -311,6 +386,13 @@ function TestComponent({ title, url, method, dataReqs }) {
                                                 ? '("Song" by "Artist")'
                                                 : ''
                                         }`}
+                                        onBlur={(e) =>
+                                            updateField(
+                                                field,
+                                                e.target.value,
+                                                type
+                                            )
+                                        }
                                     />
                                 );
                             default:
