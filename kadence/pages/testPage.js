@@ -24,6 +24,13 @@ import NetworkAPI from '../lib/networkAPI';
 const inter = Inter({ subsets: ['latin'] });
 
 // API Request Information
+//
+// dataReqs is an array of objects that can be sent to the server.
+// Each consists of a field and the type of the field, which
+// defaults to "text" if unspecified. Valid types are:
+//   - text, number, flag, array, songArray
+// These types are used to parse the fields (and generate UI components)
+// accordingly.
 const API = {
     userEndpoints: [
         {
@@ -101,12 +108,6 @@ const API = {
                 { field: 'friends', type: 'array' },
                 { field: 'actions', type: 'array' },
             ],
-        },
-        {
-            title: 'Random Error',
-            url: '/register',
-            method: 'GET',
-            dataReqs: [{ field: 'name' }],
         },
     ],
     prefEndpoints: [
@@ -400,10 +401,14 @@ function TestComponent({ title, url, method, dataReqs }) {
             </div>
             <Dialog open={dataOpen} onClose={handleClosePrompt}>
                 <DialogTitle>
-                    Construct {method} Request to {url}
+                    Send {method} Request to {url}
                 </DialogTitle>
                 <DialogContent>
-                    <DialogContentText>Fill out the request.</DialogContentText>
+                    {dataReqs.length > 0 && (
+                        <DialogContentText>
+                            Fill out the request.
+                        </DialogContentText>
+                    )}
 
                     {dataReqs.map(({ field, type = 'text' }) => {
                         return getRelevantUIComponent(field, type, updateField);
@@ -441,7 +446,7 @@ function TestComponent({ title, url, method, dataReqs }) {
                                 style={{
                                     backgroundColor: '#DDD',
                                     padding: '0.5em',
-                                    overflow: 'scroll',
+                                    overflow: 'auto',
                                     fontFamily: 'monospace',
                                 }}
                             >
@@ -458,7 +463,7 @@ function TestComponent({ title, url, method, dataReqs }) {
                                 style={{
                                     backgroundColor: '#DDD',
                                     padding: '0.5em',
-                                    overflow: 'scroll',
+                                    overflow: 'auto',
                                     fontFamily: 'monospace',
                                 }}
                             >

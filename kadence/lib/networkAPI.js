@@ -16,21 +16,39 @@ function fetch_wrapper(url, method = 'GET', data = {}) {
         fetch(url, options)
             .then((resp) => {
                 if (resp.ok) {
-                    resp.json().then((body) =>
-                        resolve({
-                            status: resp.status,
-                            message: resp.statusText,
-                            data: body,
-                        })
-                    );
+                    resp.text().then((text) => {
+                        try {
+                            const body = JSON.parse(text);
+                            return resolve({
+                                status: resp.status,
+                                message: resp.statusText,
+                                data: body,
+                            });
+                        } catch (err) {
+                            return resolve({
+                                status: resp.status,
+                                message: resp.statusText,
+                                data: text,
+                            });
+                        }
+                    });
                 } else {
-                    resp.text().then((errorMessage) =>
-                        reject({
-                            status: resp.status,
-                            message: resp.statusText,
-                            error: errorMessage,
-                        })
-                    );
+                    resp.text().then((errorObj) => {
+                        try {
+                            const body = JSON.parse(errorObj);
+                            return reject({
+                                status: resp.status,
+                                message: resp.statusText,
+                                error: body,
+                            });
+                        } catch (err) {
+                            return reject({
+                                status: resp.status,
+                                message: resp.statusText,
+                                error: errorObj,
+                            });
+                        }
+                    });
                 }
             })
             .catch((error) => {
