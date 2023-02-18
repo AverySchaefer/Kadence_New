@@ -30,9 +30,12 @@ handler.get(async (req, res) => {
         return;
     }
 
-    if (enteredPW == doc.body.password) {
+    console.log(doc);
+
+    if (enteredPW == doc.password) {
         console.log('Login Successful');
-        res.status(200).send('Login Successful!');
+        res.status(200).json(doc);
+        //res.status(200).send('Login Successful!');
     } else {
         console.log('Login Unsuccessful');
         res.status(401).send('Login unsuccessful, password incorrect');
