@@ -65,3 +65,17 @@ Capacitor is a framework used to compile and export Next.js projects into cross-
   e. Make sure your connected device is listed at the top of the window and click play
 
 Note that live reload has been turned on 
+
+### RUNNING TEST CASES
+
+Jest test cases have been built for this project. To run test cases, do the following:
+
+1. In a terminal window, run
+```bash
+  npm run dev
+```
+2. In a second terminal window, run
+```bash
+  npm run test
+```
+This will run the test suite. The output of the test suite will say what (if any) test cases have failed.
