@@ -40,7 +40,7 @@ const NetworkAPI = {
     get(url, queryParams = {}) {
         // Convert null to undefined for GET Requests
         const paramsCopy = { ...queryParams };
-        paramsCopy.forEach((param) => {
+        Object.keys(paramsCopy).forEach((param) => {
             if (paramsCopy[param] === null) delete paramsCopy[param];
         });
 
