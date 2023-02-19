@@ -2,8 +2,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from '@/styles/Register.module.css';
-import Textbox from '@/components/Textbox';
-import Button from '@/components/Button';
+import { Button, Textbox } from '@/components/';
 import { Inter } from '@next/font/google';
 import { useRouter } from 'next/router';
 
@@ -31,6 +30,7 @@ export default function Login() {
         } catch (err) {
             // TODO: handle error (wrong password, perhaps)
             console.log('Error: ', err.status, err.statusText);
+            console.log(err);
         }
     }
 

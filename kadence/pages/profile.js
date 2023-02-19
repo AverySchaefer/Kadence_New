@@ -1,20 +1,12 @@
 import * as React from 'react';
 import Image from 'next/image';
 import SettingsIcon from '@mui/icons-material/Settings';
-// import Fab from '@mui/material/Fab';
-// import Avatar from '@mui/material/Avatar';
 import Link from 'next/link';
 import Head from 'next/head';
-import BottomNav from '@/components/BottomNav';
+import { BottomNav } from '@/components/';
 import styles from '@/styles/Profile.module.css';
 import { Inter } from '@next/font/google';
 import PropTypes from 'prop-types';
-// import Tabs from '@mui/material/Tabs';
-// import Tab from '@mui/material/Tab';
-// import Typography from '@mui/material/Typography';
-// import Box from '@mui/material/Box';
-// import Button from '@mui/material/Button';
-// import Stack from '@mui/material/Stack';
 import {
     Avatar,
     Box,
@@ -41,7 +33,7 @@ function TabPanel(props) {
         >
             {value === index && (
                 <Box sx={{ p: 3 }}>
-                    <Typography>{children}</Typography>
+                    <Typography component={'span'}>{children}</Typography>
                 </Box>
             )}
         </div>

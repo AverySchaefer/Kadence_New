@@ -2,8 +2,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from '@/styles/Register.module.css';
-import Textbox from '@/components/Textbox';
-import Button from '@/components/Button';
+import { Button, Textbox } from '@/components/';
 import { Inter } from '@next/font/google';
 import { Dialog } from '@capacitor/dialog';
 
@@ -52,6 +51,7 @@ export default function Register() {
             }
         } catch (err) {
             console.log('Error: ', err.status, err.statusText);
+            console.log(err);
         }
     }
 

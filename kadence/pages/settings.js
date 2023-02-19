@@ -105,6 +105,7 @@ export default function Settings() {
             }
         } catch (err) {
             console.log('Error logging out: ', err.status, err.statusText);
+            console.log(err);
         }
     }
 
@@ -121,6 +122,7 @@ export default function Settings() {
             }
         } catch (err) {
             console.log('Error deleting account: ', err.status, err.statusText);
+            console.log(err);
         }
     }
 
@@ -158,6 +160,7 @@ export default function Settings() {
             }
         } catch (err) {
             console.log('Error: ', err.status, err.statusText);
+            console.log(err);
         }
 
         // Update Music Preferences Object
@@ -171,6 +174,7 @@ export default function Settings() {
             }
         } catch (err) {
             console.log('Error: ', err.status, err.statusText);
+            console.log(err);
         }
     }
 

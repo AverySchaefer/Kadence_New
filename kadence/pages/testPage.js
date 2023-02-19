@@ -3,16 +3,18 @@ import styles from '@/styles/Settings.module.css';
 
 import { useState } from 'react';
 import Link from 'next/link';
-import Button from '@mui/material/Button';
-import Switch from '@mui/material/Switch';
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    FormGroup,
+    FormControlLabel,
+    Switch,
+    TextField,
+} from '@mui/material/';
 
 import NetworkAPI from '../lib/networkAPI';
 
