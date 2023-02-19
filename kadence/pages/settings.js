@@ -92,39 +92,39 @@ export default function Settings() {
 
     const router = useRouter();
 
-    function logout() {
+    async function logout() {
         // TODO: implement logging out (I assume it'll involve
         //       removing some kind of cookie?)
         console.log('TODO: log out of account');
-        NetworkAPI.delete('/api/users/logout', {
-            uid: null, // TODO: how to get this?
-        })
-            .then(({ data }) => {
-                console.log(data);
-                router.push('/login');
-            })
-            .catch(({ status, error }) => {
-                console.log('Error logging out: ', status, error);
+        try {
+            const data = await NetworkAPI.delete('/api/users/logout', {
+                uid: null, // TODO: how to get this?
             });
+            if (data) {
+                router.push('/login');
+            }
+        } catch (err) {
+            console.log('Error logging out: ', err.status, err.statusText);
+        }
     }
 
-    function deleteAccount() {
+    async function deleteAccount() {
         // TODO: implement logging out (I assume it'll involve
         //       removing some kind of cookie?)
         console.log('TODO: delete account');
-        NetworkAPI.delete('/api/users/delete', {
-            uid: null, // TODO: how to get this?
-        })
-            .then(({ data }) => {
-                console.log(data);
-                router.push('/login');
-            })
-            .catch(({ status, error }) => {
-                console.log('Error deleting account: ', status, error);
+        try {
+            const data = await NetworkAPI.delete('/api/users/delete', {
+                uid: null, // TODO: how to get this?
             });
+            if (data) {
+                router.push('/login');
+            }
+        } catch (err) {
+            console.log('Error deleting account: ', err.status, err.statusText);
+        }
     }
 
-    function submitData() {
+    async function submitData() {
         const musicPrefData = {
             uid: null, // TODO: how do we get this?
             allowExplicit,
@@ -151,22 +151,27 @@ export default function Settings() {
         };
 
         // Update User object
-        NetworkAPI.patch('/api/users/update', userData)
-            .then(({ data }) => {
+        try {
+            const data = await NetworkAPI.patch('/api/users/update', userData);
+            if (data) {
                 console.log('Successfully updated user', data);
-            })
-            .catch(({ status, error }) => {
-                console.log('Error: ', status, error);
-            });
+            }
+        } catch (err) {
+            console.log('Error: ', err.status, err.statusText);
+        }
 
         // Update Music Preferences Object
-        NetworkAPI.patch('/api/preferences/update', musicPrefData)
-            .then(({ data }) => {
+        try {
+            const data = await NetworkAPI.patch(
+                '/api/preferences/update',
+                musicPrefData
+            );
+            if (data) {
                 console.log('Successfully updated preference', data);
-            })
-            .catch(({ status, error }) => {
-                console.log('Error: ', status, error);
-            });
+            }
+        } catch (err) {
+            console.log('Error: ', err.status, err.statusText);
+        }
     }
 
     return (

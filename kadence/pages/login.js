@@ -14,24 +14,24 @@ const inter = Inter({ subsets: ['latin'] });
 export default function Login() {
     const router = useRouter();
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         const form = e.target;
         const { username, enteredPW } = form;
         e.preventDefault();
 
-        // Send Request
-        NetworkAPI.get('/api/users/login', {
-            username: username.value,
-            enteredPW: enteredPW.value,
-        })
-            .then(({ data }) => {
-                // TODO: Redirect to Home Page upon success
-                router.push('/home');
-            })
-            .catch(({ status, error }) => {
-                // TODO: handle error (wrong password, perhaps)
-                console.log('Error: ', status, error);
+        try {
+            const data = await NetworkAPI.get('/api/users/login', {
+                username: username.value,
+                enteredPW: enteredPW.value,
             });
+
+            if (data) {
+                router.push('/home');
+            }
+        } catch (err) {
+            // TODO: handle error (wrong password, perhaps)
+            console.log('Error: ', err.status, err.statusText);
+        }
     }
 
     return (

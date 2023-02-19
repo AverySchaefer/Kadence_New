@@ -16,7 +16,7 @@ const inter = Inter({ subsets: ['latin'] });
 export default function Register() {
     const router = useRouter();
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         const form = e.target;
         const { email, username, password, confirmedPassword } = form;
         e.preventDefault();
@@ -38,21 +38,21 @@ export default function Register() {
         }
 
         // Send Request
-        NetworkAPI.post('/api/users/insert', {
-            email: email.value,
-            username: username.value,
-            password: password.value,
-            confirmedPassword: confirmedPassword.value,
-        })
-            .then(({ data }) => {
-                // TODO: Redirect to Login Page upon success
-                console.log(data);
-                router.push('/login');
-            })
-            .catch(({ status, error }) => {
-                // TODO: handle error
-                console.log('Error: ', status, error);
+        try {
+            const data = await NetworkAPI.post('/api/users/insert', {
+                email: email.value,
+                username: username.value,
+                password: password.value,
+                confirmedPassword: confirmedPassword.value,
             });
+
+            if (data) {
+                // TODO: Redirect to Login Page upon success
+                router.push('/login');
+            }
+        } catch (err) {
+            console.log('Error: ', err.status, err.statusText);
+        }
     }
 
     return (

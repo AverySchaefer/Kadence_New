@@ -379,17 +379,19 @@ function TestComponent({ title, url, method, dataReqs }) {
         setSentData(null);
     };
 
-    const handleSend = () => {
+    const handleSend = async () => {
         setSentData(state);
         handleClosePrompt();
         // TODO: Show Response
-        NetworkAPI._fetch(url, method, state)
-            .then((response) => {
+
+        try {
+            const response = await NetworkAPI._fetch(url, method, state);
+            if (response) {
                 handleDataReceived(response);
-            })
-            .catch((errorResponse) => {
-                handleDataReceived(errorResponse);
-            });
+            }
+        } catch (err) {
+            console.log('error in handleSend', err);
+        }
     };
 
     return (
