@@ -29,7 +29,7 @@ const BottomNav = (props) => {
                 router.push('/home');
                 break;
         }
-    }, [activeTabs, router]);
+    }, [activeTabs]);
 
     return (
         <div className={`${Styles.bottomNav}`}>
