@@ -490,64 +490,35 @@ function TestComponent({ title, url, method, dataReqs }) {
     );
 }
 
-function TestUsers() {
+function TestSection(sectionName, sectionKey) {
     return (
         <section>
             <div className={styles.sticky}>
-                <h1>USER ENDPOINTS</h1>
+                <h1>{sectionName}</h1>
             </div>
             <div className={styles.settingsSection}>
-                {API.userEndpoints.map((obj, idx) => (
+                {API[sectionKey].map((obj, idx) => (
                     <TestComponent {...obj} key={idx} />
                 ))}
             </div>
         </section>
     );
+}
+
+function TestUsers() {
+    return TestSection('USER ENDPOINTS', 'userEndpoints');
 }
 
 function TestDevices() {
-    return (
-        <section>
-            <div className={styles.sticky}>
-                <h1>DEVICE ENDPOINTS</h1>
-            </div>
-            <div className={styles.settingsSection}>
-                {API.deviceEndpoints.map((obj, idx) => (
-                    <TestComponent {...obj} key={idx} />
-                ))}
-            </div>
-        </section>
-    );
+    return TestSection('DEVICE ENDPOINTS', 'deviceEndpoints');
 }
 
 function TestMusic() {
-    return (
-        <section>
-            <div className={styles.sticky}>
-                <h1>MUSIC ENDPOINTS</h1>
-            </div>
-            <div className={styles.settingsSection}>
-                {API.musicEndpoints.map((obj, idx) => (
-                    <TestComponent {...obj} key={idx} />
-                ))}
-            </div>
-        </section>
-    );
+    return TestSection('MUSIC ENDPOINTS', 'musicEndpoints');
 }
 
 function TestPreferences() {
-    return (
-        <section>
-            <div className={styles.sticky}>
-                <h1>PREFERENCE ENDPOINTS</h1>
-            </div>
-            <div className={styles.settingsSection}>
-                {API.prefEndpoints.map((obj, idx) => (
-                    <TestComponent {...obj} key={idx} />
-                ))}
-            </div>
-        </section>
-    );
+    return TestSection('PREFERENCE ENDPOINTS', 'prefEndpoints');
 }
 
 function NavLinks() {
