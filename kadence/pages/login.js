@@ -7,14 +7,32 @@ import Button from '@/components/Button';
 import { Inter } from '@next/font/google';
 import { useRouter } from 'next/router';
 
+import NetworkAPI from '@/lib/networkAPI';
+
 const inter = Inter({ subsets: ['latin'] });
 
-function Register() {
+export default function Login() {
     const router = useRouter();
-    const handleClick = () => {
-        console.log('Login button clicked');
-        router.push('/home');
-    };
+
+    function handleSubmit(e) {
+        const form = e.target;
+        const { username, enteredPW } = form;
+        e.preventDefault();
+
+        // Send Request
+        NetworkAPI.get('/api/users/login', {
+            username: username.value,
+            enteredPW: enteredPW.value,
+        })
+            .then(({ data }) => {
+                // TODO: Redirect to Home Page upon success
+                router.push('/home');
+            })
+            .catch(({ status, error }) => {
+                // TODO: handle error (wrong password, perhaps)
+                console.log('Error: ', status, error);
+            });
+    }
 
     return (
         <>
@@ -39,22 +57,25 @@ function Register() {
                     height={200}
                     priority
                 />
-                <form className={styles.form} method="POST" action="">
-                    <Textbox name="username" placeholder="Username" />
-                    <Textbox name="password" placeholder="Password" password />
+                <form
+                    className={styles.form}
+                    method="POST"
+                    action="/api/users/login"
+                    onSubmit={handleSubmit}
+                >
+                    <Textbox name="username" placeholder="Username" required />
+                    <Textbox
+                        name="enteredPW"
+                        placeholder="Password"
+                        type="password"
+                        required
+                    />
                     <Link className={styles.note} href="/register">
                         {"Don't have an account? Register here!"}
                     </Link>
-                    <Link className={styles.note} href="/testPage">
-                        {'Test Page'}
-                    </Link>
-                    <Button type="submit" onClick={handleClick}>
-                        Login
-                    </Button>
+                    <Button type="submit">Login</Button>
                 </form>
             </main>
         </>
     );
 }
-
-export default Register;

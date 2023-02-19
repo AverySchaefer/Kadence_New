@@ -17,9 +17,9 @@
 ### GET `/api/users/getUsers`
 
 - Request Body Elements
-  - uid: USER_ID
+  - username: STRING
 - Return Body Elements
-  - Result
+  - Result (document or NULL if no document found)
 - Response Status Codes
   - 200: Request Successful
   - 400: Account cannot be found (incorrect or missing uid)
@@ -56,7 +56,7 @@
   - rampDownTime: INT
   - mood: STRING
   - zipcode: INT
-  - friendRequests: USER_ID
+  - friendRequests: USER_ID[]
   - friends: USER_ID[]
   - actions: STRING[]
 - Return Body Elements
@@ -87,7 +87,7 @@
   - rampUpTime: INT
   - rampDownTime: INT
   - mood: STRING
-  - freindRequests: USER_ID
+  - freindRequests: USER_ID[]
   - friends: USER_ID[]
   - actions: STRING[]
 - Return Body Elements
@@ -104,7 +104,7 @@
 - Request Body Elements
   - uid: PREFERENCE_ID
 - Return Body Elements
-  - Result
+  - Result (document or NULL if no document found)
 - Response Status Codes
   - 200: Request Successful
   - 400: Document cannot be found (incorrect or missing uid)
@@ -170,7 +170,7 @@
 - Request Body Elements
   - uid: MUSIC_ID
 - Return Body Elements
-  - Result
+  - Result (document or NULL if no document found)
 - Response Status Codes
   - 200: Request Successful
   - 400: Document cannot be found (incorrect or missing uid)
@@ -218,7 +218,7 @@
 - Request Body Elements
   - uid: DEVICE_ID
 - Return Body Elements
-  - Result
+  - Result (document or NULL if no document found)
 - Response Status Codes
   - 200: Request Successful
   - 400: Document cannot be found (incorrect or missing uid)

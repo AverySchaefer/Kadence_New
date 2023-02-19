@@ -6,15 +6,15 @@ const handler = nextConnect();
 handler.use(middleware);
 
 handler.get(async (req, res) => {
-    let username = req.body.username;
-    let enteredPW = req.body.enteredPW;
+    let username = req.query.username;
+    let enteredPW = req.query.enteredPW;
 
-    if (req.body.username == null) {
+    if (req.query.username == null) {
         console.log('No username sent in request');
         res.status(400).send();
         return;
     }
-    if (req.body.password == null) {
+    if (req.query.enteredPW == null) {
         console.log('No password sent in request');
         res.status(400).send();
         return;
@@ -30,9 +30,12 @@ handler.get(async (req, res) => {
         return;
     }
 
-    if (enteredPW == doc.body.password) {
+    console.log(doc);
+
+    if (enteredPW == doc.password) {
         console.log('Login Successful');
-        res.status(200).send('Login Successful!');
+        res.status(200).json(doc);
+        //res.status(200).send('Login Successful!');
     } else {
         console.log('Login Unsuccessful');
         res.status(401).send('Login unsuccessful, password incorrect');
