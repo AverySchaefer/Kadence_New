@@ -243,7 +243,7 @@ function parseValue(value, type) {
         case 'flag':
             return value;
         case 'array':
-        case 'songArray':
+        case 'songArray': {
             if (value.trim() === '') return null;
             // Split on semicolon
             let tokens = value.split(';');
@@ -287,6 +287,9 @@ function parseValue(value, type) {
                 }
             });
             return result;
+        }
+        default:
+            return value;
     }
 }
 
@@ -406,9 +409,9 @@ function TestComponent({ title, url, method, dataReqs }) {
                         </DialogContentText>
                     )}
 
-                    {dataReqs.map(({ field, type = 'text' }) => {
-                        return getRelevantUIComponent(field, type, updateField);
-                    })}
+                    {dataReqs.map(({ field, type = 'text' }) =>
+                        getRelevantUIComponent(field, type, updateField)
+                    )}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClosePrompt}>Cancel</Button>
@@ -561,24 +564,18 @@ function NavLinks() {
                 <h1>NAV LINKS</h1>
             </div>
             <div className={styles.settingsSection}>
-                {navLinks.map(({ name, link }) => {
-                    return (
-                        <Link
-                            key={name}
-                            href={link}
-                            style={{ display: 'block' }}
+                {navLinks.map(({ name, link }) => (
+                    <Link key={name} href={link} style={{ display: 'block' }}>
+                        <div
+                            className={styles.flexWrapper}
+                            style={{
+                                justifyContent: 'center',
+                            }}
                         >
-                            <div
-                                className={styles.flexWrapper}
-                                style={{
-                                    justifyContent: 'center',
-                                }}
-                            >
-                                <b>{name}</b>
-                            </div>
-                        </Link>
-                    );
-                })}
+                            <b>{name}</b>
+                        </div>
+                    </Link>
+                ))}
             </div>
         </section>
     );

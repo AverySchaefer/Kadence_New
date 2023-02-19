@@ -100,6 +100,7 @@ export default function Settings() {
             uid: null, // TODO: how to get this?
         })
             .then(({ data }) => {
+                console.log(data);
                 router.push('/login');
             })
             .catch(({ status, error }) => {
@@ -115,6 +116,7 @@ export default function Settings() {
             uid: null, // TODO: how to get this?
         })
             .then(({ data }) => {
+                console.log(data);
                 router.push('/login');
             })
             .catch(({ status, error }) => {
@@ -452,7 +454,7 @@ export default function Settings() {
                                         if (!cancelled && value.trim() !== '') {
                                             setFaveArtists(
                                                 appendToArray(
-                                                    favArtists,
+                                                    faveArtists,
                                                     value.trim()
                                                 )
                                             );
@@ -460,10 +462,10 @@ export default function Settings() {
                                     }}
                                     remove={(idx) =>
                                         setFaveArtists(
-                                            removeFromArray(favArtists, idx)
+                                            removeFromArray(faveArtists, idx)
                                         )
                                     }
-                                    items={favArtists}
+                                    items={faveArtists}
                                 />
                             )}
                         </div>
@@ -677,9 +679,9 @@ export default function Settings() {
                                     onChange={(e) => setMood(e.target.value)}
                                     value={mood}
                                 >
-                                    {moods.map((mood) => (
-                                        <option value={mood} key={mood}>
-                                            {mood}
+                                    {moods.map((m) => (
+                                        <option value={m} key={m}>
+                                            {m}
                                         </option>
                                     ))}
                                 </select>

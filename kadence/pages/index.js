@@ -1,9 +1,6 @@
 import Head from 'next/head';
 import Image from 'next/image';
-import Link from 'next/link';
 import styles from '@/styles/Register.module.css';
-import Textbox from '@/components/Textbox';
-import Button from '@/components/Button';
 import { Inter } from '@next/font/google';
 
 import { useEffect } from 'react';
@@ -22,7 +19,7 @@ export default function Index() {
         } else {
             router.push('/login');
         }
-    }, []);
+    });
 
     return (
         <>

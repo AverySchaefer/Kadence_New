@@ -15,10 +15,10 @@ handler.delete(async (req, res) => {
     const result = await req.db.collection('Users').deleteOne(query);
     if (result.deletedCount === 1) {
         console.log('Successfully deleted one document.');
-        res.status(200).json(doc).send();
+        res.status(200).json(result).send();
     } else {
         console.log('No documents matched the query. Deleted 0 documents.');
-        res.status(400).json(doc).send();
+        res.status(400).json().send();
     }
 });
 

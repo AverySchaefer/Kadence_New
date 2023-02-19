@@ -32,9 +32,7 @@ handler.patch(async (req, res) => {
     const result = await req.db
         .collection('Preferences')
         .updateOne(filter, doc, options);
-    //console.log("A document with the ID: ${result.insertedID} has been updated");
-    //res.json(doc);
-    if (result.acknowledged == false) {
+    if (result.acknowledged === false) {
         console.log('Request not acknowledged by database');
         res.status(500).send();
     } else if (result.modifiedCount < 1) {

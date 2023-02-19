@@ -12,7 +12,7 @@ handler.get(async (req, res) => {
         return;
     }
 
-    let result = await req.db
+    const result = await req.db
         .collection('Preferences')
         .findOne({ uid: req.body.uid });
 

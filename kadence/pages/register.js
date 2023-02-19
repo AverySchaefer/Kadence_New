@@ -46,6 +46,7 @@ export default function Register() {
         })
             .then(({ data }) => {
                 // TODO: Redirect to Login Page upon success
+                console.log(data);
                 router.push('/login');
             })
             .catch(({ status, error }) => {

@@ -6,8 +6,8 @@ const handler = nextConnect();
 handler.use(middleware);
 
 handler.get(async (req, res) => {
-    let username = req.query.username;
-    let enteredPW = req.query.enteredPW;
+    const { username } = req.query;
+    const { enteredPW } = req.query;
 
     if (req.query.username == null) {
         console.log('No username sent in request');
@@ -20,7 +20,7 @@ handler.get(async (req, res) => {
         return;
     }
 
-    let doc = await req.db.collection('Users').findOne({ username: username });
+    const doc = await req.db.collection('Users').findOne({ username });
 
     if (doc == null) {
         console.log('Login Unsuccessful');
@@ -32,10 +32,9 @@ handler.get(async (req, res) => {
 
     console.log(doc);
 
-    if (enteredPW == doc.password) {
+    if (enteredPW === doc.password) {
         console.log('Login Successful');
         res.status(200).json(doc);
-        //res.status(200).send('Login Successful!');
     } else {
         console.log('Login Unsuccessful');
         res.status(401).send('Login unsuccessful, password incorrect');

@@ -1,6 +1,7 @@
 {
     "rules": {
         "indent": ["error", 4, { "SwitchCase": 1 }],
+        "no-param-reassign": ["error", { "props": false }],
         "comma-dangle": "off",
         "class-methods-use-this": "off",
         "linebreak-style": "off",
@@ -23,7 +24,8 @@
         "import/resolver": {
             "alias": [
                 ["@/styles", "./styles"],
-                ["@/components", "./components"]
+                ["@/components", "./components"],
+                ["@/lib", "./lib"]
             ]
         }
     }
