@@ -6,8 +6,8 @@ test('Successful Login', () => {
         username: username,
         enteredPW: password,
     })).then((response) => {
-        console.log(response.status);
-        expect(response.status).toBe(200);
+        console.log(response.status());
+        expect(response.status()).toBe(200);
     });
 });
 

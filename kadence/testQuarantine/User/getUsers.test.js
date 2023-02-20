@@ -19,7 +19,7 @@ test('Account Does Not Exist', () => {
         username: username,
     })).then((response) => {
         //console.log(response.status);
-        expect(response.status).toBe(400);
+        expect(response.status()).toBe(400);
     });
 });
 
