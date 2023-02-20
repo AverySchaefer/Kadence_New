@@ -6,6 +6,7 @@ import Textbox from '@/components/Textbox';
 import Button from '@/components/Button';
 import { Inter } from '@next/font/google';
 import { Dialog } from '@capacitor/dialog';
+import { useRouter } from 'next/router';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -38,6 +39,7 @@ export default function Register() {
                     method="POST"
                     action="/api/users/insert"
                     onSubmit={(e) => {
+                        const router = useRouter();
                         const form = e.target;
                         const { password, password2 } = form;
                         if (password.value !== password2.value) {
@@ -47,9 +49,10 @@ export default function Register() {
                             });
                             e.preventDefault();
                         }
+                        router.push('/registerInfo');
                     }}
                 >
-                    <Textbox name="email" type="email" placeholder="Email" />
+                    <Textbox name="email" type="email" placeholder="Email" required/>
                     <Textbox
                         name="username"
                         placeholder="Username"
