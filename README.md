@@ -78,4 +78,7 @@ Jest test cases have been built for this project. To run test cases, do the foll
 ```bash
   npm run test
 ```
-This will run the test suite. The output of the test suite will say what (if any) test cases have failed.
+This will run the test suites. The output of the test suites will say what (if any) test cases have failed.
+
+NOTE: You will get an error when running the test suite about an incorrect version number, you can safely ignore this error.
+It will not impact the result of the test suites.
