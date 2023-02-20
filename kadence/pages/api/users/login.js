@@ -1,9 +1,11 @@
 import { compare } from 'bcryptjs';
 import nextConnect from 'next-connect';
 import middleware from '../../../middleware/database';
+import getConfig from 'next/config';
+const jwt = require('jsonwebtoken');
 
+const { serverRuntimeConfig } = getConfig();
 const handler = nextConnect();
-
 handler.use(middleware);
 
 handler.get(async (req, res) => {
@@ -32,17 +34,20 @@ handler.get(async (req, res) => {
     }
 
     console.log(doc);
-
+    console.log(username);
     console.log(enteredPW);
-    console.log(doc.password);
-
     compare(enteredPW, doc.password, function(err, result) {
         if (err) {
             console.log('Login Unsuccessful');
         }
         if (result == true) {
             console.log('Login Successful');
-            res.status(200).json(doc);
+            const token = jwt.sign({ sub: doc.username }, serverRuntimeConfig.secret, { expiresIn: '7d' });
+            console.log(token);
+            res.status(200).json({
+                username: doc.username,
+                token
+            });
             //res.status(200).send('Login Successful!');
         } else {
             console.log('Login Unsuccessful');

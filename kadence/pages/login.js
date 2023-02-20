@@ -6,6 +6,7 @@ import Textbox from '@/components/Textbox';
 import Button from '@/components/Button';
 import { Inter } from '@next/font/google';
 import { useRouter } from 'next/router';
+import { userService } from '@/services/user.services';
 
 import NetworkAPI from '@/lib/networkAPI';
 
@@ -18,19 +19,16 @@ export default function Login() {
         const form = e.target;
         const { username, enteredPW } = form;
         e.preventDefault();
-
-        // Send Request
-        NetworkAPI.get('/api/users/login', {
-            username: username.value,
-            enteredPW: enteredPW.value,
-        })
-            .then(({ data }) => {
-                // TODO: Redirect to Home Page upon success
-                router.push('/home');
+        
+        return userService.login(username, enteredPW)
+            .then(() => {
+                console.log("returning to the page")
+                // get return url from query parameters or default to '/'
+                const returnUrl = '/home';
+                router.push(returnUrl);
             })
-            .catch(({ status, error }) => {
-                // TODO: handle error (wrong password, perhaps)
-                console.log('Error: ', status, error);
+            .catch(error => {
+                setError('apiError', { message: error });
             });
     }
 
