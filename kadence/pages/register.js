@@ -43,7 +43,7 @@ export default function Register() {
         }
 
         // Send Request
-        NetworkAPI.post('/api/auth/signup', {
+        NetworkAPI.post('/api/users/signup', {
             email: email.value,
             username: username.value,
             password: password.value,
@@ -85,7 +85,7 @@ export default function Register() {
                 <form
                     className={styles.form}
                     method="POST"
-                    action="/api/auth/signup"
+                    action="/api/users/signup"
                     onSubmit={handleSubmit}
                 >
                     <Textbox
