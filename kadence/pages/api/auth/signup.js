@@ -1,4 +1,4 @@
-import hash from 'bcryptjs';
+import { hash } from 'bcryptjs';
 import Password from '../../../lib/passwordStrength';
 import nextConnect from 'next-connect';
 import middleware from '../../../middleware/database';
@@ -38,16 +38,16 @@ handler.post(async (req, res) => {
   console.log(credentials);
 
   /* Checking the validity of credentials */
-  if (!email || !password) {
+  if (!credentials.email || !credentials.password) {
     res.status(400).json({message: 'Invalid input - the email or password is blank.'})
     return;
-  } else if (!confirmedPassword || confirmedPassword !== password) {
+  } else if (!credentials.confirmedPassword || credentials.confirmedPassword !== credentials.password) {
     res.status(400).json({message: 'Invalid input - the passwords do not match.'})
     return;
-  } else if (!email.includes('@')) {
+  } else if (!credentials.email.includes('@')) {
     res.status(400).json({message: 'Invalid input - the email is not valid.'})
     return;
-  } else if (!verifyPasswordStrength(password)) {
+  } else if (!verifyPasswordStrength(credentials.password)) {
     res.status(400).json({message: 'Invalid input - please enter a stronger password.'})
     return;
   }
@@ -59,17 +59,24 @@ handler.post(async (req, res) => {
         .collection('Users')
         .findOne({username: credentials.username});
 
-  if (findExistingUser == true) {
+  const findExistingEmail = await req.db
+        .collection('Users')
+        .findOne({email: credentials.email});
+
+  if (!(findExistingUser == null)) {
     res.status(400).json({message: 'User already exists with this username. Try another.'})
+    return;
+  } else if (!(findExistingEmail == null)) {
+    res.status(400).json({message: 'User already exists under this email address. Try another.'})
     return;
   } else {
      const enteredUsername = credentials.username;
      const enteredEmail = credentials.email;
-     const hashedPassword = await hashPassword(password);
+     const hashedPassword = await hashPassword(credentials.password);
 
      /* INSERT NEW USER WITH HASHED PASSWORD HERE */
      const doc = {
-      uid: generateUserID(username),
+      uid: generateUserID(enteredUsername),
       username: enteredUsername,
       email: enteredEmail,
       password: hashedPassword,
