@@ -28,8 +28,8 @@ async function signUpHandler(req, res) {
 
   /* Pulling information from register form as credentials */
   const credentials = {
-    username: req.body.username,
     email: req.body.email,
+    username: req.body.username,
     password: req.body.password,
     confirmedPassword: req.body.confirmedPassword,
   };
