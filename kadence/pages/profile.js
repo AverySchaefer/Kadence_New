@@ -53,6 +53,7 @@ function a11yProps(index) {
 
 function BasicTabs() {
   const [value, setValue] = React.useState(0);
+  var image = document.getElementById('music');
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -83,8 +84,18 @@ function BasicTabs() {
       </TabPanel>
       <TabPanel value={value} index={1}>
         <Stack spacing={2} alignItems="center">
-          <Image src="/Spotify.jpg" alt="Spotify Logo" width="300" height="150" className={styles.platformImage} priority/>
-          <Button variant="contained">Change</Button>
+          <Image src="/Spotify.jpg" alt="Spotify Logo" width="300" height="150" className={styles.platformImage} id="music" priority/>
+          <Button 
+            variant="contained"
+            onClick={() =>
+              {if (image.src.match("/Spotify.jpg")) {
+                image.src = "/apple-music.jpg";
+                image.alt = "Apple Music Logo";
+              } else {
+                image.src = "/Spotify.jpg";
+                image.alt = "Spotify Logo";
+              }}
+            }>Change</Button>
         </Stack>
       </TabPanel>
       <TabPanel value={value} index={2}>

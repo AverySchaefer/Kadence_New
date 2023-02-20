@@ -6,13 +6,13 @@ import styles from '@/styles/Register.module.css';
 import Textbox from '@/components/Textbox';
 import Button from '@/components/Button';
 import { Inter } from '@next/font/google';
-import { Dialog } from '@capacitor/dialog';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { languages, genres, moods } from '@/lib/promptOptions';
 import { MenuItem, Select, InputLabel, FormControl, Box } from '@mui/material';
 import { useRouter } from 'next/router';
 
+import NetworkAPI from '@/lib/networkAPI';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -41,8 +41,10 @@ export default function Register() {
     const [mood, setMood] = useState('Happy');
     const [zipcode, setZipcode] = useState(69420);
 
+    const router = useRouter();
+
     function submitData() {
-        const router = useRouter();
+
         const musicPrefData = {
             uid: null, // TODO: how do we get this?
             allowExplicit,
@@ -66,39 +68,23 @@ export default function Register() {
             zipcode,
         };
         // Update User object
-        fetch('/api/users/update', {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(userData),
-        })
-            .then((resp) => {
-                console.log('resp', resp);
-                if (resp.ok) {
-                    return resp.json();
-                }
-                throw Error('Something went wrong');
+        NetworkAPI.patch('/api/users/update', userData)
+            .then(({ data }) => {
+                console.log('Successfully updated user', data);
             })
-            .then((json) => console.log('JSON', json));
-    
+            .catch(({ status, error }) => {
+                console.log('Error: ', status, error);
+            });
+
         // Update Music Preferences Object
-        fetch('/api/preferences/update', {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ musicPrefData }),
-        })
-            .then((resp) => {
-                console.log('resp', resp);
-                if (resp.ok) {
-                    return resp.json();
-                }
-                throw Error('Something went wrong');
+        NetworkAPI.patch('/api/preferences/update', musicPrefData)
+            .then(({ data }) => {
+                console.log('Successfully updated preference', data);
+                router.push('/home');
             })
-            .then((json) => console.log('JSON', json));
-        router.push('/home');
+            .catch(({ status, error }) => {
+                console.log('Error: ', status, error);
+            });
     }
     return (
         <>
@@ -115,9 +101,8 @@ export default function Register() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <main className={[inter.className, styles.main].join(' ')}>
-                <form
+                <div
                     className={styles.form}
-                    method="POST"
                 >
                     <h1 className={styles.title}>Get set up with</h1>
                     <h1 className={styles.title}>Kadence!!</h1>
@@ -431,12 +416,13 @@ export default function Register() {
                     </div>
                     <br/>
                     <div className={styles.center}>
-                        <Button type="submit" onClick={submitData}>
+                        <Button onClick={submitData}
+>
                             {/* <Link href="/home">Register</Link> */}
                             Next
                         </Button>
                     </div>
-                </form>
+                </div>
             </main>
         </>
     );

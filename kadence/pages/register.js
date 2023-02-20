@@ -10,7 +10,6 @@ import { useRouter } from 'next/router';
 
 import Password from '@/lib/passwordStrength';
 import NetworkAPI from '@/lib/networkAPI';
-import { useRouter } from 'next/router';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -47,7 +46,7 @@ export default function Register() {
         })
             .then(({ data }) => {
                 // TODO: Redirect to Login Page upon success
-                router.push('/login');
+                router.push('/registerInfo');
             })
             .catch(({ status, error }) => {
                 // TODO: handle error
