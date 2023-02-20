@@ -3,10 +3,11 @@ import Link from 'next/link';
 import { Dialog } from '@capacitor/dialog';
 import styles from '@/styles/Settings.module.css';
 import { useState } from 'react';
-import { Butterfly_Kids, Inter } from '@next/font/google';
-import logout from '@/lib/logout';
+import { useRouter } from 'next/router';
+import { Inter } from '@next/font/google';
 import { languages, genres, moods } from '@/lib/promptOptions';
 import { removeFromArray, appendToArray } from '@/lib/arrayUtil';
+import NetworkAPI from '@/lib/networkAPI';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -62,7 +63,7 @@ function SubList({ addNew, remove, items }) {
 export default function Settings() {
     const [profilePrivate, setProfilePrivate] = useState(true);
     const [waitToSave, setWaitToSave] = useState(true);
-    const [defaultDevice, setDefaultDevice] = useState(null);
+    const [defaultDevice, setDefaultDevice] = useState('None');
 
     const [allowExplicit, setAllowExplicit] = useState(false);
     const [lyricalVsInstrumental, setLyricalVsInstrumental] = useState(80);
@@ -88,6 +89,38 @@ export default function Settings() {
 
     // TODO: actually get devices from database
     const devices = ['Device 1', 'Device 2'];
+
+    const router = useRouter();
+
+    function logout() {
+        // TODO: implement logging out (I assume it'll involve
+        //       removing some kind of cookie?)
+        console.log('TODO: log out of account');
+        NetworkAPI.delete('/api/users/logout', {
+            uid: null, // TODO: how to get this?
+        })
+            .then(({ data }) => {
+                router.push('/login');
+            })
+            .catch(({ status, error }) => {
+                console.log('Error logging out: ', status, error);
+            });
+    }
+
+    function deleteAccount() {
+        // TODO: implement logging out (I assume it'll involve
+        //       removing some kind of cookie?)
+        console.log('TODO: delete account');
+        NetworkAPI.delete('/api/users/delete', {
+            uid: null, // TODO: how to get this?
+        })
+            .then(({ data }) => {
+                router.push('/login');
+            })
+            .catch(({ status, error }) => {
+                console.log('Error deleting account: ', status, error);
+            });
+    }
 
     function submitData() {
         const musicPrefData = {
@@ -116,38 +149,22 @@ export default function Settings() {
         };
 
         // Update User object
-        fetch('/api/users/update', {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(userData),
-        })
-            .then((resp) => {
-                console.log('resp', resp);
-                if (resp.ok) {
-                    return resp.json();
-                }
-                throw Error('Something went wrong');
+        NetworkAPI.patch('/api/users/update', userData)
+            .then(({ data }) => {
+                console.log('Successfully updated user', data);
             })
-            .then((json) => console.log('JSON', json));
+            .catch(({ status, error }) => {
+                console.log('Error: ', status, error);
+            });
 
         // Update Music Preferences Object
-        fetch('/api/preferences/update', {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ musicPrefData }),
-        })
-            .then((resp) => {
-                console.log('resp', resp);
-                if (resp.ok) {
-                    return resp.json();
-                }
-                throw Error('Something went wrong');
+        NetworkAPI.patch('/api/preferences/update', musicPrefData)
+            .then(({ data }) => {
+                console.log('Successfully updated preference', data);
             })
-            .then((json) => console.log('JSON', json));
+            .catch(({ status, error }) => {
+                console.log('Error: ', status, error);
+            });
     }
 
     return (
@@ -208,11 +225,11 @@ export default function Settings() {
                                 <select
                                     className={styles.select}
                                     onChange={(e) =>
-                                        setWaitToSave(e.target.value === 'true')
+                                        setDefaultDevice(e.target.value)
                                     }
-                                    value={waitToSave}
+                                    value={defaultDevice}
                                 >
-                                    <option value={null}>None</option>
+                                    <option value={'None'}>None</option>
                                     {devices.map((device) => (
                                         <option value={device} key={device}>
                                             {device}
@@ -222,12 +239,21 @@ export default function Settings() {
                             </div>
                         </div>
                         <div>
-                            <div className={styles.flexWrapper}>
+                            <div
+                                className={styles.flexWrapper}
+                                style={{ justifyContent: 'space-around' }}
+                            >
                                 <button
                                     className={styles.logoutButton}
                                     onClick={logout}
                                 >
                                     Log Out
+                                </button>
+                                <button
+                                    className={styles.logoutButton}
+                                    onClick={deleteAccount}
+                                >
+                                    Delete Account
                                 </button>
                             </div>
                         </div>
@@ -526,10 +552,10 @@ export default function Settings() {
                                                 setBlacklistedSongs(
                                                     appendToArray(
                                                         blacklistedSongs,
-                                                        [
-                                                            songName.trim(),
-                                                            value.trim(),
-                                                        ]
+                                                        {
+                                                            name: songName.trim(),
+                                                            artist: value.trim(),
+                                                        }
                                                     )
                                                 );
                                             }

@@ -6,7 +6,7 @@ const handler = nextConnect();
 handler.use(middleware);
 
 handler.get(async (req, res) => {
-    if (req.body.uid == null) {
+    if (req.query.uid == null) {
         console.log('No UID sent in request');
         res.status(400).send();
         return;
@@ -16,9 +16,9 @@ handler.get(async (req, res) => {
         .collection('Music')
         .findOne({ uid: req.body.uid });
 
-    if (result == false) {
-        console.log('Request not acknowledged by database');
-        res.status(400).send();
+    if (result == null) {
+        console.log('Database item could not be found');
+        res.status(400).json(result);
     } else {
         console.log('Platform Found');
         res.status(200).json(result);

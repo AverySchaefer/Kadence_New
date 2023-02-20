@@ -8,9 +8,53 @@ import { Inter } from '@next/font/google';
 import { Dialog } from '@capacitor/dialog';
 import { useRouter } from 'next/router';
 
+import Password from '@/lib/passwordStrength';
+import NetworkAPI from '@/lib/networkAPI';
+import { useRouter } from 'next/router';
+
 const inter = Inter({ subsets: ['latin'] });
 
 export default function Register() {
+    const router = useRouter();
+
+    function handleSubmit(e) {
+        const form = e.target;
+        const { email, username, password, confirmedPassword } = form;
+        e.preventDefault();
+
+        // Validate Fields
+        if (password.value !== confirmedPassword.value) {
+            Dialog.alert({
+                title: 'Error',
+                message: 'Passwords do not match!',
+            });
+            return;
+        }
+        if (!Password.isStrong(password.value)) {
+            Dialog.alert({
+                title: 'Weak Password',
+                message: Password.errorMessage,
+            });
+            return;
+        }
+
+        // Send Request
+        NetworkAPI.post('/api/users/insert', {
+            email: email.value,
+            username: username.value,
+            password: password.value,
+            confirmedPassword: confirmedPassword.value,
+        })
+            .then(({ data }) => {
+                // TODO: Redirect to Login Page upon success
+                router.push('/login');
+            })
+            .catch(({ status, error }) => {
+                // TODO: handle error
+                console.log('Error: ', status, error);
+            });
+    }
+
     return (
         <>
             <Head>
@@ -38,37 +82,33 @@ export default function Register() {
                     className={styles.form}
                     method="POST"
                     action="/api/users/insert"
-                    onSubmit={(e) => {
-                        const router = useRouter();
-                        const form = e.target;
-                        const { password, password2 } = form;
-                        if (password.value !== password2.value) {
-                            Dialog.alert({
-                                title: 'Error',
-                                message: 'Passwords do not match!',
-                            });
-                            e.preventDefault();
-                        }
-                        router.push('/registerInfo');
-                    }}
+                    onSubmit={handleSubmit}
                 >
-                    <Textbox name="email" type="email" placeholder="Email" required/>
+                    <Textbox
+                        name="email"
+                        type="email"
+                        placeholder="Email"
+                        required
+                    />
                     <Textbox
                         name="username"
                         placeholder="Username"
                         type="text"
+                        required
                     />
                     <Textbox
                         name="password"
                         placeholder="Password"
                         type="password"
+                        required
                     />
                     <Textbox
-                        name="password2"
+                        name="confirmedPassword"
                         placeholder="Confirm Password"
                         type="password"
+                        required
                     />
-                    <Link className={styles.note} href="../login">
+                    <Link className={styles.note} href="/login">
                         Already have an account? Login here!
                     </Link>
                     <Button type="submit">
