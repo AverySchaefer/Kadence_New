@@ -8,6 +8,10 @@
         "no-console": "off",
         "no-plusplus": "off",
         "no-underscore-dangle": "off",
+        "import/no-extraneous-dependencies": [
+            "error",
+            { "devDependencies": true }
+        ],
         "react/no-unescaped-entities": "warn"
     },
     "extends": [
@@ -22,11 +26,7 @@
     },
     "settings": {
         "import/resolver": {
-            "alias": [
-                ["@/styles", "./styles"],
-                ["@/components", "./components"],
-                ["@/lib", "./lib"]
-            ]
+            "alias": [["@/*", "./"]]
         }
     }
 }
