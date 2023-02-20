@@ -18,7 +18,12 @@ export default function Register() {
 
     function handleSubmit(e) {
         const form = e.target;
+        console.log("Handling the submission:");
         const { email, username, password, confirmedPassword } = form;
+        console.log(email.value);
+        console.log(username.value);
+        console.log(password.value);
+        console.log(confirmedPassword.value);
         e.preventDefault();
 
         // Validate Fields
@@ -38,7 +43,7 @@ export default function Register() {
         }
 
         // Send Request
-        NetworkAPI.post('/api/auth/signup', {
+        NetworkAPI.post('/api/users/insert', {
             email: email.value,
             username: username.value,
             password: password.value,

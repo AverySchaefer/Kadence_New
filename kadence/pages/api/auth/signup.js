@@ -1,5 +1,5 @@
 import hash from 'bcryptjs';
-import isStrong from '../../../lib/passwordStrength';
+import Password from '../../../lib/passwordStrength';
 import nextConnect from 'next-connect';
 import middleware from '../../../middleware/database';
 
@@ -13,7 +13,7 @@ async function hashPassword(password) {
 
 /* Add password strength algorithm here */
 async function verifyPasswordStrength(password) {
-  return isStrong(password);
+  return Password.isStrong(password);
 }
 
 /* User ID Generation algorithm */
@@ -22,7 +22,8 @@ async function generateUserID(username) {
   return 0;
 }
 
-async function signUpHandler(req, res) {
+handler.post(async (req, res) => {
+  console.log("Now, signing the user up!")
   /* Ensuring the request is of type POST */
   if (req.method !== 'POST') { return; }
 
@@ -33,6 +34,8 @@ async function signUpHandler(req, res) {
     password: req.body.password,
     confirmedPassword: req.body.confirmedPassword,
   };
+
+  console.log(credentials);
 
   /* Checking the validity of credentials */
   if (!email || !password) {
@@ -90,6 +93,8 @@ async function signUpHandler(req, res) {
       actions: [],
     };
 
+    console.log(doc);
+
     const result = await req.db.collection('Users').insertOne(doc);
     //res.json(doc);
     if (result.acknowledged == false) {
@@ -100,4 +105,6 @@ async function signUpHandler(req, res) {
         res.status(200).send();
     }
   }
-}
+});
+
+export default handler;
