@@ -1,5 +1,6 @@
 import nextConnect from 'next-connect';
 import middleware from '../../../middleware/database';
+import { ObjectId } from 'mongodb';
 
 const handler = nextConnect();
 
@@ -14,7 +15,7 @@ handler.get(async (req, res) => {
 
     let result = await req.db
         .collection('Devices')
-        .findOne({ uid: req.body.uid });
+        .findOne({ _id: new ObjectId(req.query.uid) });
 
     if (!result) {
         console.log('Database item could not be found');
