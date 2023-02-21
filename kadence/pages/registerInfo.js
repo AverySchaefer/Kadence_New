@@ -416,8 +416,7 @@ export default function Register() {
                     </div>
                     <br/>
                     <div className={styles.center}>
-                        <Button onClick={submitData}
->
+                        <Button onClick={submitData}>
                             {/* <Link href="/home">Register</Link> */}
                             Next
                         </Button>
