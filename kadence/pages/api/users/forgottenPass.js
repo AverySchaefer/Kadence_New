@@ -13,77 +13,43 @@ handler.post(async (req, res) => {
   /* Pulling information from register form as credentials */
   const credentials = {
     email: req.body.email,
-    username: req.body.username,
-    newPassword: req.body.newPassword,
-    newConfirmedPassword: req.body.newConfirmedPassword,
   };
 
   console.log(credentials);
-
-  /* Checking the validity of credentials */
-  if (!credentials.newConfirmedPassword || !credentials.newPassword) {
-    res.status(400).json({message: 'Invalid input - the password(s) are blank.'})
-    return;
-  } else if (credentials.newConfirmedPassword !== credentials.newPassword) {
-    res.status(400).json({message: 'Invalid input - the passwords do not match.'})
-    return;
-  } else if (!verifyPasswordStrength(credentials.newPassword)) {
-    res.status(400).json({message: 'Invalid input - please enter a stronger password.'})
-    return;
-  }
 
   /* Checking if a user exists in the database with provided username */
   /* If one exists, respond with an error message */
   /* If not, create a new user and store the hashed password */
   const findExistingUser = await req.db
         .collection('Users')
-        .findOne({username: credentials.username});
+        .findOne({email: credentials.email});
 
   if ((findExistingUser == null)) {
-    res.status(400).json({message: 'User does not exist with this username. Cannot update password.'})
+    res.status(400).json({message: 'User does not exist with this email. Cannot recover password.'})
     return;
   } else {
-     const enteredUsername = credentials.username;
-     const enteredEmail = credentials.email;
-     const hashedPassword = await hashPassword(credentials.password);
-
-     /* INSERT NEW USER WITH HASHED PASSWORD HERE */
-     const doc = {
-      uid: generateUserID(enteredUsername),
-      username: enteredUsername,
-      email: enteredEmail,
-      password: hashedPassword,
-      bio: "",
-      profilePic: null,
-      private: true,
-      devices: [],
-      selectedDevice: null,
-      musicPlatforms: [],
-      selectedMusic: null,
-      musicPrefs: [],
-      waitToSave: true,
-      intervalShort: 0,
-      intervalLong: 100,
-      rampUpTime: 0,
-      rampDownTime: 100,
-      mood: "",
-      zipCode: 0,
-      friendRequests: [],
-      friends: [],
-      actions: [],
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'jackrosenberg17@gmail.com',
+        pass: ''
+      }
+    });
+    
+    const mailOptions = {
+      from: 'youremail@gmail.com',
+      to: 'myfriend@yahoo.com',
+      subject: 'Sending Email using Node.js',
+      text: 'That was easy!'
     };
-
-    console.log(doc);
-
-    const result = await req.db.collection('Users').insertOne(doc);
-    //res.json(doc);
-    if (result.acknowledged == false) {
-        console.log('Request not acknowledged by database');
-        res.status(500).send();
-    } else {
-        console.log('A document with the ID: ${result.insertedID} has been added');
-        res.status(200).send();
-    }
+    
+    transporter.sendMail(mailOptions, function(error, info){
+      if (error) {
+        console.log(error);
+      } else {
+        console.log('Email sent: ' + info.response);
+      }
+    });
   }
 });
 
