@@ -16,8 +16,6 @@ handler.get(async (req, res) => {
         .collection('Users')
         .findOne({ username: req.query.username });
 
-    console.log(result);
-
     if (!result) {
         console.log('Database item could not be found');
         res.status(400).send('Database item could not be found');
