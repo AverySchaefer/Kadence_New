@@ -1,6 +1,6 @@
 import { hash } from 'bcryptjs';
-import Password from '../../../lib/passwordStrength';
 import nextConnect from 'next-connect';
+import Password from '../../../lib/passwordStrength';
 import middleware from '../../../middleware/database';
 
 const handler = nextConnect();
@@ -33,16 +33,19 @@ handler.post(async (req, res) => {
     if (!credentials.email || !credentials.password) {
         res.status(400).send('Invalid input - the email or password is blank.');
         return;
-    } else if (
+    }
+    if (
         !credentials.confirmedPassword ||
         credentials.confirmedPassword !== credentials.password
     ) {
         res.status(400).send('Invalid input - the passwords do not match.');
         return;
-    } else if (!credentials.email.includes('@')) {
+    }
+    if (!credentials.email.includes('@')) {
         res.status(400).send('Invalid input - the email is not valid.');
         return;
-    } else if (!verifyPasswordStrength(credentials.password)) {
+    }
+    if (!verifyPasswordStrength(credentials.password)) {
         res.status(400).send(
             'Invalid input - please enter a stronger password.'
         );
@@ -64,12 +67,10 @@ handler.post(async (req, res) => {
         res.status(400).send(
             'User already exists with this username. Try another.'
         );
-        return;
     } else if (findExistingEmail !== null) {
         res.status(400).send(
             'User already exists under this email address. Try another.'
         );
-        return;
     } else {
         const enteredUsername = credentials.username;
         const enteredEmail = credentials.email;
@@ -83,10 +84,8 @@ handler.post(async (req, res) => {
             bio: '',
             profilePic: null,
             private: true,
-            devices: [],
-            selectedDevice: null,
-            musicPlatforms: [],
-            selectedMusic: null,
+            devices: null,
+            musicPlatforms: null,
             musicPrefs: null,
             waitToSave: true,
             intervalShort: 0,
@@ -103,13 +102,13 @@ handler.post(async (req, res) => {
         console.log(doc);
 
         const result = await req.db.collection('Users').insertOne(doc);
-        //res.json(doc);
-        if (result.acknowledged == false) {
+        // res.json(doc);
+        if (result.acknowledged === false) {
             console.log('Request not acknowledged by database');
             res.status(500).send('Request not acknowledged by database');
         } else {
             console.log(
-                'A document with the ID: ${result.insertedID} has been added'
+                `A document with the ID: ${result.insertedID} has been added`
             );
             res.status(200).send();
         }

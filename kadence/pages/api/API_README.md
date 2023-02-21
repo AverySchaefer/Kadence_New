@@ -58,10 +58,8 @@
     -   bio: STRING
     -   profilePic: STRING
     -   private: BOOLEAN
-    -   devices: DEVICE_ID[]
-    -   selectedDevice: DEVICE_ID
-    -   musicPlatforms: MUSIC_ID[]
-    -   selectedMusic: MUSIC_ID
+    -   devices: DEVICES_ID
+    -   musicPlatforms: MUSICS_ID
     -   musicPrefs: PREFERENCES_ID
     -   waitToSave: BOOLEAN
     -   intervalShort: INT
@@ -69,7 +67,7 @@
     -   rampUpTime: INT
     -   rampDownTime: INT
     -   mood: STRING
-    -   zipcode: INT
+    -   zipCode: INT
     -   friendRequests: USER_ID[]
     -   friends: USER_ID[]
     -   actions: STRING[]
@@ -108,10 +106,8 @@
     -   bio: STRING
     -   profilePic: STRING
     -   private: BOOLEAN
-    -   devices: DEVICE_ID[]
-    -   selectedDevice: DEVICE_ID
-    -   musicPlatforms: MUSIC_ID[]
-    -   selectedMusic: MUSIC_ID
+    -   devices: DEVICES_ID
+    -   musicPlatforms: MUSICS_ID
     -   musicPrefs: PREFERENCES_ID
     -   waitToSave: BOOLEAN
     -   intervalShort: INT
@@ -119,7 +115,8 @@
     -   rampUpTime: INT
     -   rampDownTime: INT
     -   mood: STRING
-    -   freindRequests: USER_ID[]
+    -   zipCode: INT
+    -   friendRequests: USER_ID[]
     -   friends: USER_ID[]
     -   actions: STRING[]
 -   Return Body Elements
@@ -134,7 +131,7 @@
 ### GET `/api/preferences/getPreferences`
 
 -   Request Body Elements
-    -   uid: PREFERENCE_ID
+    -   uid: PREFERENCES_ID
 -   Return Body Elements
     -   Result (document or NULL if no document found)
 -   Response Status Codes
@@ -144,7 +141,7 @@
 ### DELETE `/api/preferences/delete`
 
 -   Request Body Elements
-    -   uid: PREFERENCE_ID
+    -   uid: PREFERENCES_ID
 -   Return Body Elements
     -   Return Doc
 -   Response Status Codes
@@ -175,7 +172,7 @@
 ### PATCH `/api/preferences/update`
 
 -   Request Body Elements
-    -   uid: PREFERENCE_ID
+    -   uid: PREFERENCES_ID
     -   allowExplicit: BOOLEAN
     -   lyricalInstrumental: INT
     -   lyricalLanguage: STRING
@@ -199,7 +196,7 @@
 ### GET `/api/music/getPlatform`
 
 -   Request Body Elements
-    -   uid: MUSIC_ID
+    -   uid: MUSICS_ID
 -   Return Body Elements
     -   Result (document or NULL if no document found)
 -   Response Status Codes
@@ -209,7 +206,7 @@
 ### DELETE `/api/music/delete`
 
 -   Request Body Elements
-    -   uid: MUSIC_ID
+    -   uid: MUSICS_ID
 -   Return Body Elements
     -   Return Doc
 -   Response Status Codes
@@ -231,7 +228,7 @@
 ### PATCH `/api/music/update`
 
 -   Request Body Elements
-    -   uid: MUSIC_ID
+    -   uid: MUSICS_ID
     -   spotifyAccountID: STRING
     -   appleMusicID: STRING
 -   Return Body Elements
@@ -246,7 +243,7 @@
 ### GET `/api/devices/getDevices`
 
 -   Request Body Elements
-    -   uid: DEVICE_ID
+    -   uid: DEVICES_ID
 -   Return Body Elements
     -   Result (document or NULL if no document found)
 -   Response Status Codes
@@ -256,7 +253,7 @@
 ### DELETE `/api/devices/delete`
 
 -   Request Body Elements
-    -   uid: DEVICE_ID
+    -   uid: DEVICES_ID
 -   Return Body Elements
     -   Return Doc
 -   Response Status Codes
@@ -280,7 +277,7 @@
 ### PATCH `/api/devices/update`
 
 -   Request Body Elements
-    -   uid: DEVICE_ID
+    -   uid: DEVICES_ID
     -   deviceList: STRING[]
     -   selectedDeviceName: STRING
     -   selectedDeviceID: STRING

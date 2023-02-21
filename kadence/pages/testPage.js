@@ -3,16 +3,18 @@ import styles from '@/styles/Settings.module.css';
 
 import { useState } from 'react';
 import Link from 'next/link';
-import Button from '@mui/material/Button';
-import Switch from '@mui/material/Switch';
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    FormGroup,
+    FormControlLabel,
+    Switch,
+    TextField,
+} from '@mui/material/';
 
 import NetworkAPI from '../lib/networkAPI';
 
@@ -74,7 +76,7 @@ const API = {
                 { field: 'rampUpTime', type: 'number' },
                 { field: 'rampDownTime', type: 'number' },
                 { field: 'mood' },
-                { field: 'zipcode', type: 'number' },
+                { field: 'zipCode', type: 'number' },
                 { field: 'friendRequests', type: 'array' },
                 { field: 'friends', type: 'array' },
                 { field: 'actions', type: 'array' },
@@ -113,7 +115,7 @@ const API = {
                 { field: 'rampUpTime', type: 'number' },
                 { field: 'rampDownTime', type: 'number' },
                 { field: 'mood' },
-                { field: 'zipcode', type: 'number' },
+                { field: 'zipCode', type: 'number' },
                 { field: 'friendRequests', type: 'array' },
                 { field: 'friends', type: 'array' },
                 { field: 'actions', type: 'array' },
@@ -263,7 +265,7 @@ function parseValue(value, type) {
         case 'flag':
             return value;
         case 'array':
-        case 'songArray':
+        case 'songArray': {
             if (value.trim() === '') return null;
             // Split on semicolon
             let tokens = value.split(';');
@@ -307,6 +309,9 @@ function parseValue(value, type) {
                 }
             });
             return result;
+        }
+        default:
+            return value;
     }
 }
 
@@ -396,17 +401,19 @@ function TestComponent({ title, url, method, dataReqs }) {
         setSentData(null);
     };
 
-    const handleSend = () => {
+    const handleSend = async () => {
         setSentData(state);
         handleClosePrompt();
         // TODO: Show Response
-        NetworkAPI._fetch(url, method, state)
-            .then((response) => {
+
+        try {
+            const response = await NetworkAPI._fetch(url, method, state);
+            if (response) {
                 handleDataReceived(response);
-            })
-            .catch((errorResponse) => {
-                handleDataReceived(errorResponse);
-            });
+            }
+        } catch (err) {
+            console.log('error in handleSend', err);
+        }
     };
 
     return (
@@ -426,9 +433,9 @@ function TestComponent({ title, url, method, dataReqs }) {
                         </DialogContentText>
                     )}
 
-                    {dataReqs.map(({ field, type = 'text' }) => {
-                        return getRelevantUIComponent(field, type, updateField);
-                    })}
+                    {dataReqs.map(({ field, type = 'text' }) =>
+                        getRelevantUIComponent(field, type, updateField)
+                    )}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClosePrompt}>Cancel</Button>
@@ -536,24 +543,18 @@ function NavLinks() {
                 <h1>NAV LINKS</h1>
             </div>
             <div className={styles.settingsSection}>
-                {navLinks.map(({ name, link }) => {
-                    return (
-                        <Link
-                            key={name}
-                            href={link}
-                            style={{ display: 'block' }}
+                {navLinks.map(({ name, link }) => (
+                    <Link key={name} href={link} style={{ display: 'block' }}>
+                        <div
+                            className={styles.flexWrapper}
+                            style={{
+                                justifyContent: 'center',
+                            }}
                         >
-                            <div
-                                className={styles.flexWrapper}
-                                style={{
-                                    justifyContent: 'center',
-                                }}
-                            >
-                                <b>{name}</b>
-                            </div>
-                        </Link>
-                    );
-                })}
+                            <b>{name}</b>
+                        </div>
+                    </Link>
+                ))}
             </div>
         </section>
     );

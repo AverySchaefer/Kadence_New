@@ -12,11 +12,9 @@ handler.get(async (req, res) => {
         return;
     }
 
-    let result = await req.db
+    const result = await req.db
         .collection('Users')
         .findOne({ username: req.query.username });
-
-    console.log(result);
 
     if (!result) {
         console.log('Database item could not be found');

@@ -14,9 +14,7 @@ handler.post(async (req, res) => {
         profilePic: req.body.profilePic,
         private: req.body.private,
         devices: req.body.devices,
-        selectedDevice: req.body.selectedDevice,
         musicPlatforms: req.body.musicPlatforms,
-        selectedMusic: req.body.selectedMusic,
         musicPrefs: req.body.musicPrefs,
         waitToSave: req.body.waitToSave,
         intervalShort: req.body.intervalShort,
@@ -37,8 +35,7 @@ handler.post(async (req, res) => {
     }
 
     const result = await req.db.collection('Users').insertOne(doc);
-
-    if (result.acknowledged == false) {
+    if (result.acknowledged === false) {
         console.log('Request not acknowledged by database');
         res.status(500).send('Request not acknowledged by database');
     } else {
