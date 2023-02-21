@@ -122,7 +122,7 @@ export default function Settings() {
     function submitData() {
         // TODO: test
         const musicPrefData = {
-            uid: null, // TODO: how do we get this?
+            username: localStorage.getItem('username'),
             allowExplicit,
             lyricalVsInstrumental,
             prefLanguage,

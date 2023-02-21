@@ -11,6 +11,8 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import { languages, genres, moods } from '@/lib/promptOptions';
 import { MenuItem, Select, InputLabel, FormControl, Box } from '@mui/material';
 import { useRouter } from 'next/router';
+import {useSession, signIn, signOut} from 'next-auth/react';
+
 
 import NetworkAPI from '@/lib/networkAPI';
 
@@ -46,7 +48,7 @@ export default function Register() {
     function submitData() {
 
         const musicPrefData = {
-            uid: null, // TODO: how do we get this?
+            username: localStorage.getItem('username'),
             allowExplicit,
             lyricalVsInstrumental,
             prefLanguage,
@@ -57,7 +59,7 @@ export default function Register() {
             faveGenres,
         };
         const userData = {
-            uid: null, // TODO: how do we get this?
+            username: localStorage.getItem('username'),
             private: profilePrivate,
             bio,
             intervalShort,
@@ -414,7 +416,9 @@ export default function Register() {
                             </div>
                         </div>
                     </div>
-                    <br/>
+                    <div className={styles.center}>
+                        <Button onClick={() => signIn()}>Sign in to Spotify</Button>
+                    </div>
                     <div className={styles.center}>
                         <Button onClick={submitData}>
                             {/* <Link href="/home">Register</Link> */}
