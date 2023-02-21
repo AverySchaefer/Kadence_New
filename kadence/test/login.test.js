@@ -1,4 +1,7 @@
 import { testApiHandler } from 'next-test-api-route-handler';
+import { hash } from 'bcryptjs';
+import getConfig from 'next/config';
+import jwt from 'jsonwebtoken';
 import handler from '../pages/api/users/login';
 import { initTestDB, teardownTestDB } from './testDB';
 
@@ -11,9 +14,11 @@ describe('GET /api/users/login', () => {
     beforeAll(async () => {
         ({ mongoServer, client, db } = await initTestDB(handler));
 
+        const saltedPassword = await hash(password, 10);
+
         await db
             .collection('Users')
-            .insertOne({ _id: '1', username, password });
+            .insertOne({ _id: '1', username, password: saltedPassword });
     });
 
     afterAll(async () => {
@@ -21,6 +26,8 @@ describe('GET /api/users/login', () => {
     });
 
     it('should respond with 200 status code if correct username and password are provided', async () => {
+        const jwtSpy = jest.spyOn(jwt, 'sign').mockReturnValueOnce('abc');
+
         await testApiHandler({
             handler,
             url: `/users/login?username=${username}&enteredPW=${password}`,
@@ -28,11 +35,17 @@ describe('GET /api/users/login', () => {
                 const res = await fetch({
                     method: 'GET',
                 });
+                const { serverRuntimeConfig } = getConfig();
+                expect(jwtSpy).toHaveBeenCalledWith(
+                    { sub: username },
+                    serverRuntimeConfig.secret,
+                    { expiresIn: '7d' }
+                );
+
                 expect(res.status).toStrictEqual(200);
-                await expect(res.json()).resolves.toStrictEqual({
-                    _id: '1',
+                await expect(res.json()).resolves.toEqual({
                     username,
-                    password,
+                    token: 'abc',
                 });
             },
         });
