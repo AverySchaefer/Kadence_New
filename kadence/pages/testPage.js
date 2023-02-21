@@ -35,6 +35,12 @@ const API = {
             dataReqs: [{ field: 'username' }, { field: 'enteredPW' }],
         },
         {
+            title: 'Logout',
+            url: '/api/users/logout',
+            method: 'GET',
+            dataReqs: [],
+        },
+        {
             title: 'Get Users',
             url: '/api/users/getUsers',
             method: 'GET',
@@ -44,14 +50,13 @@ const API = {
             title: 'Delete',
             url: '/api/users/delete',
             method: 'DELETE',
-            dataReqs: [{ field: 'uid' }],
+            dataReqs: [{ field: 'username' }],
         },
         {
             title: 'Insert',
             url: '/api/users/insert',
             method: 'POST',
             dataReqs: [
-                { field: 'uid' },
                 { field: 'username' },
                 { field: 'email' },
                 { field: 'password' },
@@ -76,11 +81,21 @@ const API = {
             ],
         },
         {
+            title: 'Signup',
+            url: '/api/users/signup',
+            method: 'POST',
+            dataReqs: [
+                { field: 'username' },
+                { field: 'email' },
+                { field: 'password' },
+                { field: 'confirmedPassword' },
+            ],
+        },
+        {
             title: 'Update',
             url: '/api/users/update',
             method: 'PATCH',
             dataReqs: [
-                { field: 'uid' },
                 { field: 'username' },
                 { field: 'email' },
                 { field: 'password' },
@@ -123,7 +138,6 @@ const API = {
             url: '/api/preferences/insert',
             method: 'POST',
             dataReqs: [
-                { field: 'uid' },
                 { field: 'allowExplicit', type: 'flag' },
                 { field: 'lyricalInstrumental', type: 'number' },
                 { field: 'lyricalLanguage' },
@@ -175,7 +189,6 @@ const API = {
             url: '/api/music/insert',
             method: 'POST',
             dataReqs: [
-                { field: 'uid' },
                 { field: 'spotifyAccountID' },
                 { field: 'appleMusicID' },
             ],
@@ -209,7 +222,6 @@ const API = {
             url: '/api/devices/insert',
             method: 'POST',
             dataReqs: [
-                { field: 'uid' },
                 { field: 'deviceList', type: 'array' },
                 { field: 'selectedDeviceName' },
                 { field: 'selectedDeviceID' },
@@ -227,6 +239,14 @@ const API = {
                 { field: 'selectedDeviceID' },
                 { field: 'tracking', type: 'flag' },
             ],
+        },
+    ],
+    spotifyEndpoints: [
+        {
+            title: 'Get Current Song',
+            url: '/api/spotify/currentSong',
+            method: 'GET',
+            dataReqs: [{ field: 'accessToken' }],
         },
     ],
 };
@@ -483,59 +503,14 @@ function TestComponent({ title, url, method, dataReqs }) {
     );
 }
 
-function TestUsers() {
+function EndpointSection({ title, endpoints }) {
     return (
         <section>
             <div className={styles.sticky}>
-                <h1>USER ENDPOINTS</h1>
+                <h1>{title} ENDPOINTS</h1>
             </div>
             <div className={styles.settingsSection}>
-                {API.userEndpoints.map((obj, idx) => (
-                    <TestComponent {...obj} key={idx} />
-                ))}
-            </div>
-        </section>
-    );
-}
-
-function TestDevices() {
-    return (
-        <section>
-            <div className={styles.sticky}>
-                <h1>DEVICE ENDPOINTS</h1>
-            </div>
-            <div className={styles.settingsSection}>
-                {API.deviceEndpoints.map((obj, idx) => (
-                    <TestComponent {...obj} key={idx} />
-                ))}
-            </div>
-        </section>
-    );
-}
-
-function TestMusic() {
-    return (
-        <section>
-            <div className={styles.sticky}>
-                <h1>MUSIC ENDPOINTS</h1>
-            </div>
-            <div className={styles.settingsSection}>
-                {API.musicEndpoints.map((obj, idx) => (
-                    <TestComponent {...obj} key={idx} />
-                ))}
-            </div>
-        </section>
-    );
-}
-
-function TestPreferences() {
-    return (
-        <section>
-            <div className={styles.sticky}>
-                <h1>PREFERENCE ENDPOINTS</h1>
-            </div>
-            <div className={styles.settingsSection}>
-                {API.prefEndpoints.map((obj, idx) => (
+                {endpoints.map((obj, idx) => (
                     <TestComponent {...obj} key={idx} />
                 ))}
             </div>
@@ -588,10 +563,11 @@ export default function TestPage() {
     return (
         <main className={inter.className}>
             <NavLinks />
-            <TestUsers />
-            <TestPreferences />
-            <TestDevices />
-            <TestMusic />
+            <EndpointSection title="USER" endpoints={API.userEndpoints} />
+            <EndpointSection title="PREFERENCE" endpoints={API.prefEndpoints} />
+            <EndpointSection title="MUSIC" endpoints={API.musicEndpoints} />
+            <EndpointSection title="DEVICE" endpoints={API.deviceEndpoints} />
+            <EndpointSection title="SPOTIFY" endpoints={API.spotifyEndpoints} />
         </main>
     );
 }

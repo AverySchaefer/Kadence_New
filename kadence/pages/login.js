@@ -6,6 +6,7 @@ import Textbox from '@/components/Textbox';
 import Button from '@/components/Button';
 import { Inter } from '@next/font/google';
 import { useRouter } from 'next/router';
+import { Dialog } from '@capacitor/dialog';
 
 import NetworkAPI from '@/lib/networkAPI';
 
@@ -25,7 +26,7 @@ export default function Login() {
             enteredPW: enteredPW.value,
         })
             .then(({ data }) => {
-                console.log("Adding things to local storage");
+                console.log('Adding things to local storage');
                 console.log(data);
                 // Publish user to subscribers and store in local storage to stay logged in between page refreshes
                 const jwt = data.token;
@@ -35,7 +36,10 @@ export default function Login() {
                 router.push('/profile');
             })
             .catch(({ status, error }) => {
-                console.log('Error: ', status, error);
+                Dialog.alert({
+                    title: 'Error Occurred',
+                    message: `${status} ${error}`,
+                });
             });
     }
 

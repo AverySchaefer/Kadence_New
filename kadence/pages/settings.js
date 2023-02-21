@@ -93,36 +93,34 @@ export default function Settings() {
     const router = useRouter();
 
     function logout() {
-        // TODO: implement logging out (I assume it'll involve
-        //       removing some kind of cookie?)
-        console.log('TODO: log out of account');
-        NetworkAPI.delete('/api/users/logout', {
-            uid: null, // TODO: how to get this?
-        })
-            .then(({ data }) => {
-                router.push('/login');
-            })
-            .catch(({ status, error }) => {
-                console.log('Error logging out: ', status, error);
-            });
+        localStorage.removeItem('jwt');
+        localStorage.removeItem('username');
+        NetworkAPI.get('/api/users/logout').then(({ data }) => {
+            router.push('/login');
+        });
     }
 
     function deleteAccount() {
-        // TODO: implement logging out (I assume it'll involve
-        //       removing some kind of cookie?)
-        console.log('TODO: delete account');
         NetworkAPI.delete('/api/users/delete', {
-            uid: null, // TODO: how to get this?
+            username: localStorage.getItem('username'),
         })
             .then(({ data }) => {
+                Dialog.alert({
+                    title: 'Success',
+                    message: `Account successfully deleted.`,
+                });
                 router.push('/login');
             })
             .catch(({ status, error }) => {
-                console.log('Error deleting account: ', status, error);
+                Dialog.alert({
+                    title: 'Error Occurred',
+                    message: `${status} ${error}`,
+                });
             });
     }
 
     function submitData() {
+        // TODO: test
         const musicPrefData = {
             uid: null, // TODO: how do we get this?
             allowExplicit,
@@ -138,7 +136,7 @@ export default function Settings() {
             blacklistedSongs,
         };
         const userData = {
-            uid: null, // TODO: how do we get this?
+            username: localStorage.getItem('username'),
             private: profilePrivate,
             intervalShort,
             intervalLong,
@@ -151,19 +149,31 @@ export default function Settings() {
         // Update User object
         NetworkAPI.patch('/api/users/update', userData)
             .then(({ data }) => {
-                console.log('Successfully updated user', data);
+                Dialog.alert({
+                    title: 'Success',
+                    message: `User information successfully updated.`,
+                });
             })
             .catch(({ status, error }) => {
-                console.log('Error: ', status, error);
+                Dialog.alert({
+                    title: 'Error Occurred',
+                    message: `${status} ${error}`,
+                });
             });
 
         // Update Music Preferences Object
         NetworkAPI.patch('/api/preferences/update', musicPrefData)
             .then(({ data }) => {
-                console.log('Successfully updated preference', data);
+                Dialog.alert({
+                    title: 'Success',
+                    message: `Music preferences successfully updated.`,
+                });
             })
             .catch(({ status, error }) => {
-                console.log('Error: ', status, error);
+                Dialog.alert({
+                    title: 'Error Occurred',
+                    message: `${status} ${error}`,
+                });
             });
     }
 
