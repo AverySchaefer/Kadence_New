@@ -1,6 +1,5 @@
 import { MongoClient } from 'mongodb';
 import nextConnect from 'next-connect';
-import { MongoMemoryServer } from 'mongodb-memory-server';
 
 async function database(req, res, next) {
     const client = new MongoClient(
@@ -10,20 +9,6 @@ async function database(req, res, next) {
             useUnifiedTopology: true,
         }
     );
-
-    await client.connect();
-    req.dbClient = client;
-    req.db = client.db('kadenceDatabase');
-    return next();
-}
-
-async function testDatabase(req, res, next) {
-    const mongod = await MongoMemoryServer.create();
-    const client = new MongoClient(mongod.getUri(), {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    });
-
     req.dbClient = client;
     req.db = client.db('kadenceDatabase');
     return next();
@@ -31,6 +16,6 @@ async function testDatabase(req, res, next) {
 
 const middleware = nextConnect();
 
-middleware.use(process.env.NODE_ENV === 'test' ? testDatabase : database);
+middleware.use(database);
 
 export default middleware;

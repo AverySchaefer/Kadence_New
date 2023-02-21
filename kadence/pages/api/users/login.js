@@ -6,7 +6,6 @@ const handler = nextConnect();
 handler.use(middleware);
 
 handler.get(async (req, res) => {
-    console.log('---in handler---');
     const { username } = req.query;
     const { enteredPW } = req.query;
 
@@ -21,9 +20,7 @@ handler.get(async (req, res) => {
         return;
     }
 
-    console.log('---find one---');
     const doc = await req.db.collection('Users').findOne({ username });
-    console.log('🚀 ~ file: login.js:24 ~ handler.get ~ doc', doc);
 
     if (doc == null) {
         console.log('Login Unsuccessful');

@@ -1,112 +1,101 @@
-// const { createMocks } = require('node-mocks-http');
-// const handler = require('../pages/api/users/login');
-import getTestDB from './init';
-import { createMocks } from 'node-mocks-http';
+import { testApiHandler } from 'next-test-api-route-handler';
 import handler from '../pages/api/users/login';
+import { initTestDB, teardownTestDB } from './testDB';
 
-describe('login test', () => {
-    // let req;
-    // let res;
-    // beforeEach(() => {
-    //     const { req, res } = createMocks({
-    //         method: 'GET',
-    //         query: {
-    //             username,
-    //             enteredPW: password,
-    //         },
-    //     });
+describe('GET /api/users/login', () => {
+    const username = 'JohnDoe';
+    const password = 'passw0rd';
+    let mongoServer;
+    let client;
+    let db;
+    beforeAll(async () => {
+        ({ mongoServer, client, db } = await initTestDB(handler));
 
-    //     req = {
-    //         query: {
-    //             username: 'JohnDoe',
-    //         },
-    //         db: {
-    //             collection: jest.fn(() => ({
-    //                 findOne: jest.fn(() => ({
-    //                     id: '1',
-    //                     username: 'JohnDoe',
-    //                     password: 'passw0rd',
-    //                 })),
-    //             })),
-    //         },
-    //     };
-    //     res = {
-    //         status: jest.fn().mockReturnThis(),
-    //         send: jest.fn(),
-    //         json: jest.fn(),
-    //     };
-    // });
-    // let dbClient;
-    // let db;
-    // beforeAll(async () => {
-    //     const testDB = await getTestDB();
-    //     dbClient = testDB.dbClient;
-    //     db = testDB.db;
-    //     console.log('init db');
-    // });
+        await db
+            .collection('Users')
+            .insertOne({ _id: '1', username, password });
+    });
 
-    it('Successful Login', async () => {
-        const username = 'JohnDoe';
-        const password = 'password';
-        console.log('insert user');
-        // await db.collection('Users').insertOne({ id: '1', username, password });
+    afterAll(async () => {
+        await teardownTestDB(mongoServer, client);
+    });
 
-        console.log('mocks');
-        const { req, res } = createMocks({
-            method: 'GET',
-            query: {
-                username,
-                enteredPW: password,
+    it('should respond with 200 status code if correct username and password are provided', async () => {
+        await testApiHandler({
+            handler,
+            url: `/users/login?username=${username}&enteredPW=${password}`,
+            test: async ({ fetch }) => {
+                const res = await fetch({
+                    method: 'GET',
+                });
+                expect(res.status).toStrictEqual(200);
+                await expect(res.json()).resolves.toStrictEqual({
+                    _id: '1',
+                    username,
+                    password,
+                });
             },
-        });
-        // req.db = db;
-        // req.dbClient = dbClient;
-
-        // const mockReq = {
-        //     query: {
-        //         username: 'JohnDoe',
-        //     },
-        //     db: {
-        //         collection: jest.fn(() => ({
-        //             findOne: jest.fn(() => ({
-        //                 id: '1',
-        //                 username: 'JohnDoe',
-        //                 password: 'passw0rd',
-        //             })),
-        //         })),
-        //     },
-        // };
-
-        const mockRes = {
-            status: jest.fn().mockReturnThis(),
-            send: jest.fn(),
-            json: jest.fn(),
-        };
-
-        // await handler(req, { ...res, ...mockRes });
-        // console.log('handler');
-        await handler(req, res);
-        expect(res.statusCode).toBe(200);
-        expect(mockRes.json).toHaveBeenCalledWith({
-            id: '1',
-            username: 'JohnDoe',
-            password: 'passw0rd',
         });
     });
 
-    // it('Failed Login', async () => {
-    //     const username = 'JohnDoe';
-    //     const password = 'wrong';
+    it('should respond with 400 status code if no username is provided in request', async () => {
+        await testApiHandler({
+            handler,
+            url: `/users/login?&enteredPW=${password}`,
+            test: async ({ fetch }) => {
+                const res = await fetch({
+                    method: 'GET',
+                });
+                expect(res.status).toStrictEqual(400);
+            },
+        });
+    });
 
-    //     const { req, res } = createMocks({
-    //         method: 'GET',
-    //         query: {
-    //             username,
-    //             enteredPW: password,
-    //         },
-    //     });
+    it('should respond with 400 status code if no password is provided in request', async () => {
+        await testApiHandler({
+            handler,
+            url: `/users/login?&username=${username}`,
+            test: async ({ fetch }) => {
+                const res = await fetch({
+                    method: 'GET',
+                });
+                expect(res.status).toStrictEqual(400);
+            },
+        });
+    });
 
-    //     await handler(req, res);
-    //     expect(res.statusCode).toBe(401);
-    // });
+    it('should respond with 400 status code if account could not be located', async () => {
+        const nonexistingUser = 'idontexist';
+        const nonexistingPassword = '123';
+        await testApiHandler({
+            handler,
+            url: `/users/login?&username=${nonexistingUser}&enteredPW=${nonexistingPassword}`,
+            test: async ({ fetch }) => {
+                const res = await fetch({
+                    method: 'GET',
+                });
+                expect(res.status).toStrictEqual(400);
+                await expect(res.text()).resolves.toStrictEqual(
+                    'Login unsuccessful, account could not be located'
+                );
+            },
+        });
+    });
+
+    it('should respond with 401 status code if password is incorrect', async () => {
+        const wrongPassword = '123';
+        await testApiHandler({
+            handler,
+            url: `/users/login?&username=${username}&enteredPW=${wrongPassword}`,
+            test: async ({ fetch }) => {
+                const res = await fetch({
+                    method: 'GET',
+                });
+                expect(res.status).toStrictEqual(401);
+                await expect(res.text()).resolves.toStrictEqual(
+                    'Login unsuccessful, password incorrect'
+                );
+            },
+        });
+    });
 });
