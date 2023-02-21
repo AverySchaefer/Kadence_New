@@ -85,7 +85,7 @@ export default function Settings() {
     const [rampUpTime, setRampUpTime] = useState(0);
     const [rampDownTime, setRampDownTime] = useState(0);
     const [mood, setMood] = useState('Happy');
-    const [zipcode, setZipcode] = useState(69420);
+    const [zipCode, setZipCode] = useState(69420);
 
     // TODO: actually get devices from database
     const devices = ['Device 1', 'Device 2'];
@@ -143,7 +143,7 @@ export default function Settings() {
             rampUpTime,
             rampDownTime,
             mood,
-            zipcode,
+            zipCode,
         };
 
         // Update User object
@@ -161,20 +161,20 @@ export default function Settings() {
                 });
             });
 
-        // Update Music Preferences Object
-        NetworkAPI.patch('/api/preferences/update', musicPrefData)
-            .then(({ data }) => {
-                Dialog.alert({
-                    title: 'Success',
-                    message: `Music preferences successfully updated.`,
-                });
-            })
-            .catch(({ status, error }) => {
-                Dialog.alert({
-                    title: 'Error Occurred',
-                    message: `${status} ${error}`,
-                });
-            });
+        // // Update Music Preferences Object
+        // NetworkAPI.patch('/api/preferences/update', musicPrefData)
+        //     .then(({ data }) => {
+        //         Dialog.alert({
+        //             title: 'Success',
+        //             message: `Music preferences successfully updated.`,
+        //         });
+        //     })
+        //     .catch(({ status, error }) => {
+        //         Dialog.alert({
+        //             title: 'Error Occurred',
+        //             message: `${status} ${error}`,
+        //         });
+        //     });
     }
 
     return (
@@ -704,9 +704,9 @@ export default function Settings() {
                                     min="0"
                                     max="99999"
                                     step="1"
-                                    value={zipcode}
+                                    value={zipCode}
                                     onChange={(e) =>
-                                        setZipcode(
+                                        setZipCode(
                                             parseInt(e.target.value, 10) % 99999
                                         )
                                     }

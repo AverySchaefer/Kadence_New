@@ -69,7 +69,7 @@
     -   rampUpTime: INT
     -   rampDownTime: INT
     -   mood: STRING
-    -   zipcode: INT
+    -   zipCode: INT
     -   friendRequests: USER_ID[]
     -   friends: USER_ID[]
     -   actions: STRING[]
@@ -119,7 +119,8 @@
     -   rampUpTime: INT
     -   rampDownTime: INT
     -   mood: STRING
-    -   freindRequests: USER_ID[]
+    -   zipCode: INT
+    -   friendRequests: USER_ID[]
     -   friends: USER_ID[]
     -   actions: STRING[]
 -   Return Body Elements
