@@ -19,7 +19,13 @@ async function fetchWrapper(url, method = 'GET', data = {}) {
         const errorMessage = await resp.text();
         throw new HTTPError(resp, {}, errorMessage);
     }
-    return resp.json();
+
+    try {
+        const json = await resp.json();
+        return json;
+    } catch {
+        return {};
+    }
 }
 
 const NetworkAPI = {
