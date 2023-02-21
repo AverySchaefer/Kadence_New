@@ -404,7 +404,6 @@ function TestComponent({ title, url, method, dataReqs }) {
     const handleSend = async () => {
         setSentData(state);
         handleClosePrompt();
-        // TODO: Show Response
 
         try {
             const response = await NetworkAPI._fetch(url, method, state);
@@ -412,7 +411,11 @@ function TestComponent({ title, url, method, dataReqs }) {
                 handleDataReceived(response);
             }
         } catch (err) {
-            console.log('error in handleSend', err);
+            handleDataReceived({
+                data: err.message,
+                status: err.status || -1,
+                statusText: err.statusText || 'Network Failure',
+            });
         }
     };
 
@@ -458,16 +461,10 @@ function TestComponent({ title, url, method, dataReqs }) {
                                     {method} Request to {url}
                                 </i>
                             </div>
-                            {receivedData.status !== -1 ? (
-                                <div style={{ marginBottom: '1em' }}>
-                                    Status: {receivedData.status}{' '}
-                                    {receivedData.message}
-                                </div>
-                            ) : (
-                                <div style={{ marginBottom: '1em' }}>
-                                    {receivedData.message}
-                                </div>
-                            )}
+                            <div style={{ marginBottom: '1em' }}>
+                                Status: {receivedData.status}{' '}
+                                {receivedData.statusText}
+                            </div>
 
                             <div>Response Data: </div>
                             <pre
@@ -478,11 +475,7 @@ function TestComponent({ title, url, method, dataReqs }) {
                                     fontFamily: 'monospace',
                                 }}
                             >
-                                {JSON.stringify(
-                                    receivedData.data || receivedData.error,
-                                    null,
-                                    2
-                                )}
+                                {JSON.stringify(receivedData.data, null, 2)}
                             </pre>
                             <div style={{ marginTop: '1em' }}>
                                 Data You Sent:{' '}

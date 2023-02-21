@@ -22,9 +22,17 @@ async function fetchWrapper(url, method = 'GET', data = {}) {
 
     try {
         const json = await resp.json();
-        return json;
+        return {
+            data: json,
+            status: resp.status,
+            statusText: resp.statusText,
+        };
     } catch {
-        return {};
+        return {
+            data: {},
+            status: resp.status,
+            statusText: resp.statusText,
+        };
     }
 }
 
