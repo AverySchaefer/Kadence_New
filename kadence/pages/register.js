@@ -17,7 +17,12 @@ export default function Register() {
 
     async function handleSubmit(e) {
         const form = e.target;
+        console.log('Handling the submission:');
         const { email, username, password, confirmedPassword } = form;
+        console.log(email.value);
+        console.log(username.value);
+        console.log(password.value);
+        console.log(confirmedPassword.value);
         e.preventDefault();
 
         // Validate Fields
@@ -37,22 +42,25 @@ export default function Register() {
         }
 
         // Send Request
-        try {
-            const data = await NetworkAPI.post('/api/users/insert', {
-                email: email.value,
-                username: username.value,
-                password: password.value,
-                confirmedPassword: confirmedPassword.value,
-            });
-
-            if (data) {
-                // TODO: Redirect to Login Page upon success
+        NetworkAPI.post('/api/users/signup', {
+            email: email.value,
+            username: username.value,
+            password: password.value,
+            confirmedPassword: confirmedPassword.value,
+        })
+            .then(({ data }) => {
+                Dialog.alert({
+                    title: 'Success',
+                    message: `Account created successfully!`,
+                });
                 router.push('/login');
-            }
-        } catch (err) {
-            console.log('Error: ', err.status, err.statusText);
-            console.log(err);
-        }
+            })
+            .catch(({ status, error }) => {
+                Dialog.alert({
+                    title: 'Error Occurred',
+                    message: `${status} ${error}`,
+                });
+            });
     }
 
     return (
@@ -81,7 +89,7 @@ export default function Register() {
                 <form
                     className={styles.form}
                     method="POST"
-                    action="/api/users/insert"
+                    action="/api/users/signup"
                     onSubmit={handleSubmit}
                 >
                     <Textbox

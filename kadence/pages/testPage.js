@@ -37,6 +37,12 @@ const API = {
             dataReqs: [{ field: 'username' }, { field: 'enteredPW' }],
         },
         {
+            title: 'Logout',
+            url: '/api/users/logout',
+            method: 'GET',
+            dataReqs: [],
+        },
+        {
             title: 'Get Users',
             url: '/api/users/getUsers',
             method: 'GET',
@@ -46,14 +52,13 @@ const API = {
             title: 'Delete',
             url: '/api/users/delete',
             method: 'DELETE',
-            dataReqs: [{ field: 'uid' }],
+            dataReqs: [{ field: 'username' }],
         },
         {
             title: 'Insert',
             url: '/api/users/insert',
             method: 'POST',
             dataReqs: [
-                { field: 'uid' },
                 { field: 'username' },
                 { field: 'email' },
                 { field: 'password' },
@@ -71,10 +76,21 @@ const API = {
                 { field: 'rampUpTime', type: 'number' },
                 { field: 'rampDownTime', type: 'number' },
                 { field: 'mood' },
-                { field: 'zipcode', type: 'number' },
+                { field: 'zipCode', type: 'number' },
                 { field: 'friendRequests', type: 'array' },
                 { field: 'friends', type: 'array' },
                 { field: 'actions', type: 'array' },
+            ],
+        },
+        {
+            title: 'Signup',
+            url: '/api/users/signup',
+            method: 'POST',
+            dataReqs: [
+                { field: 'username' },
+                { field: 'email' },
+                { field: 'password' },
+                { field: 'confirmedPassword' },
             ],
         },
         {
@@ -82,7 +98,6 @@ const API = {
             url: '/api/users/update',
             method: 'PATCH',
             dataReqs: [
-                { field: 'uid' },
                 { field: 'username' },
                 { field: 'email' },
                 { field: 'password' },
@@ -100,7 +115,7 @@ const API = {
                 { field: 'rampUpTime', type: 'number' },
                 { field: 'rampDownTime', type: 'number' },
                 { field: 'mood' },
-                { field: 'zipcode', type: 'number' },
+                { field: 'zipCode', type: 'number' },
                 { field: 'friendRequests', type: 'array' },
                 { field: 'friends', type: 'array' },
                 { field: 'actions', type: 'array' },
@@ -125,7 +140,6 @@ const API = {
             url: '/api/preferences/insert',
             method: 'POST',
             dataReqs: [
-                { field: 'uid' },
                 { field: 'allowExplicit', type: 'flag' },
                 { field: 'lyricalInstrumental', type: 'number' },
                 { field: 'lyricalLanguage' },
@@ -177,7 +191,6 @@ const API = {
             url: '/api/music/insert',
             method: 'POST',
             dataReqs: [
-                { field: 'uid' },
                 { field: 'spotifyAccountID' },
                 { field: 'appleMusicID' },
             ],
@@ -211,7 +224,6 @@ const API = {
             url: '/api/devices/insert',
             method: 'POST',
             dataReqs: [
-                { field: 'uid' },
                 { field: 'deviceList', type: 'array' },
                 { field: 'selectedDeviceName' },
                 { field: 'selectedDeviceID' },
@@ -229,6 +241,14 @@ const API = {
                 { field: 'selectedDeviceID' },
                 { field: 'tracking', type: 'flag' },
             ],
+        },
+    ],
+    spotifyEndpoints: [
+        {
+            title: 'Get Current Song',
+            url: '/api/spotify/currentSong',
+            method: 'GET',
+            dataReqs: [{ field: 'accessToken' }],
         },
     ],
 };
@@ -490,35 +510,19 @@ function TestComponent({ title, url, method, dataReqs }) {
     );
 }
 
-function TestSection(sectionName, sectionKey) {
+function EndpointSection({ title, endpoints }) {
     return (
         <section>
             <div className={styles.sticky}>
-                <h1>{sectionName}</h1>
+                <h1>{title} ENDPOINTS</h1>
             </div>
             <div className={styles.settingsSection}>
-                {API[sectionKey].map((obj, idx) => (
+                {endpoints.map((obj, idx) => (
                     <TestComponent {...obj} key={idx} />
                 ))}
             </div>
         </section>
     );
-}
-
-function TestUsers() {
-    return TestSection('USER ENDPOINTS', 'userEndpoints');
-}
-
-function TestDevices() {
-    return TestSection('DEVICE ENDPOINTS', 'deviceEndpoints');
-}
-
-function TestMusic() {
-    return TestSection('MUSIC ENDPOINTS', 'musicEndpoints');
-}
-
-function TestPreferences() {
-    return TestSection('PREFERENCE ENDPOINTS', 'prefEndpoints');
 }
 
 function NavLinks() {
@@ -560,10 +564,11 @@ export default function TestPage() {
     return (
         <main className={inter.className}>
             <NavLinks />
-            <TestUsers />
-            <TestPreferences />
-            <TestDevices />
-            <TestMusic />
+            <EndpointSection title="USER" endpoints={API.userEndpoints} />
+            <EndpointSection title="PREFERENCE" endpoints={API.prefEndpoints} />
+            <EndpointSection title="MUSIC" endpoints={API.musicEndpoints} />
+            <EndpointSection title="DEVICE" endpoints={API.deviceEndpoints} />
+            <EndpointSection title="SPOTIFY" endpoints={API.spotifyEndpoints} />
         </main>
     );
 }

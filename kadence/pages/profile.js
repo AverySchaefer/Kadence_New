@@ -6,45 +6,9 @@ import Head from 'next/head';
 import { BottomNav } from '@/components/';
 import styles from '@/styles/Profile.module.css';
 import { Inter } from '@next/font/google';
-import PropTypes from 'prop-types';
-import {
-    Avatar,
-    Box,
-    Button,
-    Fab,
-    Stack,
-    Tab,
-    Tabs,
-    Typography,
-} from '@mui/material/';
+import { Avatar, Box, Button, Fab, Stack, Tab, Tabs } from '@mui/material/';
 
 const inter = Inter({ subsets: ['latin'] });
-
-function TabPanel(props) {
-    const { children, value, index, ...other } = props;
-
-    return (
-        <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`simple-tabpanel-${index}`}
-            aria-labelledby={`simple-tab-${index}`}
-            {...other}
-        >
-            {value === index && (
-                <Box sx={{ p: 3 }}>
-                    <Typography component={'span'}>{children}</Typography>
-                </Box>
-            )}
-        </div>
-    );
-}
-
-TabPanel.propTypes = {
-    children: PropTypes.node,
-    index: PropTypes.number.isRequired,
-    value: PropTypes.number.isRequired,
-};
 
 function a11yProps(index) {
     return {
@@ -74,36 +38,44 @@ function BasicTabs() {
                     <Tab label="Devices" {...a11yProps(2)} />
                 </Tabs>
             </Box>
-            <TabPanel value={value} index={0}>
-                <Stack spacing={2} alignItems="center">
-                    <h4 className={styles.tabTitle}>Favorite Artist</h4>
-                    <p>Snarky Puppy</p>
-                    <br />
-                    <h4 className={styles.tabTitle}>Favorite Song</h4>
-                    <p>Sleeper</p>
-                    <br />
-                    <h4 className={styles.tabTitle}>Favorite Album</h4>
-                    <p>Immigrance</p>
-                    <br />
-                    <Button variant="contained">Edit</Button>
-                </Stack>
-            </TabPanel>
-            <TabPanel value={value} index={1}>
-                <Stack spacing={2} alignItems="center">
-                    <Image
-                        src="/Spotify.jpg"
-                        alt="Spotify Logo"
-                        width="300"
-                        height="150"
-                        className={styles.platformImage}
-                        priority
-                    />
-                    <Button variant="contained">Change</Button>
-                </Stack>
-            </TabPanel>
-            <TabPanel value={value} index={2}>
-                <Button variant="contained">Connect</Button>
-            </TabPanel>
+            <Box sx={{ padding: 2 }}>
+                {value === 0 && (
+                    <Box>
+                        <Stack spacing={2} alignItems="center">
+                            <h4 className={styles.tabTitle}>Favorite Artist</h4>
+                            <p>Snarky Puppy</p>
+                            <br />
+                            <h4 className={styles.tabTitle}>Favorite Song</h4>
+                            <p>Sleeper</p>
+                            <br />
+                            <h4 className={styles.tabTitle}>Favorite Album</h4>
+                            <p>Immigrance</p>
+                            <br />
+                            <Button variant="contained">Edit</Button>
+                        </Stack>
+                    </Box>
+                )}
+                {value === 1 && (
+                    <Box>
+                        <Stack spacing={2} alignItems="center">
+                            <Image
+                                src="/Spotify.jpg"
+                                alt="Spotify Logo"
+                                width="300"
+                                height="150"
+                                className={styles.platformImage}
+                                priority
+                            />
+                            <Button variant="contained">Change</Button>
+                        </Stack>
+                    </Box>
+                )}
+                {value === 2 && (
+                    <Box>
+                        <Button variant="contained">Connect</Button>
+                    </Box>
+                )}
+            </Box>
         </Box>
     );
 }

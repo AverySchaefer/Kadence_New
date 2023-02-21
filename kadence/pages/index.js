@@ -11,11 +11,10 @@ const inter = Inter({ subsets: ['latin'] });
 
 export default function Index() {
     // Redirect to home page if logged in, otherwise to login page
-    const { status } = useSession();
     const router = useRouter();
     useEffect(() => {
-        if (status === 'authenticated') {
-            router.push('/home');
+        if (localStorage.getItem('username') !== null) {
+            router.push('/profile');
         } else {
             router.push('/login');
         }
