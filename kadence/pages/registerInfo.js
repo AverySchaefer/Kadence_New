@@ -1,17 +1,15 @@
 import * as React from 'react';
-import { useState } from 'react';
 import Head from 'next/head';
-import Link from 'next/link';
 import styles from '@/styles/Register.module.css';
-import Textbox from '@/components/Textbox';
 import Button from '@/components/Button';
-import { Inter } from '@next/font/google';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { languages, genres, moods } from '@/lib/promptOptions';
-import { MenuItem, Select, InputLabel, FormControl, Box } from '@mui/material';
 import { useRouter } from 'next/router';
-import {useSession, signIn, signOut} from 'next-auth/react';
+import { signIn } from 'next-auth/react';
+import { useState } from 'react';
+import { Inter } from '@next/font/google';
+
 
 
 import NetworkAPI from '@/lib/networkAPI';
@@ -104,7 +102,7 @@ export default function Register() {
             </Head>
             <main className={[inter.className, styles.main].join(' ')}>
                 <div
-                    className={styles.form}
+                    className={styles.formInfo}
                 >
                     <h1 className={styles.title}>Get set up with</h1>
                     <h1 className={styles.title}>Kadence!!</h1>
