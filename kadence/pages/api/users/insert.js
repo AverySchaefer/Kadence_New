@@ -7,7 +7,6 @@ handler.use(middleware);
 
 handler.post(async (req, res) => {
     const doc = {
-        uid: req.body.uid,
         username: req.body.username,
         email: req.body.email,
         password: req.body.password,
@@ -31,20 +30,19 @@ handler.post(async (req, res) => {
         actions: req.body.actions,
     };
 
-    if (req.body.username == null) {
+    if (!req.body.username) {
         console.log('No username sent in request');
-        res.status(400).send();
+        res.status(400).send('No username sent in request');
         return;
     }
 
     const result = await req.db.collection('Users').insertOne(doc);
-    //console.log("A document with the ID: ${result.insertedID} has been added");
-    //res.json(doc);
+
     if (result.acknowledged == false) {
         console.log('Request not acknowledged by database');
-        res.status(500).send();
+        res.status(500).send('Request not acknowledged by database');
     } else {
-        console.log('Account Updated');
+        console.log('Account Created');
         res.status(200).send();
     }
 });

@@ -6,10 +6,9 @@ const handler = nextConnect();
 handler.use(middleware);
 
 handler.patch(async (req, res) => {
-    const filter = { uid: req.body.uid };
+    const filter = { username: req.body.username };
     const options = { upsert: true };
     const doc = {
-        uid: req.body.uid,
         username: req.body.username,
         email: req.body.email,
         password: req.body.password,
@@ -33,9 +32,9 @@ handler.patch(async (req, res) => {
         actions: req.body.actions,
     };
 
-    if (req.body.uid == null) {
-        console.log('No UID sent in request');
-        res.status(400).send();
+    if (!req.body.username) {
+        console.log('No username sent in request');
+        res.status(400).send('No username sent in request');
         return;
     }
 
@@ -45,10 +44,10 @@ handler.patch(async (req, res) => {
 
     if (result.acknowledged == false) {
         console.log('Request not acknowledged by database');
-        res.status(500).send();
+        res.status(500).send('Request not acknowledged by database');
     } else if (result.modifiedCount < 1) {
         console.log('Account could not be located');
-        res.status(400).send();
+        res.status(400).send('Account could not be located');
     } else {
         console.log('Account Updated');
         res.status(200).send();

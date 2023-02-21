@@ -6,9 +6,9 @@ const handler = nextConnect();
 handler.use(middleware);
 
 handler.get(async (req, res) => {
-    if (req.query.username == null) {
+    if (!req.query.username) {
         console.log('No Username sent in request');
-        res.status(400).json(null);
+        res.status(400).send('No Username sent in request');
         return;
     }
 
@@ -18,9 +18,9 @@ handler.get(async (req, res) => {
 
     console.log(result);
 
-    if (result == null) {
+    if (!result) {
         console.log('Database item could not be found');
-        res.status(400).json(result);
+        res.status(400).send('Database item could not be found');
     } else {
         console.log('Account Found');
         res.status(200).json(result);

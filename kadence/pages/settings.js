@@ -95,15 +95,14 @@ export default function Settings() {
     function logout() {
         // TODO: implement logging out (I assume it'll involve
         //       removing some kind of cookie?)
-        console.log('TODO: log out of account');
-        NetworkAPI.delete('/api/users/logout', {
-            uid: null, // TODO: how to get this?
-        })
+        localStorage.removeItem('jwt');
+        localStorage.setItem('username');
+        NetworkAPI.get('/api/users/logout')
             .then(({ data }) => {
                 router.push('/login');
             })
             .catch(({ status, error }) => {
-                console.log('Error logging out: ', status, error);
+                alert('Error logging out: ', status, error);
             });
     }
 
