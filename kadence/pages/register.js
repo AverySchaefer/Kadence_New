@@ -18,7 +18,7 @@ export default function Register() {
 
     function handleSubmit(e) {
         const form = e.target;
-        console.log("Handling the submission:");
+        console.log('Handling the submission:');
         const { email, username, password, confirmedPassword } = form;
         console.log(email.value);
         console.log(username.value);
@@ -50,12 +50,17 @@ export default function Register() {
             confirmedPassword: confirmedPassword.value,
         })
             .then(({ data }) => {
-                // TODO: Redirect to Login Page upon success
+                Dialog.alert({
+                    title: 'Success',
+                    message: `Account created successfully!`,
+                });
                 router.push('/registerInfo');
             })
             .catch(({ status, error }) => {
-                // TODO: handle error
-                console.log('Error: ', status, error);
+                Dialog.alert({
+                    title: 'Error Occurred',
+                    message: `${status} ${error}`,
+                });
             });
     }
 
