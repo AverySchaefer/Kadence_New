@@ -32,7 +32,7 @@ export default function Login() {
                 const username = data.username;
                 localStorage.setItem('jwt', jwt);
                 localStorage.setItem('username', username);
-                router.push('/home');
+                router.push('/profile');
             })
             .catch(({ status, error }) => {
                 console.log('Error: ', status, error);
