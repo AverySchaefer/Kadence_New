@@ -2,8 +2,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from '@/styles/Register.module.css';
-import Textbox from '@/components/Textbox';
-import Button from '@/components/Button';
+import { Button, Textbox } from '@/components/';
 import { Inter } from '@next/font/google';
 import { Dialog } from '@capacitor/dialog';
 
@@ -16,7 +15,7 @@ const inter = Inter({ subsets: ['latin'] });
 export default function Register() {
     const router = useRouter();
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         const form = e.target;
         console.log('Handling the submission:');
         const { email, username, password, confirmedPassword } = form;
@@ -43,25 +42,26 @@ export default function Register() {
         }
 
         // Send Request
-        NetworkAPI.post('/api/users/signup', {
-            email: email.value,
-            username: username.value,
-            password: password.value,
-            confirmedPassword: confirmedPassword.value,
-        })
-            .then(({ data }) => {
+        try {
+            const data = await NetworkAPI.post('/api/users/signup', {
+                email: email.value,
+                username: username.value,
+                password: password.value,
+                confirmedPassword: confirmedPassword.value,
+            });
+            if (data) {
                 Dialog.alert({
                     title: 'Success',
                     message: `Account created successfully!`,
                 });
                 router.push('/login');
-            })
-            .catch(({ status, error }) => {
-                Dialog.alert({
-                    title: 'Error Occurred',
-                    message: `${status} ${error}`,
-                });
+            }
+        } catch (err) {
+            Dialog.alert({
+                title: 'Error Occurred',
+                message: `${err.status} ${err}`,
             });
+        }
     }
 
     return (

@@ -35,8 +35,7 @@ handler.post(async (req, res) => {
     }
 
     const result = await req.db.collection('Users').insertOne(doc);
-
-    if (result.acknowledged == false) {
+    if (result.acknowledged === false) {
         console.log('Request not acknowledged by database');
         res.status(500).send('Request not acknowledged by database');
     } else {

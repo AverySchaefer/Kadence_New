@@ -1,6 +1,6 @@
 import nextConnect from 'next-connect';
-import middleware from '../../../middleware/database';
 import { ObjectId } from 'mongodb';
+import middleware from '../../../middleware/database';
 
 const handler = nextConnect();
 
@@ -26,7 +26,7 @@ handler.patch(async (req, res) => {
         .collection('Devices')
         .updateOne(filter, { $set: doc }, options);
 
-    if (result.acknowledged == false) {
+    if (result.acknowledged === false) {
         console.log('Request not acknowledged by database');
         res.status(500).send('Request not acknowledged by database');
     } else if (result.modifiedCount < 1 && result.matchedCount < 1) {

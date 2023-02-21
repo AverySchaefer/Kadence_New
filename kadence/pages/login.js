@@ -2,8 +2,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from '@/styles/Register.module.css';
-import Textbox from '@/components/Textbox';
-import Button from '@/components/Button';
+import { Button, Textbox } from '@/components/';
 import { Inter } from '@next/font/google';
 import { useRouter } from 'next/router';
 import { Dialog } from '@capacitor/dialog';
@@ -15,32 +14,33 @@ const inter = Inter({ subsets: ['latin'] });
 export default function Login() {
     const router = useRouter();
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         const form = e.target;
-        const { username, enteredPW } = form;
+        const { username: formUsername, enteredPW: formPassword } = form;
         e.preventDefault();
 
         // Send Request
-        return NetworkAPI.get('/api/users/login', {
-            username: username.value,
-            enteredPW: enteredPW.value,
-        })
-            .then(({ data }) => {
+        try {
+            const data = await NetworkAPI.get('/api/users/login', {
+                username: formUsername.value,
+                enteredPW: formPassword.value,
+            });
+            if (data) {
                 console.log('Adding things to local storage');
                 console.log(data);
                 // Publish user to subscribers and store in local storage to stay logged in between page refreshes
                 const jwt = data.token;
-                const username = data.username;
+                const { username } = data;
                 localStorage.setItem('jwt', jwt);
                 localStorage.setItem('username', username);
                 router.push('/profile');
-            })
-            .catch(({ status, error }) => {
-                Dialog.alert({
-                    title: 'Error Occurred',
-                    message: `${status} ${error}`,
-                });
+            }
+        } catch (err) {
+            Dialog.alert({
+                title: 'Error Occurred',
+                message: `${err.status} ${err}`,
             });
+        }
     }
 
     return (

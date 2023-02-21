@@ -1,6 +1,6 @@
 import nextConnect from 'next-connect';
-import middleware from '../../../middleware/database';
 import { ObjectId } from 'mongodb';
+import middleware from '../../../middleware/database';
 
 const handler = nextConnect();
 
@@ -13,7 +13,7 @@ handler.get(async (req, res) => {
         return;
     }
 
-    let result = await req.db
+    const result = await req.db
         .collection('Preferences')
         .findOne({ _id: new ObjectId(req.query.uid) });
 

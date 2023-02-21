@@ -96,6 +96,8 @@ export default function Settings() {
         async function fetchData() {
             try {
                 // Get User Data first
+                // TODO: Fix the variable shadowing issues here
+                /* eslint-disable no-shadow */
                 const {
                     data: {
                         private: profilePrivate,
@@ -168,31 +170,39 @@ export default function Settings() {
 
     const router = useRouter();
 
-    function logout() {
+    async function logout() {
         localStorage.removeItem('jwt');
         localStorage.removeItem('username');
-        NetworkAPI.get('/api/users/logout').then(({ data }) => {
-            router.push('/login');
-        });
+        try {
+            const data = await NetworkAPI.get('/api/users/logout');
+            if (data) {
+                router.push('/login');
+            }
+        } catch (err) {
+            console.log('Error logging out');
+            console.error(err);
+        }
     }
 
-    function deleteAccount() {
-        NetworkAPI.delete('/api/users/delete', {
-            username: localStorage.getItem('username'),
-        })
-            .then(({ data }) => {
+    async function deleteAccount() {
+        try {
+            const data = await NetworkAPI.delete('/api/users/delete', {
+                username: localStorage.getItem('username'),
+            });
+
+            if (data) {
                 Dialog.alert({
                     title: 'Success',
                     message: `Account successfully deleted.`,
                 });
                 router.push('/login');
-            })
-            .catch(({ status, error }) => {
-                Dialog.alert({
-                    title: 'Error Occurred',
-                    message: `${status} ${error}`,
-                });
+            }
+        } catch (err) {
+            Dialog.alert({
+                title: 'Error Occurred',
+                message: `${err.status} ${err}`,
             });
+        }
     }
 
     async function submitData() {
@@ -768,9 +778,9 @@ export default function Settings() {
                                     onChange={(e) => setMood(e.target.value)}
                                     value={mood}
                                 >
-                                    {moods.map((mood) => (
-                                        <option value={mood} key={mood}>
-                                            {mood}
+                                    {moods.map((m) => (
+                                        <option value={m} key={m}>
+                                            {m}
                                         </option>
                                     ))}
                                 </select>

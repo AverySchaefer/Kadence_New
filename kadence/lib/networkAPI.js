@@ -1,4 +1,6 @@
-function fetch_wrapper(url, method = 'GET', data = {}) {
+import HTTPError from './errors/HTTPError';
+
+async function fetchWrapper(url, method = 'GET', data = {}) {
     const options = {
         method,
         headers: {
@@ -12,57 +14,15 @@ function fetch_wrapper(url, method = 'GET', data = {}) {
         options.body = JSON.stringify(data);
     }
 
-    return new Promise((resolve, reject) => {
-        fetch(url, options)
-            .then((resp) => {
-                if (resp.ok) {
-                    resp.text().then((text) => {
-                        try {
-                            const body = JSON.parse(text);
-                            return resolve({
-                                status: resp.status,
-                                message: resp.statusText,
-                                data: body,
-                            });
-                        } catch (err) {
-                            return resolve({
-                                status: resp.status,
-                                message: resp.statusText,
-                                data: text,
-                            });
-                        }
-                    });
-                } else {
-                    resp.text().then((errorObj) => {
-                        try {
-                            const body = JSON.parse(errorObj);
-                            return reject({
-                                status: resp.status,
-                                message: resp.statusText,
-                                error: body,
-                            });
-                        } catch (err) {
-                            return reject({
-                                status: resp.status,
-                                message: resp.statusText,
-                                error: errorObj,
-                            });
-                        }
-                    });
-                }
-            })
-            .catch((error) => {
-                reject({
-                    status: -1,
-                    message: `Error: ${error.message}`,
-                    error: error,
-                });
-            });
-    });
+    const resp = await fetch(url, options);
+    if (!resp.ok) {
+        throw new HTTPError(resp);
+    }
+    return resp.json();
 }
 
 const NetworkAPI = {
-    _fetch: function (url, method, data) {
+    _fetch(url, method, data) {
         switch (method.trim().toUpperCase()) {
             case 'GET':
                 return this.get(url, data);
@@ -72,33 +32,38 @@ const NetworkAPI = {
                 return this.patch(url, data);
             case 'DELETE':
                 return this.delete(url, data);
+            default:
+                throw new Error('Method not supported');
         }
     },
 
-    get: function (url, queryParams = {}) {
+    get(url, queryParams = {}) {
         // Convert null to undefined for GET Requests
         const paramsCopy = { ...queryParams };
-        for (const param in paramsCopy) {
+        Object.keys(paramsCopy).forEach((param) => {
             if (paramsCopy[param] === null) delete paramsCopy[param];
-        }
+        });
+
         // Add query parameters into URL
-        if (Object.keys(paramsCopy).length > 0) {
-            url = `${url}?${new URLSearchParams(paramsCopy).toString()}`;
-        }
+        const finalURL =
+            Object.keys(paramsCopy).length > 0
+                ? `${url}?${new URLSearchParams(paramsCopy).toString()}`
+                : url;
+
         // Do GET Request on finalized URL
-        return fetch_wrapper(url, 'GET');
+        return fetchWrapper(finalURL, 'GET');
     },
 
-    post: function (url, data) {
-        return fetch_wrapper(url, 'POST', data);
+    post(url, data) {
+        return fetchWrapper(url, 'POST', data);
     },
 
-    patch: function (url, data) {
-        return fetch_wrapper(url, 'PATCH', data);
+    patch(url, data) {
+        return fetchWrapper(url, 'PATCH', data);
     },
 
-    delete: function (url, data) {
-        return fetch_wrapper(url, 'DELETE', data);
+    delete(url, data) {
+        return fetchWrapper(url, 'DELETE', data);
     },
 };
 

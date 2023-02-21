@@ -34,15 +34,16 @@ handler.patch(async (req, res) => {
         friends: req.body.friends,
         actions: req.body.actions,
     };
-    for (const field in doc) {
+
+    Object.keys(doc).forEach((field) => {
         if (doc[field] === undefined) delete doc[field];
-    }
+    });
 
     const result = await req.db
         .collection('Users')
         .updateOne(filter, { $set: doc }, options);
 
-    if (result.acknowledged == false) {
+    if (result.acknowledged === false) {
         console.log('Request not acknowledged by database');
         res.status(500).send('Request not acknowledged by database');
     } else if (result.modifiedCount < 1 && result.matchedCount < 1) {
