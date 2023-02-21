@@ -34,9 +34,10 @@ handler.patch(async (req, res) => {
         friends: req.body.friends,
         actions: req.body.actions,
     };
-    for (const field in doc) {
+
+    Object.keys(doc).forEach((field) => {
         if (doc[field] === undefined) delete doc[field];
-    }
+    });
 
     const result = await req.db
         .collection('Users')

@@ -42,25 +42,26 @@ export default function Register() {
         }
 
         // Send Request
-        NetworkAPI.post('/api/users/signup', {
-            email: email.value,
-            username: username.value,
-            password: password.value,
-            confirmedPassword: confirmedPassword.value,
-        })
-            .then(({ data }) => {
+        try {
+            const data = await NetworkAPI.post('/api/users/signup', {
+                email: email.value,
+                username: username.value,
+                password: password.value,
+                confirmedPassword: confirmedPassword.value,
+            });
+            if (data) {
                 Dialog.alert({
                     title: 'Success',
                     message: `Account created successfully!`,
                 });
                 router.push('/login');
-            })
-            .catch(({ status, error }) => {
-                Dialog.alert({
-                    title: 'Error Occurred',
-                    message: `${status} ${error}`,
-                });
+            }
+        } catch (err) {
+            Dialog.alert({
+                title: 'Error Occurred',
+                message: `${err.status} ${err}`,
             });
+        }
     }
 
     return (

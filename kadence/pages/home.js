@@ -33,18 +33,19 @@ function Home() {
   */
     const router = useRouter();
 
-    function handleClick() {
+    async function handleClick() {
         console.log('Clicking the logout button!');
         localStorage.removeItem('jwt');
         localStorage.removeItem('username');
         // Send Request
-        NetworkAPI.get('/api/users/logout', {})
-            .then(({ data }) => {
+        try {
+            const data = await NetworkAPI.get('/api/users/logout', {});
+            if (data) {
                 router.push('/login');
-            })
-            .catch(({ status, error }) => {
-                console.log('Error: ', status, error);
-            });
+            }
+        } catch (err) {
+            console.log('Error: ', err.status, err);
+        }
     }
 
     return (

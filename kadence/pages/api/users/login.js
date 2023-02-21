@@ -1,7 +1,8 @@
 import { compare } from 'bcryptjs';
 import nextConnect from 'next-connect';
-import middleware from '../../../middleware/database';
 import getConfig from 'next/config';
+import middleware from '../../../middleware/database';
+
 const jwt = require('jsonwebtoken');
 
 const { serverRuntimeConfig } = getConfig();

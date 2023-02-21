@@ -4,7 +4,6 @@ import styles from '@/styles/Register.module.css';
 import { Inter } from '@next/font/google';
 
 import { useEffect } from 'react';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 
 const inter = Inter({ subsets: ['latin'] });

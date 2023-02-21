@@ -16,38 +16,30 @@ export default function Login() {
 
     async function handleSubmit(e) {
         const form = e.target;
-        const { username, enteredPW } = form;
+        const { username: formUsername, enteredPW: formPassword } = form;
         e.preventDefault();
 
         // Send Request
-        return NetworkAPI.get('/api/users/login', {
-            username: username.value,
-            enteredPW: enteredPW.value,
-        })
-            .then(({ data }) => {
+        try {
+            const data = await NetworkAPI.get('/api/users/login', {
+                username: formUsername.value,
+                enteredPW: formPassword.value,
+            });
+            if (data) {
                 console.log('Adding things to local storage');
                 console.log(data);
                 // Publish user to subscribers and store in local storage to stay logged in between page refreshes
                 const jwt = data.token;
-                const username = data.username;
+                const { username } = data;
                 localStorage.setItem('jwt', jwt);
                 localStorage.setItem('username', username);
                 router.push('/profile');
-            })
-            .catch(({ status, error }) => {
-                Dialog.alert({
-                    title: 'Error Occurred',
-                    message: `${status} ${error}`,
-                });
-            });
-
-            if (data) {
-                router.push('/home');
             }
         } catch (err) {
-            // TODO: handle error (wrong password, perhaps)
-            console.log('Error: ', err.status, err.statusText);
-            console.log(err);
+            Dialog.alert({
+                title: 'Error Occurred',
+                message: `${err.status} ${err}`,
+            });
         }
     }
 
