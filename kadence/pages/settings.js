@@ -96,66 +96,41 @@ export default function Settings() {
         async function fetchData() {
             try {
                 // Get User Data first
-                // TODO: Fix the variable shadowing issues here
-                /* eslint-disable no-shadow */
-                const {
-                    data: {
-                        private: profilePrivate,
-                        waitToSave,
-                        intervalShort,
-                        intervalLong,
-                        rampUpTime,
-                        rampDownTime,
-                        mood,
-                        zipCode,
-                        musicPrefs,
-                    },
-                } = await NetworkAPI.get('/api/users/getUsers', {
+                const userData = await NetworkAPI.get('/api/users/getUsers', {
                     username: localStorage.getItem('username'),
                 });
-                setProfilePrivate(profilePrivate);
-                setWaitToSave(waitToSave);
-                setIntervalShort(intervalShort);
-                setIntervalLong(intervalLong);
-                setRampUpTime(rampUpTime);
-                setRampDownTime(rampDownTime);
-                setMood(mood);
-                setZipCode(zipCode);
-                setMusicPrefId(musicPrefs);
+                setProfilePrivate(userData.private);
+                setWaitToSave(userData.waitToSave);
+                setIntervalShort(userData.intervalShort);
+                setIntervalLong(userData.intervalLong);
+                setRampUpTime(userData.rampUpTime);
+                setRampDownTime(userData.rampDownTime);
+                setMood(userData.mood);
+                setZipCode(userData.zipCode);
+                setMusicPrefId(userData.musicPrefs);
 
                 // Get preference data second (using musicPrefs id)
-                const {
-                    data: {
-                        allowExplicit,
-                        lyricalInstrumental,
-                        lyricalLanguage,
-                        minSongLength,
-                        maxSongLength,
-                        minPlaylistLength,
-                        maxPlaylistLength,
-                        faveGenres,
-                        faveArtists,
-                        blacklistedArtists,
-                        blacklistedSongs,
-                    },
-                } = await NetworkAPI.get('/api/preferences/getPreferences', {
-                    uid: musicPrefs,
-                });
-                setAllowExplicit(allowExplicit);
-                setLyricalInstrumental(lyricalInstrumental);
-                setLyricalLanguage(lyricalLanguage);
-                setMinSongLength(minSongLength);
-                setMaxSongLength(maxSongLength);
-                setMinPlaylistLength(minPlaylistLength);
-                setMaxPlaylistLength(maxPlaylistLength);
-                setFaveGenres(faveGenres[0] ?? 'Lo-fi');
-                setFaveArtists(faveArtists);
-                setBlacklistedArtists(blacklistedArtists);
-                setBlacklistedSongs(blacklistedSongs);
-            } catch ({ status, error }) {
+                const prefData = await NetworkAPI.get(
+                    '/api/preferences/getPreferences',
+                    {
+                        uid: userData.musicPrefs,
+                    }
+                );
+                setAllowExplicit(prefData.allowExplicit);
+                setLyricalInstrumental(prefData.lyricalInstrumental);
+                setLyricalLanguage(prefData.lyricalLanguage);
+                setMinSongLength(prefData.minSongLength);
+                setMaxSongLength(prefData.maxSongLength);
+                setMinPlaylistLength(prefData.minPlaylistLength);
+                setMaxPlaylistLength(prefData.maxPlaylistLength);
+                setFaveGenres(prefData.faveGenres[0] ?? 'Lo-fi');
+                setFaveArtists(prefData.faveArtists);
+                setBlacklistedArtists(prefData.blacklistedArtists);
+                setBlacklistedSongs(prefData.blacklistedSongs);
+            } catch (err) {
                 Dialog.alert({
                     title: 'Error',
-                    message: `An error occurred while fetching your data: ${status} ${error}. Some defaults have been set in their place.`,
+                    message: `An error occurred while fetching your data: ${err.message}. Some defaults have been set in their place.`,
                 });
             } finally {
                 setLoaded(true);
