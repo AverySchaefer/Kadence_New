@@ -8,13 +8,15 @@ handler.use(middleware);
 handler.get(async (req, res) => {
     if (req.query.username == null) {
         console.log('No Username sent in request');
-        res.status(400).send();
+        res.status(400).json(null);
         return;
     }
 
     let result = await req.db
         .collection('Users')
-        .findOne({ username: req.body.username });
+        .findOne({ username: req.query.username });
+
+    console.log(result);
 
     if (result == null) {
         console.log('Database item could not be found');
