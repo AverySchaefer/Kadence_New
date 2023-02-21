@@ -1,23 +1,12 @@
-import { hash } from 'bcryptjs';
-import Password from '../../../lib/passwordStrength';
 import nextConnect from 'next-connect';
 import middleware from '../../../middleware/database';
+import nodemailer from 'nodemailer';
 
 const handler = nextConnect();
 handler.use(middleware);
 
-async function hashPassword(password) {
-  const hashedPassword = await hash(password, 10);
-  return hashedPassword;
-}
-
-/* Add password strength algorithm here */
-async function verifyPasswordStrength(password) {
-  return Password.isStrong(password);
-}
-
 handler.post(async (req, res) => {
-  console.log("Posting the new password")
+  console.log("Sending an email to change the password.")
   /* Ensuring the request is of type POST */
   if (req.method !== 'POST') { return; }
 

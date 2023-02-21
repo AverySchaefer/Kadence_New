@@ -16,16 +16,16 @@ export default function Login() {
 
     function handleSubmit(e) {
         const form = e.target;
-        const { username, enteredPW } = form;
+        const { email } = form;
         e.preventDefault();
 
         // Send Request
-        return NetworkAPI.get('/api/users/login', {
-            username: username.value,
-            enteredPW: enteredPW.value,
+        return NetworkAPI.post('/api/users/forgottenPass', {
+            email: email.value,
         })
             .then(({ data }) => {
-                router.push('/login');
+                console.log("Success!")
+                router.push('/emailConfirm');
             })
             .catch(({ status, error }) => {
                 console.log('Error: ', status, error);
@@ -60,16 +60,10 @@ export default function Login() {
                     method="POST"
                     action="/api/users/forgottenPass"
                     onSubmit={handleSubmit}
-                >
-                    <Textbox name="username" placeholder="Username" required />
-                    <Textbox
-                        name="enteredPW"
-                        placeholder="Password"
-                        type="password"
-                        required
-                    />
-                    <Link className={styles.note} href="/register">
-                        {"Don't have an account? Register here!"}
+                >   <h4>Please enter the email address associated with the account.</h4>
+                    <Textbox name="email" placeholder="Email Address" required />
+                    <Link className={styles.note} href="/login">
+                        {"Remember your password? Login here!"}
                     </Link>
                     <Button type="submit">Login</Button>
                 </form>
