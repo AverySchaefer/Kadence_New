@@ -31,8 +31,8 @@ handler.post(async (req, res) => {
         actions: req.body.actions,
     };
 
-    if (req.body.uid == null) {
-        console.log('No UID sent in request');
+    if (req.body.username == null) {
+        console.log('No username sent in request');
         res.status(400).send();
         return;
     }
