@@ -8,8 +8,14 @@ const createJestConfig = nextJest({
 // Add any custom config to be passed to Jest
 /** @type {import('jest').Config} */
 const customJestConfig = {
-    // Nothing here for now
-    // This file is mainly just here to make sure Jest is setup correctly for Next
+    // This runs jest.setup.js so the next.config is available to our tests
+    setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+
+    // This resoolves our [Module Path Aliases](https://nextjs.org/docs/advanced-features/module-path-aliases)
+    // in Jest tests to their absolute paths
+    moduleNameMapper: {
+        '@/(.*)$': '<rootDir>/$1',
+    },
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
