@@ -4,25 +4,40 @@
 
 ### GET `/api/users/login`
 
-- Request Body Elements
+- Request Query Elements
   - username: STRING
   - enteredPW: STRING
-- Return Body Elements
+- Request Body Elements
   - NONE
+- Return Body Elements
+  - Description of response status
 - Response Status Codes
   - 200: Login Successful
-  - 400: Account cannot be found (incorrect or username) or request body missing
+  - 400: Account cannot be found (incorrect or username) or request query parameter missing
   - 401: Incorrect Password
+
+### GET `/api/users/logout`
+
+- Request Query Elements
+  - NONE
+- Request Body Elements
+  - NONE
+- Return Body Elements
+  - Description of response status
+- Response Status Codes
+  - 200: Logout Successful
 
 ### GET `/api/users/getUsers`
 
-- Request Body Elements
+- Request Query Elements
   - username: STRING
+- Request Body Elements
+  - NONE
 - Return Body Elements
   - Result (document or NULL if no document found)
 - Response Status Codes
   - 200: Request Successful
-  - 400: Account cannot be found (incorrect or missing uid)
+  - 400: Account cannot be found (incorrect or missing username)
 
 ### DELETE `/api/users/delete`
 
@@ -65,6 +80,25 @@
   - 200: Request Successful
   - 400: No uid provided in request body
   - 500: No account was able to be created
+
+### POST `/api/users/signup`
+
+- Request Body Elements
+  - username: STRING
+  - email: STRING
+  - password: STRING
+  - confirmedPassword: STRING
+- Return Body Elements
+  - NONE
+- Response Status Codes
+  - 200: Request Successful
+  - 400: Invalid input:
+    - Email or password not included
+    - Password and confirmedPassword do not match
+    - Email is invalid
+    - Password does not meet strength requirements
+    - User with given username or email already exists
+  - 500: Request was not acknowledged by the database
 
 ### PATCH `/api/users/update`
 
@@ -262,3 +296,14 @@
   - 200: Request Successful
   - 400: Device document cannot be found (incorrect or missing uid)
   - 500: No document was able to be updated
+
+## SPOTIFY (`/api/spotify/~`)
+
+### GET `/api/spotify/currentSong`
+
+- Request token elements
+  - accessToken
+- Return Body
+  - Song Item (in JSON format)
+- Response Status Codes
+  - 200: Request Successful, song item sent

@@ -20,16 +20,21 @@ export default function Login() {
         e.preventDefault();
 
         // Send Request
-        NetworkAPI.get('/api/users/login', {
+        return NetworkAPI.get('/api/users/login', {
             username: username.value,
             enteredPW: enteredPW.value,
         })
             .then(({ data }) => {
-                // TODO: Redirect to Home Page upon success
-                router.push('/home');
+                console.log("Adding things to local storage");
+                console.log(data);
+                // Publish user to subscribers and store in local storage to stay logged in between page refreshes
+                const jwt = data.token;
+                const username = data.username;
+                localStorage.setItem('jwt', jwt);
+                localStorage.setItem('username', username);
+                router.push('/profile');
             })
             .catch(({ status, error }) => {
-                // TODO: handle error (wrong password, perhaps)
                 console.log('Error: ', status, error);
             });
     }
