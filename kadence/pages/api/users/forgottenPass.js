@@ -28,6 +28,10 @@ handler.post(async (req, res) => {
     res.status(400).json({message: 'User does not exist with this email. Cannot recover password.'})
     return;
   } else {
+    const username = findExistingUser.username;
+    const resetLink = 'http://localhost:3000/resetPass'
+    console.log(username);
+
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -39,8 +43,8 @@ handler.post(async (req, res) => {
     const mailOptions = {
       from: 'jackrosenberg17@gmail.com',
       to: credentials.email,
-      subject: 'Password Recovery Link for username',
-      text: 'Reset your Kadence password here resetLink'
+      subject: 'Password Recovery Link for ' + username + '',
+      text: 'Reset your Kadence password here: ' + resetLink,
     };
     
     transporter.sendMail(mailOptions, function(error, info){
