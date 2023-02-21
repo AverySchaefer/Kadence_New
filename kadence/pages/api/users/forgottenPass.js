@@ -32,15 +32,15 @@ handler.post(async (req, res) => {
       service: 'gmail',
       auth: {
         user: 'jackrosenberg17@gmail.com',
-        pass: ''
+        pass: 'kzakelglsvhsijik'
       }
     });
     
     const mailOptions = {
-      from: 'youremail@gmail.com',
-      to: 'myfriend@yahoo.com',
-      subject: 'Sending Email using Node.js',
-      text: 'That was easy!'
+      from: 'jackrosenberg17@gmail.com',
+      to: credentials.email,
+      subject: 'Password Recovery Link for username',
+      text: 'Reset your Kadence password here resetLink'
     };
     
     transporter.sendMail(mailOptions, function(error, info){

@@ -65,7 +65,7 @@ export default function Login() {
                     <Link className={styles.note} href="/login">
                         {"Remember your password? Login here!"}
                     </Link>
-                    <Button type="submit">Login</Button>
+                    <Button type="submit">Send Email!</Button>
                 </form>
             </main>
         </>
