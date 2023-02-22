@@ -6,20 +6,22 @@ const handler = nextConnect();
 handler.use(middleware);
 
 handler.patch(async (req, res) => {
-    const filter = { uid: req.body.uid };
+    if (!req.body.username) {
+        console.log('No username sent in request');
+        res.status(400).send('No username sent in request');
+        return;
+    }
+
+    const filter = { username: req.body.username };
     const options = { upsert: true };
     const doc = {
-        uid: req.body.uid,
-        username: req.body.username,
         email: req.body.email,
         password: req.body.password,
         bio: req.body.bio,
         profilePic: req.body.profilePic,
         private: req.body.private,
         devices: req.body.devices,
-        selectedDevice: req.body.selectedDevice,
         musicPlatforms: req.body.musicPlatforms,
-        selectedMusic: req.body.selectedMusic,
         musicPrefs: req.body.musicPrefs,
         waitToSave: req.body.waitToSave,
         intervalShort: req.body.intervalShort,
@@ -31,24 +33,25 @@ handler.patch(async (req, res) => {
         friendRequests: req.body.friendRequests,
         friends: req.body.friends,
         actions: req.body.actions,
+        favoriteArtist: req.body.favoriteArtist,
+        favoriteSong: req.body.favoriteSong,
+        favoriteAlbum: req.body.favoriteAlbum,
     };
 
-    if (req.body.uid == null) {
-        console.log('No UID sent in request');
-        res.status(400).send();
-        return;
-    }
+    Object.keys(doc).forEach((field) => {
+        if (doc[field] === undefined) delete doc[field];
+    });
 
     const result = await req.db
         .collection('Users')
-        .updateOne(filter, doc, options);
+        .updateOne(filter, { $set: doc }, options);
 
-    if (result.acknowledged == false) {
+    if (result.acknowledged === false) {
         console.log('Request not acknowledged by database');
-        res.status(500).send();
-    } else if (result.modifiedCount < 1) {
+        res.status(500).send('Request not acknowledged by database');
+    } else if (result.modifiedCount < 1 && result.matchedCount < 1) {
         console.log('Account could not be located');
-        res.status(400).send();
+        res.status(400).send('Account could not be located');
     } else {
         console.log('Account Updated');
         res.status(200).send();
