@@ -86,7 +86,7 @@ export default function Settings() {
     const [rampUpTime, setRampUpTime] = useState(0);
     const [rampDownTime, setRampDownTime] = useState(0);
     const [mood, setMood] = useState('Happy');
-    const [zipCode, setZipCode] = useState(69420);
+    const [zipCode, setZipCode] = useState(47907);
 
     const [loaded, setLoaded] = useState(false);
     const [musicPrefId, setMusicPrefId] = useState(null);
