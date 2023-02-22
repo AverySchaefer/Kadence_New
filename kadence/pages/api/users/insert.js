@@ -26,7 +26,7 @@ handler.post(async (req, res) => {
         friendRequests: req.body.friendRequests,
         friends: req.body.friends,
         actions: req.body.actions,
-        favoriteArtists: req.body.favoriteArtists,
+        favoriteArtist: req.body.favoriteArtist,
         favoriteSong: req.body.favoriteSong,
         favoriteAlbum: req.body.favoriteAlbum,
     };

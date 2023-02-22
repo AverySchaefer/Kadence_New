@@ -7,6 +7,7 @@ import styles from '@/styles/Profile.module.css';
 import { BottomNav } from '@/components/';
 import { Inter } from '@next/font/google';
 import { Dialog } from '@capacitor/dialog';
+import { useRouter } from 'next/router';
 import { Avatar, Box, Button, Fab, Stack, Tab, Tabs } from '@mui/material/';
 import NetworkAPI from '@/lib/networkAPI';
 
@@ -21,6 +22,7 @@ function a11yProps(index) {
 
 function BasicTabs({ favArtist, favSong, favAlbum }) {
     const [value, setValue] = React.useState(0);
+    const router = useRouter();
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -53,7 +55,7 @@ function BasicTabs({ favArtist, favSong, favAlbum }) {
                             <h4 className={styles.tabTitle}>Favorite Album</h4>
                             <p>{favAlbum}</p>
                             <br />
-                            <Button variant="contained">Edit</Button>
+                            <Button variant="contained" onClick={() => router.push('/changeProfile')}>Edit</Button>
                         </Stack>
                     </Box>
                 )}
@@ -95,12 +97,12 @@ export default function Profile() {
         async function fetchData() {
             try {
                 // Get User Data first
-                const userData = await NetworkAPI.get('/api/users/getUsers', {
+                const { data: userData } = await NetworkAPI.get('/api/users/getUsers', {
                     username: localStorage.getItem('username'),
                 });
-                setFaveArtist(userData.favArtist);
-                setFaveAlbum(userData.favAlbum);
-                setFaveSong(userData.favSong);
+                setFaveArtist(userData.favoriteArtist);
+                setFaveAlbum(userData.favoriteAlbum);
+                setFaveSong(userData.favoriteSong);
                 setBio(userData.bio);
             } catch (err) {
                 Dialog.alert({
@@ -109,6 +111,9 @@ export default function Profile() {
                 });
             } finally {
                 setLoaded(true);
+                console.log('faveArtist: ', faveArtist);
+                console.log('faveAlbum: ', faveAlbum);
+                console.log('faveSong: ', faveSong);
             }
         }
         fetchData();
@@ -134,7 +139,7 @@ export default function Profile() {
                 <section>
                     <div className={styles.picture}>
                         <Avatar alt="NS" sx={{ width: 150, height: 150 }}>
-                            NS
+                            {localStorage.getItem('username')[0].toUpperCase()}
                         </Avatar>
                     </div>
                 </section>
