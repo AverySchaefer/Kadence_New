@@ -2,7 +2,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { Dialog } from '@capacitor/dialog';
 import styles from '@/styles/Settings.module.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Inter } from '@next/font/google';
 import { languages, genres, moods } from '@/lib/promptOptions';
@@ -64,10 +64,11 @@ export default function Settings() {
     const [profilePrivate, setProfilePrivate] = useState(true);
     const [waitToSave, setWaitToSave] = useState(true);
     const [defaultDevice, setDefaultDevice] = useState('None');
+    const [defaultMusicPlatform, setDefaultMusicPlatform] = useState('None');
 
     const [allowExplicit, setAllowExplicit] = useState(false);
-    const [lyricalVsInstrumental, setLyricalVsInstrumental] = useState(80);
-    const [prefLanguage, setPrefLanguage] = useState('English');
+    const [lyricalInstrumental, setLyricalInstrumental] = useState(80);
+    const [lyricalLanguage, setLyricalLanguage] = useState('English');
     const [minSongLength, setMinSongLength] = useState(0);
     const [maxSongLength, setMaxSongLength] = useState(300);
     const [minPlaylistLength, setMinPlaylistLength] = useState(0);
@@ -85,87 +86,146 @@ export default function Settings() {
     const [rampUpTime, setRampUpTime] = useState(0);
     const [rampDownTime, setRampDownTime] = useState(0);
     const [mood, setMood] = useState('Happy');
-    const [zipcode, setZipcode] = useState(69420);
+    const [zipCode, setZipCode] = useState(47907);
 
-    // TODO: actually get devices from database
+    const [loaded, setLoaded] = useState(false);
+    const [musicPrefId, setMusicPrefId] = useState(null);
+
+    // Fetch values from database
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                // Get User Data first
+                const { data: userData } = await NetworkAPI.get(
+                    '/api/users/getUsers',
+                    {
+                        username: localStorage.getItem('username'),
+                    }
+                );
+                setProfilePrivate(userData.private);
+                setWaitToSave(userData.waitToSave);
+                setIntervalShort(userData.intervalShort);
+                setIntervalLong(userData.intervalLong);
+                setRampUpTime(userData.rampUpTime);
+                setRampDownTime(userData.rampDownTime);
+                setMood(userData.mood);
+                setZipCode(userData.zipCode);
+                setMusicPrefId(userData.musicPrefs);
+
+                // Get preference data second (using musicPrefs id)
+                const { data: prefData } = await NetworkAPI.get(
+                    '/api/preferences/getPreferences',
+                    {
+                        uid: userData.musicPrefs,
+                    }
+                );
+                setAllowExplicit(prefData.allowExplicit);
+                setLyricalInstrumental(prefData.lyricalInstrumental);
+                setLyricalLanguage(prefData.lyricalLanguage);
+                setMinSongLength(prefData.minSongLength);
+                setMaxSongLength(prefData.maxSongLength);
+                setMinPlaylistLength(prefData.minPlaylistLength);
+                setMaxPlaylistLength(prefData.maxPlaylistLength);
+                setFaveGenres(prefData.faveGenres[0] ?? 'Lo-fi');
+                setFaveArtists(prefData.faveArtists);
+                setBlacklistedArtists(prefData.blacklistedArtists);
+                setBlacklistedSongs(prefData.blacklistedSongs);
+            } catch (err) {
+                Dialog.alert({
+                    title: 'Error',
+                    message: `An error occurred while fetching your data: ${err.message}. Some defaults have been set in their place.`,
+                });
+            } finally {
+                setLoaded(true);
+            }
+        }
+        fetchData();
+    }, []);
+
+    // TODO: actually get devices and platforms from database
     const devices = ['Device 1', 'Device 2'];
+    const musicPlatforms = ['Spotify', 'Apple Music'];
 
     const router = useRouter();
 
-    function logout() {
-        // TODO: implement logging out (I assume it'll involve
-        //       removing some kind of cookie?)
-        console.log('TODO: log out of account');
-        NetworkAPI.delete('/api/users/logout', {
-            uid: null, // TODO: how to get this?
-        })
-            .then(({ data }) => {
+    async function logout() {
+        localStorage.removeItem('jwt');
+        localStorage.removeItem('username');
+        try {
+            const data = await NetworkAPI.get('/api/users/logout');
+            if (data) {
                 router.push('/login');
-            })
-            .catch(({ status, error }) => {
-                console.log('Error logging out: ', status, error);
-            });
+            }
+        } catch (err) {
+            console.log('Error logging out');
+            console.error(err);
+        }
     }
 
-    function deleteAccount() {
-        // TODO: implement logging out (I assume it'll involve
-        //       removing some kind of cookie?)
-        console.log('TODO: delete account');
-        NetworkAPI.delete('/api/users/delete', {
-            uid: null, // TODO: how to get this?
-        })
-            .then(({ data }) => {
-                router.push('/login');
-            })
-            .catch(({ status, error }) => {
-                console.log('Error deleting account: ', status, error);
+    async function deleteAccount() {
+        try {
+            const data = await NetworkAPI.delete('/api/users/delete', {
+                username: localStorage.getItem('username'),
             });
+
+            if (data) {
+                Dialog.alert({
+                    title: 'Success',
+                    message: `Account successfully deleted.`,
+                });
+                router.push('/login');
+            }
+        } catch (err) {
+            Dialog.alert({
+                title: 'Error Occurred',
+                message: `${err.status} ${err.message}`,
+            });
+        }
     }
 
-    function submitData() {
+    async function submitData() {
         const musicPrefData = {
-            uid: null, // TODO: how do we get this?
+            uid: musicPrefId,
             allowExplicit,
-            lyricalVsInstrumental,
-            prefLanguage,
+            lyricalInstrumental,
+            lyricalLanguage,
             minSongLength,
             maxSongLength,
             minPlaylistLength,
             maxPlaylistLength,
-            faveGenres,
+            faveGenres: [faveGenres],
             faveArtists,
             blacklistedArtists,
             blacklistedSongs,
         };
         const userData = {
-            uid: null, // TODO: how do we get this?
+            username: localStorage.getItem('username'),
             private: profilePrivate,
+            waitToSave,
             intervalShort,
             intervalLong,
             rampUpTime,
             rampDownTime,
             mood,
-            zipcode,
+            zipCode,
         };
 
-        // Update User object
-        NetworkAPI.patch('/api/users/update', userData)
-            .then(({ data }) => {
-                console.log('Successfully updated user', data);
-            })
-            .catch(({ status, error }) => {
-                console.log('Error: ', status, error);
+        try {
+            await NetworkAPI.patch('/api/users/update', userData);
+            await NetworkAPI.patch('/api/preferences/update', musicPrefData);
+            Dialog.alert({
+                title: 'Success',
+                message: `Settings successfully saved.`,
             });
-
-        // Update Music Preferences Object
-        NetworkAPI.patch('/api/preferences/update', musicPrefData)
-            .then(({ data }) => {
-                console.log('Successfully updated preference', data);
-            })
-            .catch(({ status, error }) => {
-                console.log('Error: ', status, error);
+        } catch (err) {
+            Dialog.alert({
+                title: 'Error Occurred',
+                message: `Error occurred while saving: ${err.message}`,
             });
+        }
     }
+
+    if (!loaded) return '';
 
     return (
         <div className={inter.className}>
@@ -221,7 +281,7 @@ export default function Settings() {
                         </div>
                         <div>
                             <div className={styles.flexWrapper}>
-                                <b>Default Device: </b>
+                                <b>Selected Device: </b>
                                 <select
                                     className={styles.select}
                                     onChange={(e) =>
@@ -233,6 +293,25 @@ export default function Settings() {
                                     {devices.map((device) => (
                                         <option value={device} key={device}>
                                             {device}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <div className={styles.flexWrapper}>
+                                <b>Selected Music Platform: </b>
+                                <select
+                                    className={styles.select}
+                                    onChange={(e) =>
+                                        setDefaultMusicPlatform(e.target.value)
+                                    }
+                                    value={defaultMusicPlatform}
+                                >
+                                    <option value={'None'}>None</option>
+                                    {musicPlatforms.map((mp) => (
+                                        <option value={mp} key={mp}>
+                                            {mp}
                                         </option>
                                     ))}
                                 </select>
@@ -292,9 +371,9 @@ export default function Settings() {
                                     min="0"
                                     max="100"
                                     step="1"
-                                    value={lyricalVsInstrumental}
+                                    value={lyricalInstrumental}
                                     onChange={(e) =>
-                                        setLyricalVsInstrumental(
+                                        setLyricalInstrumental(
                                             parseInt(e.target.value, 10)
                                         )
                                     }
@@ -310,9 +389,9 @@ export default function Settings() {
                                 <select
                                     className={styles.select}
                                     onChange={(e) =>
-                                        setPrefLanguage(e.target.value)
+                                        setLyricalLanguage(e.target.value)
                                     }
-                                    value={prefLanguage}
+                                    value={lyricalLanguage}
                                 >
                                     {languages.map((language) => (
                                         <option value={language} key={language}>
@@ -452,7 +531,7 @@ export default function Settings() {
                                         if (!cancelled && value.trim() !== '') {
                                             setFaveArtists(
                                                 appendToArray(
-                                                    favArtists,
+                                                    faveArtists,
                                                     value.trim()
                                                 )
                                             );
@@ -460,10 +539,10 @@ export default function Settings() {
                                     }}
                                     remove={(idx) =>
                                         setFaveArtists(
-                                            removeFromArray(favArtists, idx)
+                                            removeFromArray(faveArtists, idx)
                                         )
                                     }
-                                    items={favArtists}
+                                    items={faveArtists}
                                 />
                             )}
                         </div>
@@ -570,8 +649,8 @@ export default function Settings() {
                                         )
                                     }
                                     items={blacklistedSongs.map(
-                                        ([song, artist]) =>
-                                            `"${song}" by ${artist}`
+                                        ({ name, artist }) =>
+                                            `"${name}" by ${artist}`
                                     )}
                                 />
                             )}
@@ -677,9 +756,9 @@ export default function Settings() {
                                     onChange={(e) => setMood(e.target.value)}
                                     value={mood}
                                 >
-                                    {moods.map((mood) => (
-                                        <option value={mood} key={mood}>
-                                            {mood}
+                                    {moods.map((m) => (
+                                        <option value={m} key={m}>
+                                            {m}
                                         </option>
                                     ))}
                                 </select>
@@ -694,9 +773,9 @@ export default function Settings() {
                                     min="0"
                                     max="99999"
                                     step="1"
-                                    value={zipcode}
+                                    value={zipCode}
                                     onChange={(e) =>
-                                        setZipcode(
+                                        setZipCode(
                                             parseInt(e.target.value, 10) % 99999
                                         )
                                     }
@@ -708,7 +787,12 @@ export default function Settings() {
             </main>
             <Header title="Settings" prevLink="/profile" />
             <NavBar>
-                <button onClick={submitData}>Save Changes</button>
+                <button
+                    style={{ paddingInline: '0.5rem' }}
+                    onClick={submitData}
+                >
+                    Save Changes
+                </button>
             </NavBar>
         </div>
     );

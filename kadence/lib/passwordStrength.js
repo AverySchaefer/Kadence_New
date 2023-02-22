@@ -23,7 +23,7 @@ function containsAtLeastOne(password, charset) {
 }
 
 const Password = {
-    isStrong: function (password) {
+    isStrong(password) {
         if (password === null || password === undefined) return false;
         if (password.length < minLength) return false;
         if (!containsAtLeastOne(password, lowercaseLetters)) return false;

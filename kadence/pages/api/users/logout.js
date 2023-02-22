@@ -6,9 +6,7 @@ handler.use(middleware);
 
 handler.get(async (req, res) => {
     console.log('Logout successful');
-    res.status(200).send(
-        'Logout successful, return back to login page.'
-    );
+    res.status(200).send();
 });
 
 export default handler;

@@ -2,23 +2,22 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from '@/styles/Register.module.css';
-import Textbox from '@/components/Textbox';
-import Button from '@/components/Button';
+import { Button, Textbox } from '@/components/';
 import { Inter } from '@next/font/google';
 import { Dialog } from '@capacitor/dialog';
+import { useRouter } from 'next/router';
 
 import Password from '@/lib/passwordStrength';
 import NetworkAPI from '@/lib/networkAPI';
-import { useRouter } from 'next/router';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export default function Register() {
     const router = useRouter();
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         const form = e.target;
-        console.log("Handling the submission:");
+        console.log('Handling the submission:');
         const { email, username, password, confirmedPassword } = form;
         console.log(email.value);
         console.log(username.value);
@@ -43,20 +42,29 @@ export default function Register() {
         }
 
         // Send Request
-        NetworkAPI.post('/api/users/signup', {
-            email: email.value,
-            username: username.value,
-            password: password.value,
-            confirmedPassword: confirmedPassword.value,
-        })
-            .then(({ data }) => {
-                // TODO: Redirect to Login Page upon success
-                router.push('/login');
-            })
-            .catch(({ status, error }) => {
-                // TODO: handle error
-                console.log('Error: ', status, error);
+        try {
+            const data = await NetworkAPI.post('/api/users/signup', {
+                email: email.value,
+                username: username.value,
+                password: password.value,
+                confirmedPassword: confirmedPassword.value,
             });
+            if (data) {
+                Dialog.alert({
+                    title: 'Success',
+                    message: `Account created successfully!`,
+                });
+                const jwt = data.token;
+                localStorage.setItem('jwt', jwt);
+                localStorage.setItem('username', username.value);
+                router.push('/registerInfo');
+            }
+        } catch (err) {
+            Dialog.alert({
+                title: 'Error Occurred',
+                message: `${err.status} ${err}`,
+            });
+        }
     }
 
     return (

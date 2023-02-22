@@ -3,16 +3,18 @@ import styles from '@/styles/Settings.module.css';
 
 import { useState } from 'react';
 import Link from 'next/link';
-import Button from '@mui/material/Button';
-import Switch from '@mui/material/Switch';
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    FormGroup,
+    FormControlLabel,
+    Switch,
+    TextField,
+} from '@mui/material/';
 
 import NetworkAPI from '../lib/networkAPI';
 
@@ -35,6 +37,12 @@ const API = {
             dataReqs: [{ field: 'username' }, { field: 'enteredPW' }],
         },
         {
+            title: 'Logout',
+            url: '/api/users/logout',
+            method: 'GET',
+            dataReqs: [],
+        },
+        {
             title: 'Get Users',
             url: '/api/users/getUsers',
             method: 'GET',
@@ -44,14 +52,13 @@ const API = {
             title: 'Delete',
             url: '/api/users/delete',
             method: 'DELETE',
-            dataReqs: [{ field: 'uid' }],
+            dataReqs: [{ field: 'username' }],
         },
         {
             title: 'Insert',
             url: '/api/users/insert',
             method: 'POST',
             dataReqs: [
-                { field: 'uid' },
                 { field: 'username' },
                 { field: 'email' },
                 { field: 'password' },
@@ -69,10 +76,21 @@ const API = {
                 { field: 'rampUpTime', type: 'number' },
                 { field: 'rampDownTime', type: 'number' },
                 { field: 'mood' },
-                { field: 'zipcode', type: 'number' },
+                { field: 'zipCode', type: 'number' },
                 { field: 'friendRequests', type: 'array' },
                 { field: 'friends', type: 'array' },
                 { field: 'actions', type: 'array' },
+            ],
+        },
+        {
+            title: 'Signup',
+            url: '/api/users/signup',
+            method: 'POST',
+            dataReqs: [
+                { field: 'username' },
+                { field: 'email' },
+                { field: 'password' },
+                { field: 'confirmedPassword' },
             ],
         },
         {
@@ -80,7 +98,6 @@ const API = {
             url: '/api/users/update',
             method: 'PATCH',
             dataReqs: [
-                { field: 'uid' },
                 { field: 'username' },
                 { field: 'email' },
                 { field: 'password' },
@@ -98,7 +115,7 @@ const API = {
                 { field: 'rampUpTime', type: 'number' },
                 { field: 'rampDownTime', type: 'number' },
                 { field: 'mood' },
-                { field: 'zipcode', type: 'number' },
+                { field: 'zipCode', type: 'number' },
                 { field: 'friendRequests', type: 'array' },
                 { field: 'friends', type: 'array' },
                 { field: 'actions', type: 'array' },
@@ -123,7 +140,6 @@ const API = {
             url: '/api/preferences/insert',
             method: 'POST',
             dataReqs: [
-                { field: 'uid' },
                 { field: 'allowExplicit', type: 'flag' },
                 { field: 'lyricalInstrumental', type: 'number' },
                 { field: 'lyricalLanguage' },
@@ -175,7 +191,6 @@ const API = {
             url: '/api/music/insert',
             method: 'POST',
             dataReqs: [
-                { field: 'uid' },
                 { field: 'spotifyAccountID' },
                 { field: 'appleMusicID' },
             ],
@@ -209,7 +224,6 @@ const API = {
             url: '/api/devices/insert',
             method: 'POST',
             dataReqs: [
-                { field: 'uid' },
                 { field: 'deviceList', type: 'array' },
                 { field: 'selectedDeviceName' },
                 { field: 'selectedDeviceID' },
@@ -229,6 +243,14 @@ const API = {
             ],
         },
     ],
+    spotifyEndpoints: [
+        {
+            title: 'Get Current Song',
+            url: '/api/spotify/currentSong',
+            method: 'GET',
+            dataReqs: [{ field: 'accessToken' }],
+        },
+    ],
 };
 
 // Parse value based on dataReq type
@@ -243,7 +265,7 @@ function parseValue(value, type) {
         case 'flag':
             return value;
         case 'array':
-        case 'songArray':
+        case 'songArray': {
             if (value.trim() === '') return null;
             // Split on semicolon
             let tokens = value.split(';');
@@ -287,6 +309,9 @@ function parseValue(value, type) {
                 }
             });
             return result;
+        }
+        default:
+            return value;
     }
 }
 
@@ -376,17 +401,22 @@ function TestComponent({ title, url, method, dataReqs }) {
         setSentData(null);
     };
 
-    const handleSend = () => {
+    const handleSend = async () => {
         setSentData(state);
         handleClosePrompt();
-        // TODO: Show Response
-        NetworkAPI._fetch(url, method, state)
-            .then((response) => {
+
+        try {
+            const response = await NetworkAPI._fetch(url, method, state);
+            if (response) {
                 handleDataReceived(response);
-            })
-            .catch((errorResponse) => {
-                handleDataReceived(errorResponse);
+            }
+        } catch (err) {
+            handleDataReceived({
+                data: err.message,
+                status: err.status || -1,
+                statusText: err.statusText || 'Network Failure',
             });
+        }
     };
 
     return (
@@ -406,9 +436,9 @@ function TestComponent({ title, url, method, dataReqs }) {
                         </DialogContentText>
                     )}
 
-                    {dataReqs.map(({ field, type = 'text' }) => {
-                        return getRelevantUIComponent(field, type, updateField);
-                    })}
+                    {dataReqs.map(({ field, type = 'text' }) =>
+                        getRelevantUIComponent(field, type, updateField)
+                    )}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClosePrompt}>Cancel</Button>
@@ -431,16 +461,10 @@ function TestComponent({ title, url, method, dataReqs }) {
                                     {method} Request to {url}
                                 </i>
                             </div>
-                            {receivedData.status !== -1 ? (
-                                <div style={{ marginBottom: '1em' }}>
-                                    Status: {receivedData.status}{' '}
-                                    {receivedData.message}
-                                </div>
-                            ) : (
-                                <div style={{ marginBottom: '1em' }}>
-                                    {receivedData.message}
-                                </div>
-                            )}
+                            <div style={{ marginBottom: '1em' }}>
+                                Status: {receivedData.status}{' '}
+                                {receivedData.statusText}
+                            </div>
 
                             <div>Response Data: </div>
                             <pre
@@ -451,11 +475,7 @@ function TestComponent({ title, url, method, dataReqs }) {
                                     fontFamily: 'monospace',
                                 }}
                             >
-                                {JSON.stringify(
-                                    receivedData.data || receivedData.error,
-                                    null,
-                                    2
-                                )}
+                                {JSON.stringify(receivedData.data, null, 2)}
                             </pre>
                             <div style={{ marginTop: '1em' }}>
                                 Data You Sent:{' '}
@@ -483,59 +503,14 @@ function TestComponent({ title, url, method, dataReqs }) {
     );
 }
 
-function TestUsers() {
+function EndpointSection({ title, endpoints }) {
     return (
         <section>
             <div className={styles.sticky}>
-                <h1>USER ENDPOINTS</h1>
+                <h1>{title} ENDPOINTS</h1>
             </div>
             <div className={styles.settingsSection}>
-                {API.userEndpoints.map((obj, idx) => (
-                    <TestComponent {...obj} key={idx} />
-                ))}
-            </div>
-        </section>
-    );
-}
-
-function TestDevices() {
-    return (
-        <section>
-            <div className={styles.sticky}>
-                <h1>DEVICE ENDPOINTS</h1>
-            </div>
-            <div className={styles.settingsSection}>
-                {API.deviceEndpoints.map((obj, idx) => (
-                    <TestComponent {...obj} key={idx} />
-                ))}
-            </div>
-        </section>
-    );
-}
-
-function TestMusic() {
-    return (
-        <section>
-            <div className={styles.sticky}>
-                <h1>MUSIC ENDPOINTS</h1>
-            </div>
-            <div className={styles.settingsSection}>
-                {API.musicEndpoints.map((obj, idx) => (
-                    <TestComponent {...obj} key={idx} />
-                ))}
-            </div>
-        </section>
-    );
-}
-
-function TestPreferences() {
-    return (
-        <section>
-            <div className={styles.sticky}>
-                <h1>PREFERENCE ENDPOINTS</h1>
-            </div>
-            <div className={styles.settingsSection}>
-                {API.prefEndpoints.map((obj, idx) => (
+                {endpoints.map((obj, idx) => (
                     <TestComponent {...obj} key={idx} />
                 ))}
             </div>
@@ -561,24 +536,18 @@ function NavLinks() {
                 <h1>NAV LINKS</h1>
             </div>
             <div className={styles.settingsSection}>
-                {navLinks.map(({ name, link }) => {
-                    return (
-                        <Link
-                            key={name}
-                            href={link}
-                            style={{ display: 'block' }}
+                {navLinks.map(({ name, link }) => (
+                    <Link key={name} href={link} style={{ display: 'block' }}>
+                        <div
+                            className={styles.flexWrapper}
+                            style={{
+                                justifyContent: 'center',
+                            }}
                         >
-                            <div
-                                className={styles.flexWrapper}
-                                style={{
-                                    justifyContent: 'center',
-                                }}
-                            >
-                                <b>{name}</b>
-                            </div>
-                        </Link>
-                    );
-                })}
+                            <b>{name}</b>
+                        </div>
+                    </Link>
+                ))}
             </div>
         </section>
     );
@@ -588,10 +557,11 @@ export default function TestPage() {
     return (
         <main className={inter.className}>
             <NavLinks />
-            <TestUsers />
-            <TestPreferences />
-            <TestDevices />
-            <TestMusic />
+            <EndpointSection title="USER" endpoints={API.userEndpoints} />
+            <EndpointSection title="PREFERENCE" endpoints={API.prefEndpoints} />
+            <EndpointSection title="MUSIC" endpoints={API.musicEndpoints} />
+            <EndpointSection title="DEVICE" endpoints={API.deviceEndpoints} />
+            <EndpointSection title="SPOTIFY" endpoints={API.spotifyEndpoints} />
         </main>
     );
 }
