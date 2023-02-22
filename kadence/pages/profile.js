@@ -10,7 +10,6 @@ import { Dialog } from '@capacitor/dialog';
 import { Avatar, Box, Button, Fab, Stack, Tab, Tabs } from '@mui/material/';
 import NetworkAPI from '@/lib/networkAPI';
 
-
 const inter = Inter({ subsets: ['latin'] });
 
 function a11yProps(index) {
@@ -20,7 +19,7 @@ function a11yProps(index) {
     };
 }
 
-function BasicTabs(favArtist, favSong, favAlbum) {
+function BasicTabs({ favArtist, favSong, favAlbum }) {
     const [value, setValue] = React.useState(0);
 
     const handleChange = (event, newValue) => {
@@ -140,12 +139,16 @@ export default function Profile() {
                     </div>
                 </section>
                 <div className={styles.card}>
-                    <h4 className={styles.cardTitle}>{localStorage.getItem('username')}</h4>
+                    <h4 className={styles.cardTitle}>
+                        {localStorage.getItem('username')}
+                    </h4>
                 </div>
-                <div className={styles.cardText}>
-                    {bio}
-                </div>
-                {BasicTabs(faveArtist, faveAlbum , faveSong)}
+                <div className={styles.cardText}>{bio}</div>
+                <BasicTabs
+                    favArtist={faveArtist}
+                    favAlbum={faveAlbum}
+                    favSong={faveSong}
+                />
             </main>
             <Header title="Profile" />
             <BottomNav name="profile" />
