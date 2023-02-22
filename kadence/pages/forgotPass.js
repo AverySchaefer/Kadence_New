@@ -14,22 +14,23 @@ const inter = Inter({ subsets: ['latin'] });
 export default function Login() {
     const router = useRouter();
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         const form = e.target;
         const { email } = form;
         e.preventDefault();
 
         // Send Request
-        return NetworkAPI.post('/api/users/forgottenPass', {
-            email: email.value,
-        })
-            .then(({ data }) => {
-                console.log("Success!")
-                router.push('/emailConfirm');
-            })
-            .catch(({ status, error }) => {
-                console.log('Error: ', status, error);
+        try {
+            const data = await NetworkAPI.post('/api/users/forgottenPass', {
+                email: email.value,
             });
+            if (data) {
+                console.log('Success!');
+                router.push('/emailConfirm');
+            }
+        } catch (err) {
+            console.log('Error: ', err.status, err);
+        }
     }
 
     return (
@@ -60,10 +61,19 @@ export default function Login() {
                     method="POST"
                     action="/api/users/forgottenPass"
                     onSubmit={handleSubmit}
-                >   <h4>Please enter the email address associated with the account.</h4>
-                    <Textbox name="email" placeholder="Email Address" required />
+                >
+                    {' '}
+                    <h4>
+                        Please enter the email address associated with the
+                        account.
+                    </h4>
+                    <Textbox
+                        name="email"
+                        placeholder="Email Address"
+                        required
+                    />
                     <Link className={styles.note} href="/login">
-                        {"Remember your password? Login here!"}
+                        {'Remember your password? Login here!'}
                     </Link>
                     <Button type="submit">Send Email!</Button>
                 </form>

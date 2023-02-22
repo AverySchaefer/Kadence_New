@@ -2,8 +2,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from '@/styles/Register.module.css';
-import Textbox from '@/components/Textbox';
-import Button from '@/components/Button';
+import { Button, Textbox } from '@/components/';
 import { Inter } from '@next/font/google';
 import { useRouter } from 'next/router';
 
@@ -14,23 +13,24 @@ const inter = Inter({ subsets: ['latin'] });
 export default function Login() {
     const router = useRouter();
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         const form = e.target;
         const { username, newPassword, newConfirmedPassword } = form;
         e.preventDefault();
 
         // Send Request
-        return NetworkAPI.post('/api/users/resetPass', {
-            username: username.value,
-            newPassword: newPassword.value,
-            newConfirmedPassword: newConfirmedPassword.value,
-        })
-            .then(({ data }) => {
-                router.push('/login');
-            })
-            .catch(({ status, error }) => {
-                console.log('Error: ', status, error);
+        try {
+            const data = await NetworkAPI.post('/api/users/resetPass', {
+                username: username.value,
+                newPassword: newPassword.value,
+                newConfirmedPassword: newConfirmedPassword.value,
             });
+            if (data) {
+                router.push('/login');
+            }
+        } catch (err) {
+            console.log('Error: ', err.status, err);
+        }
     }
 
     return (
@@ -61,7 +61,7 @@ export default function Login() {
                     method="POST"
                     action="/api/users/changePass"
                     onSubmit={handleSubmit}
-                    >
+                >
                     <Textbox name="username" placeholder="Username" required />
                     <Textbox
                         name="newPassword"
