@@ -9,14 +9,11 @@ import { useRouter } from 'next/router';
 import { signIn } from 'next-auth/react';
 import { useState } from 'react';
 import { Inter } from '@next/font/google';
-
-
+import { Dialog } from '@capacitor/dialog';
 
 import NetworkAPI from '@/lib/networkAPI';
 
 const inter = Inter({ subsets: ['latin'] });
-
-
 
 export default function Register() {
     const [profilePrivate, setProfilePrivate] = useState(true);
@@ -33,7 +30,6 @@ export default function Register() {
     const [maxPlaylistLength, setMaxPlaylistLength] = useState(60);
     const [faveGenres, setFaveGenres] = useState('Lo-fi');
 
-
     const [intervalShort, setIntervalShort] = useState(5);
     const [intervalLong, setIntervalLong] = useState(10);
     const [rampUpTime, setRampUpTime] = useState(0);
@@ -43,8 +39,7 @@ export default function Register() {
 
     const router = useRouter();
 
-    function submitData() {
-
+    async function submitData() {
         const musicPrefData = {
             username: localStorage.getItem('username'),
             allowExplicit,
@@ -67,24 +62,21 @@ export default function Register() {
             mood,
             zipcode,
         };
-        // Update User object
-        NetworkAPI.patch('/api/users/update', userData)
-            .then(({ data }) => {
-                console.log('Successfully updated user', data);
-            })
-            .catch(({ status, error }) => {
-                console.log('Error: ', status, error);
-            });
 
-        // Update Music Preferences Object
-        NetworkAPI.patch('/api/preferences/update', musicPrefData)
-            .then(({ data }) => {
-                console.log('Successfully updated preference', data);
-                router.push('/home');
-            })
-            .catch(({ status, error }) => {
-                console.log('Error: ', status, error);
+        try {
+            await NetworkAPI.patch('/api/users/update', userData);
+            await NetworkAPI.patch('/api/preferences/update', musicPrefData);
+            Dialog.alert({
+                title: 'Success',
+                message: `Settings successfully saved.`,
             });
+            router.push('/home');
+        } catch (err) {
+            Dialog.alert({
+                title: 'Error Occurred',
+                message: `Error occurred while saving: ${err.message}`,
+            });
+        }
     }
     return (
         <>
@@ -101,49 +93,61 @@ export default function Register() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <main className={[inter.className, styles.main].join(' ')}>
-                <div
-                    className={styles.formInfo}
-                >
+                <div className={styles.formInfo}>
                     <h1 className={styles.title}>Get set up with</h1>
                     <h1 className={styles.title}>Kadence!!</h1>
-                    <br/>
+                    <br />
                     <h2>Write a short bio!</h2>
-                    <textarea name="bio" rows="3" cols="40" placeholder='Bio'/>
+                    <textarea
+                        name="bio"
+                        rows="3"
+                        cols="40"
+                        placeholder="Bio"
+                        onChange={(e) => setBio(e.target.value)}
+                        value={bio}
+                    />
                     <h2>Set your preferences!</h2>
                     <div className={styles.switch}>
-                        <FormControlLabel 
-                            label="Set profile to private" 
-                            control={<Switch defaultChecked 
-                                name="private" 
-                                onChange={(e) =>
-                                    setProfilePrivate(e.target.checked)
-                                }/>
+                        <FormControlLabel
+                            label="Set profile to private"
+                            control={
+                                <Switch
+                                    defaultChecked
+                                    name="private"
+                                    onChange={(e) =>
+                                        setProfilePrivate(e.target.checked)
+                                    }
+                                />
                             }
                         />
-                        <FormControlLabel 
-                            label="Wait to save playlists" 
-                            control={<Switch defaultChecked 
-                                name="waitToSave" 
-                                onChange={(e) =>
-                                    setWaitToSave(e.target.checked)
-                                }/>
+                        <FormControlLabel
+                            label="Wait to save playlists"
+                            control={
+                                <Switch
+                                    checked={waitToSave}
+                                    name="waitToSave"
+                                    onChange={(e) =>
+                                        setWaitToSave(e.target.checked)
+                                    }
+                                />
                             }
                         />
-                        <FormControlLabel 
-                            label="Allow explicit songs" 
-                            control={<Switch defaultChecked 
-                                name="explicit" 
-                                onChange={(e) =>
-                                    setAllowExplicit(e.target.checked)
-                                }/>
+                        <FormControlLabel
+                            label="Allow explicit songs"
+                            control={
+                                <Switch
+                                    checked={allowExplicit}
+                                    name="explicit"
+                                    onChange={(e) =>
+                                        setAllowExplicit(e.target.checked)
+                                    }
+                                />
                             }
                         />
                     </div>
                     <h3>Lyrical vs. Instrumental: </h3>
                     <div className={styles.sliderContainer}>
-                        <span className={styles.sliderLabel}>
-                            Lyrical
-                        </span>
+                        <span className={styles.sliderLabel}>Lyrical</span>
                         <input
                             type="range"
                             min="0"
@@ -156,15 +160,13 @@ export default function Register() {
                                 )
                             }
                         />
-                        <span className={styles.sliderLabel}>
-                            Instrumental
-                        </span>
+                        <span className={styles.sliderLabel}>Instrumental</span>
                     </div>
                     <div>
                         <h3>Song Length Preferences: </h3>
                         <div className={styles.subsetting}>
                             <div className={styles.flexWrapper}>
-                                <i>Minimum: 	&nbsp;</i>
+                                <i>Minimum: &nbsp;</i>
                                 <div>
                                     <input
                                         type="number"
@@ -173,10 +175,8 @@ export default function Register() {
                                         value={minSongLength}
                                         onChange={(e) =>
                                             setMinSongLength(
-                                                parseInt(
-                                                    e.target.value,
-                                                    10
-                                                ) % 10000
+                                                parseInt(e.target.value, 10) %
+                                                    10000
                                             )
                                         }
                                     />{' '}
@@ -184,7 +184,7 @@ export default function Register() {
                                 </div>
                             </div>
                             <div className={styles.flexWrapper}>
-                                <i>Maximum: 	&nbsp;</i>
+                                <i>Maximum: &nbsp;</i>
                                 <div>
                                     <input
                                         type="number"
@@ -193,10 +193,8 @@ export default function Register() {
                                         value={maxSongLength}
                                         onChange={(e) =>
                                             setMaxSongLength(
-                                                parseInt(
-                                                    e.target.value,
-                                                    10
-                                                ) % 10000
+                                                parseInt(e.target.value, 10) %
+                                                    10000
                                             )
                                         }
                                     />{' '}
@@ -209,7 +207,7 @@ export default function Register() {
                         <h3>Playlist Length Preferences: </h3>
                         <div className={styles.subsetting}>
                             <div className={styles.flexWrapper}>
-                                <i>Minimum: 	&nbsp;</i>
+                                <i>Minimum: &nbsp;</i>
                                 <div>
                                     <input
                                         type="number"
@@ -218,10 +216,8 @@ export default function Register() {
                                         value={minPlaylistLength}
                                         onChange={(e) =>
                                             setMinPlaylistLength(
-                                                parseInt(
-                                                    e.target.value,
-                                                    10
-                                                ) % 10000
+                                                parseInt(e.target.value, 10) %
+                                                    10000
                                             )
                                         }
                                     />{' '}
@@ -229,7 +225,7 @@ export default function Register() {
                                 </div>
                             </div>
                             <div className={styles.flexWrapper}>
-                                <i>Maximum: 	&nbsp;</i>
+                                <i>Maximum: &nbsp;</i>
                                 <div>
                                     <input
                                         type="number"
@@ -238,10 +234,8 @@ export default function Register() {
                                         value={maxPlaylistLength}
                                         onChange={(e) =>
                                             setMaxPlaylistLength(
-                                                parseInt(
-                                                    e.target.value,
-                                                    10
-                                                ) % 10000
+                                                parseInt(e.target.value, 10) %
+                                                    10000
                                             )
                                         }
                                     />{' '}
@@ -273,9 +267,7 @@ export default function Register() {
                             <b>Preferred Genre: &nbsp;</b>
                             <select
                                 className={styles.select}
-                                onChange={(e) =>
-                                    setFaveGenres(e.target.value)
-                                }
+                                onChange={(e) => setFaveGenres(e.target.value)}
                                 value={faveGenres}
                             >
                                 {genres.map((genre) => (
@@ -286,7 +278,9 @@ export default function Register() {
                             </select>
                         </div>
                     </div>
-                    <h2 className={styles.text}>Set Your Mode-Specific Preferences!</h2>
+                    <h2 className={styles.text}>
+                        Set Your Mode-Specific Preferences!
+                    </h2>
                     <div className={styles.settingsSection}>
                         <div>
                             <h3>Interval Mode Times: </h3>
@@ -394,7 +388,7 @@ export default function Register() {
                                 </select>
                             </div>
                         </div>
-                        <br/>
+                        <br />
                         <div className={styles.left}>
                             <div className={styles.flexWrapper}>
                                 <b>Local Mode Zip Code: &nbsp;</b>
@@ -415,7 +409,9 @@ export default function Register() {
                         </div>
                     </div>
                     <div className={styles.center}>
-                        <Button onClick={() => signIn()}>Sign in to Spotify</Button>
+                        <Button onClick={() => signIn()}>
+                            Sign in to Spotify
+                        </Button>
                     </div>
                     <div className={styles.center}>
                         <Button onClick={submitData}>
