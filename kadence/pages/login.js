@@ -21,7 +21,7 @@ export default function Login() {
 
         // Send Request
         try {
-            const data = await NetworkAPI.get('/api/users/login', {
+            const { data } = await NetworkAPI.get('/api/users/login', {
                 username: formUsername.value,
                 enteredPW: formPassword.value,
             });

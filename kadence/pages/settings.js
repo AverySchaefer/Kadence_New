@@ -86,7 +86,7 @@ export default function Settings() {
     const [rampUpTime, setRampUpTime] = useState(0);
     const [rampDownTime, setRampDownTime] = useState(0);
     const [mood, setMood] = useState('Happy');
-    const [zipCode, setZipCode] = useState(69420);
+    const [zipCode, setZipCode] = useState(47907);
 
     const [loaded, setLoaded] = useState(false);
     const [musicPrefId, setMusicPrefId] = useState(null);
@@ -96,9 +96,12 @@ export default function Settings() {
         async function fetchData() {
             try {
                 // Get User Data first
-                const userData = await NetworkAPI.get('/api/users/getUsers', {
-                    username: localStorage.getItem('username'),
-                });
+                const { data: userData } = await NetworkAPI.get(
+                    '/api/users/getUsers',
+                    {
+                        username: localStorage.getItem('username'),
+                    }
+                );
                 setProfilePrivate(userData.private);
                 setWaitToSave(userData.waitToSave);
                 setIntervalShort(userData.intervalShort);
@@ -110,7 +113,7 @@ export default function Settings() {
                 setMusicPrefId(userData.musicPrefs);
 
                 // Get preference data second (using musicPrefs id)
-                const prefData = await NetworkAPI.get(
+                const { data: prefData } = await NetworkAPI.get(
                     '/api/preferences/getPreferences',
                     {
                         uid: userData.musicPrefs,
@@ -175,7 +178,7 @@ export default function Settings() {
         } catch (err) {
             Dialog.alert({
                 title: 'Error Occurred',
-                message: `${err.status} ${err}`,
+                message: `${err.status} ${err.message}`,
             });
         }
     }
@@ -214,10 +217,10 @@ export default function Settings() {
                 title: 'Success',
                 message: `Settings successfully saved.`,
             });
-        } catch ({ status, error }) {
+        } catch (err) {
             Dialog.alert({
                 title: 'Error Occurred',
-                message: `Error occurred while saving: ${status} ${error}`,
+                message: `Error occurred while saving: ${err.message}`,
             });
         }
     }
@@ -784,7 +787,12 @@ export default function Settings() {
             </main>
             <Header title="Settings" prevLink="/profile" />
             <NavBar>
-                <button onClick={submitData}>Save Changes</button>
+                <button
+                    style={{ paddingInline: '0.5rem' }}
+                    onClick={submitData}
+                >
+                    Save Changes
+                </button>
             </NavBar>
         </div>
     );
