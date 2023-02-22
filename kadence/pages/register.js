@@ -5,10 +5,10 @@ import styles from '@/styles/Register.module.css';
 import { Button, Textbox } from '@/components/';
 import { Inter } from '@next/font/google';
 import { Dialog } from '@capacitor/dialog';
+import { useRouter } from 'next/router';
 
 import Password from '@/lib/passwordStrength';
 import NetworkAPI from '@/lib/networkAPI';
-import { useRouter } from 'next/router';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -54,7 +54,10 @@ export default function Register() {
                     title: 'Success',
                     message: `Account created successfully!`,
                 });
-                router.push('/login');
+                const jwt = data.token;
+                localStorage.setItem('jwt', jwt);
+                localStorage.setItem('username', username.value);
+                router.push('/registerInfo');
             }
         } catch (err) {
             Dialog.alert({

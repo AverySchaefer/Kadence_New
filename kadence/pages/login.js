@@ -30,9 +30,8 @@ export default function Login() {
                 console.log(data);
                 // Publish user to subscribers and store in local storage to stay logged in between page refreshes
                 const jwt = data.token;
-                const { username } = data;
                 localStorage.setItem('jwt', jwt);
-                localStorage.setItem('username', username);
+                localStorage.setItem('username', formUsername.value);
                 router.push('/profile');
             }
         } catch (err) {

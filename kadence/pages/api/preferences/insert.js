@@ -26,7 +26,8 @@ handler.post(async (req, res) => {
         res.status(500).send();
     } else {
         console.log('Document Created');
-        res.status(200).send({ id: result.insertedID });
+        res.status(200).json({ id: result.insertedId });
+        
     }
 });
 
