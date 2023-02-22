@@ -4,9 +4,9 @@ import styles from '@/styles/Register.module.css';
 import Button from '@/components/Button';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import Textbox from '@/components/Textbox';
 import { languages, genres, moods } from '@/lib/promptOptions';
 import { useRouter } from 'next/router';
-import { signIn } from 'next-auth/react';
 import { useState } from 'react';
 import { Inter } from '@next/font/google';
 import { Dialog } from '@capacitor/dialog';
@@ -19,7 +19,9 @@ export default function Register() {
     const [profilePrivate, setProfilePrivate] = useState(true);
     const [bio, setBio] = useState('');
     const [waitToSave, setWaitToSave] = useState(true);
-    const [defaultDevice, setDefaultDevice] = useState(null);
+    const [favoriteArtist, setFaveArtist] = useState('');
+    const [favoriteAlbum, setFaveAlbum] = useState('');
+    const [favoriteSong, setFaveSong] = useState('');
 
     const [allowExplicit, setAllowExplicit] = useState(false);
     const [lyricalVsInstrumental, setLyricalVsInstrumental] = useState(80);
@@ -40,6 +42,8 @@ export default function Register() {
     const router = useRouter();
 
     async function submitData() {
+        console.log('Submitting Data');
+        console.log(localStorage.getItem('username'));
         const musicPrefData = {
             // Needs to be preference_id, can get that from getUsers api if the preference object
             // already exists or create a new preference object here (might be better, but then
@@ -55,6 +59,7 @@ export default function Register() {
             minPlaylistLength,
             maxPlaylistLength,
             faveGenres,
+            faveArtists: favoriteArtist,
         };
         const userData = {
             username: localStorage.getItem('username'),
@@ -66,6 +71,9 @@ export default function Register() {
             rampDownTime,
             mood,
             zipcode,
+            favoriteArtist,
+            favoriteAlbum,
+            favoriteSong,
         };
 
         try {
@@ -75,7 +83,7 @@ export default function Register() {
                 title: 'Success',
                 message: `Settings successfully saved.`,
             });
-            router.push('/home');
+            router.push('/platform');
         } catch (err) {
             Dialog.alert({
                 title: 'Error Occurred',
@@ -110,6 +118,33 @@ export default function Register() {
                         placeholder="Bio"
                         onChange={(e) => setBio(e.target.value)}
                         value={bio}
+                    />
+                    <h3>Who is your favorite artist?</h3>
+                    <Textbox
+                        name="favoriteArtist"
+                        type="text"
+                        placeholder="Artist"
+                        onChange={(e) => setFaveArtist(e.target.value)}
+                        value={favoriteArtist}
+                        required
+                    />
+                    <h3>What is your favorite song?</h3>
+                    <Textbox
+                        name="favoriteSong"
+                        type="text"
+                        placeholder="Song"
+                        onChange={(e) => setFaveSong(e.target.value)}
+                        value={favoriteSong}
+                        required
+                    />
+                    <h3>What is your favorite album?</h3>
+                    <Textbox
+                        name="favoriteAlbum"
+                        type="text"
+                        placeholder="Album"
+                        onChange={(e) => setFaveAlbum(e.target.value)}
+                        value={favoriteAlbum}
+                        required
                     />
                     <h2>Set your preferences!</h2>
                     <div className={styles.switch}>
@@ -385,9 +420,9 @@ export default function Register() {
                                     onChange={(e) => setMood(e.target.value)}
                                     value={mood}
                                 >
-                                    {moods.map((mood) => (
-                                        <option value={mood} key={mood}>
-                                            {mood}
+                                    {moods.map((m) => (
+                                        <option value={m} key={m}>
+                                            {m}
                                         </option>
                                     ))}
                                 </select>
@@ -412,11 +447,6 @@ export default function Register() {
                                 />
                             </div>
                         </div>
-                    </div>
-                    <div className={styles.center}>
-                        <Button onClick={() => signIn()}>
-                            Sign in to Spotify
-                        </Button>
                     </div>
                     <div className={styles.center}>
                         <Button onClick={submitData}>

@@ -3,10 +3,13 @@ import Image from 'next/image';
 import SettingsIcon from '@mui/icons-material/Settings';
 import Link from 'next/link';
 import Head from 'next/head';
-import { BottomNav } from '@/components/';
 import styles from '@/styles/Profile.module.css';
+import { BottomNav } from '@/components/';
 import { Inter } from '@next/font/google';
+import { Dialog } from '@capacitor/dialog';
 import { Avatar, Box, Button, Fab, Stack, Tab, Tabs } from '@mui/material/';
+import NetworkAPI from '@/lib/networkAPI';
+
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -17,7 +20,7 @@ function a11yProps(index) {
     };
 }
 
-function BasicTabs() {
+function BasicTabs(favArtist, favSong, favAlbum) {
     const [value, setValue] = React.useState(0);
 
     const handleChange = (event, newValue) => {
@@ -43,13 +46,13 @@ function BasicTabs() {
                     <Box>
                         <Stack spacing={2} alignItems="center">
                             <h4 className={styles.tabTitle}>Favorite Artist</h4>
-                            <p>Snarky Puppy</p>
+                            <p>{favArtist}</p>
                             <br />
                             <h4 className={styles.tabTitle}>Favorite Song</h4>
-                            <p>Sleeper</p>
+                            <p>{favSong}</p>
                             <br />
                             <h4 className={styles.tabTitle}>Favorite Album</h4>
-                            <p>Immigrance</p>
+                            <p>{favAlbum}</p>
                             <br />
                             <Button variant="contained">Edit</Button>
                         </Stack>
@@ -80,7 +83,40 @@ function BasicTabs() {
     );
 }
 
-function Profile() {
+export default function Profile() {
+    const [faveArtist, setFaveArtist] = React.useState('Snarky Puppy');
+    const [faveAlbum, setFaveAlbum] = React.useState('Lingus');
+    const [faveSong, setFaveSong] = React.useState('What About Me?');
+    const [bio, setBio] = React.useState('Something about me...');
+
+    const [loaded, setLoaded] = React.useState(false);
+
+    // Fetch values from database
+    React.useEffect(() => {
+        async function fetchData() {
+            try {
+                // Get User Data first
+                const userData = await NetworkAPI.get('/api/users/getUsers', {
+                    username: localStorage.getItem('username'),
+                });
+                setFaveArtist(userData.favArtist);
+                setFaveAlbum(userData.favAlbum);
+                setFaveSong(userData.favSong);
+                setBio(userData.bio);
+            } catch (err) {
+                Dialog.alert({
+                    title: 'Error',
+                    message: `An error occurred while fetching your data: ${err.message}. Some defaults have been set in their place.`,
+                });
+            } finally {
+                setLoaded(true);
+            }
+        }
+        fetchData();
+    }, []);
+
+    if (!loaded) return '';
+
     return (
         <div className={inter.className}>
             <Head>
@@ -104,12 +140,12 @@ function Profile() {
                     </div>
                 </section>
                 <div className={styles.card}>
-                    <h4 className={styles.cardTitle}>Nathan Simon</h4>
+                    <h4 className={styles.cardTitle}>{localStorage.getItem('username')}</h4>
                 </div>
                 <div className={styles.cardText}>
-                    Nathan enjoys jazz, punk rock, and funk.
+                    {bio}
                 </div>
-                <BasicTabs />
+                {BasicTabs(faveArtist, faveAlbum , faveSong)}
             </main>
             <Header title="Profile" />
             <BottomNav name="profile" />
@@ -131,5 +167,3 @@ function Header({ title }) {
         </div>
     );
 }
-
-export default Profile;

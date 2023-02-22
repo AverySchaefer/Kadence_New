@@ -54,6 +54,9 @@ export default function Register() {
                     title: 'Success',
                     message: `Account created successfully!`,
                 });
+                const jwt = data.token;
+                localStorage.setItem('jwt', jwt);
+                localStorage.setItem('username', username.value);
                 router.push('/registerInfo');
             }
         } catch (err) {
