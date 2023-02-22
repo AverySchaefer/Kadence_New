@@ -787,7 +787,12 @@ export default function Settings() {
             </main>
             <Header title="Settings" prevLink="/profile" />
             <NavBar>
-                <button onClick={submitData}>Save Changes</button>
+                <button
+                    style={{ paddingInline: '0.5rem' }}
+                    onClick={submitData}
+                >
+                    Save Changes
+                </button>
             </NavBar>
         </div>
     );
