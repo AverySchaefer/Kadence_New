@@ -41,7 +41,12 @@ export default function Register() {
 
     async function submitData() {
         const musicPrefData = {
-            username: localStorage.getItem('username'),
+            // Needs to be preference_id, can get that from getUsers api if the preference object
+            // already exists or create a new preference object here (might be better, but then
+            // must make updateUser api call to set the preference field to the inserted document
+            // id. Might just have to discuss tomorrow and see what everybody decides)
+            username: null,
+            // Rest are fine
             allowExplicit,
             lyricalVsInstrumental,
             prefLanguage,
