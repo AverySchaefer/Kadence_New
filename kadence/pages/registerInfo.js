@@ -49,7 +49,6 @@ export default function Register() {
             // already exists or create a new preference object here (might be better, but then
             // must make updateUser api call to set the preference field to the inserted document
             // id. Might just have to discuss tomorrow and see what everybody decides)
-            username: null,
             // Rest are fine
             allowExplicit,
             lyricalVsInstrumental,
@@ -61,24 +60,27 @@ export default function Register() {
             faveGenres,
             faveArtists: favoriteArtist,
         };
-        const userData = {
-            username: localStorage.getItem('username'),
-            private: profilePrivate,
-            bio,
-            intervalShort,
-            intervalLong,
-            rampUpTime,
-            rampDownTime,
-            mood,
-            zipcode,
-            favoriteArtist,
-            favoriteAlbum,
-            favoriteSong,
-        };
+        
 
         try {
+            
+            const {data} = await NetworkAPI.post('/api/preferences/insert', musicPrefData);
+            const userData = {
+                username: localStorage.getItem('username'),
+                private: profilePrivate,
+                bio,
+                musicPrefs:data.id,
+                intervalShort,
+                intervalLong,
+                rampUpTime,
+                rampDownTime,
+                mood,
+                zipcode,
+                favoriteArtist,
+                favoriteAlbum,
+                favoriteSong,
+            };
             await NetworkAPI.patch('/api/users/update', userData);
-            await NetworkAPI.patch('/api/preferences/update', musicPrefData);
             Dialog.alert({
                 title: 'Success',
                 message: `Settings successfully saved.`,

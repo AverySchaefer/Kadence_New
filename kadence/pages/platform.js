@@ -51,7 +51,7 @@ export default function Platform() {
                             className={styles.platformImage}
                             priority
                         />
-                        <Button variant="contained" onClick={() => signIn()}>
+                        <Button variant="contained" onClick={handleSpotify}>
                             Connect to Apple Music!
                         </Button>
                     </Stack>
