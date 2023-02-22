@@ -11,7 +11,7 @@ const customJestConfig = {
     // This runs jest.setup.js so the next.config is available to our tests
     setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
 
-    // This resoolves our [Module Path Aliases](https://nextjs.org/docs/advanced-features/module-path-aliases)
+    // This resolves our [Module Path Aliases](https://nextjs.org/docs/advanced-features/module-path-aliases)
     // in Jest tests to their absolute paths
     moduleNameMapper: {
         '@/(.*)$': '<rootDir>/$1',

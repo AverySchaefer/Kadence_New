@@ -18,7 +18,6 @@
         "eslint:recommended",
         "airbnb-base",
         "next/core-web-vitals",
-        "next/babel",
         "prettier"
     ],
     "plugins": ["jest"],
