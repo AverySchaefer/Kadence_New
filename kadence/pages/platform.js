@@ -2,7 +2,6 @@ import * as React from 'react';
 import Head from 'next/head';
 import styles from '@/styles/Platform.module.css';
 import Image from 'next/image';
-import { signIn, useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { Dialog } from '@capacitor/dialog';
 import { Box, Button, Stack } from '@mui/material/';
@@ -10,27 +9,16 @@ import NetworkAPI from '@/lib/networkAPI';
 
 export default function Platform() {
     const router = useRouter();
-    const { data: session, status } = useSession();
-    console.log(status);
-    console.log(session);
 
     async function handleSpotify() {
-        // This is for changing the platform (logout of one)
-        if (status === "authenticated" || session) {
-            signOut();
-            console.log("Signed out");
-        }
-        
-        signIn();
-        console.log("Signed in");
         const newPlatformData = {
             username: localStorage.getItem('username'),
             musicPlatforms: "Spotify",
         };
         
         try {
-            await NetworkAPI.patch('/api/users/update', newPlatformData);
-            router.push('/profile');
+            console.log("Try1");
+            await NetworkAPI.patch('/api/users/update', newPlatformData).then(router.push("/spotify/display"));
         } catch (err) {
             Dialog.alert({
                 title: 'Error',
