@@ -111,7 +111,6 @@ export default function Profile() {
     const [faveSong, setFaveSong] = React.useState('What About Me?');
     const [bio, setBio] = React.useState('Something about me...');
     const [musicPlatforms, setMusicPlatforms] = React.useState('Spotify');
-    const [profilePic, setProfilePic] = React.useState('');
 
     const [loaded, setLoaded] = React.useState(false);
     
@@ -128,7 +127,6 @@ export default function Profile() {
                 setFaveSong(userData.favoriteSong);
                 setBio(userData.bio);
                 setMusicPlatforms(userData.musicPlatforms);
-                setProfilePic(userData.profilePic);
             } catch (err) {
                 Dialog.alert({
                     title: 'Error',
@@ -160,7 +158,7 @@ export default function Profile() {
             <main className={styles.main}>
                 <section>
                     <div className={styles.picture}>
-                        <Avatar src={profilePic} alt="NS" sx={{ width: 150, height: 150 }}>
+                        <Avatar alt="NS" sx={{ width: 150, height: 150 }}>
                             {localStorage.getItem('username')[0].toUpperCase()}
                         </Avatar>
                     </div>

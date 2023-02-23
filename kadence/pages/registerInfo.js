@@ -39,7 +39,6 @@ export default function Register() {
     const [rampDownTime, setRampDownTime] = useState(0);
     const [mood, setMood] = useState('Happy');
     const [zipCode, setZipCode] = useState(69420);
-    const [profilePic, setProfilePic] = useState('');
 
     const router = useRouter();
 
@@ -83,7 +82,6 @@ export default function Register() {
                 favoriteArtist,
                 favoriteAlbum,
                 favoriteSong,
-                profilePic
             };
             await NetworkAPI.patch('/api/users/update', userData);
             Dialog.alert({
@@ -455,17 +453,6 @@ export default function Register() {
                                     }
                                 />
                             </div>
-                        </div>
-                        <br />
-                        <div className={styles.left}>
-                            <h3>Upload a profile picture!</h3>
-                        </div>
-                        <div className={styles.left}>
-                            <input type="file" name="profilePic"  accept="image/*" onChange={(e) => {
-                                setProfilePic((e.target.value).replace("C:\\fakepath\\", ""));
-                                console.log({profilePic});
-                            }
-                            }/>
                         </div>
                         <br />
                     </div>
