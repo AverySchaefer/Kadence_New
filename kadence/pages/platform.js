@@ -18,7 +18,7 @@ export default function Platform() {
         
         try {
             console.log("Try1");
-            await NetworkAPI.patch('/api/users/update', newPlatformData).then(router.push("/spotify/display"));
+            await NetworkAPI.patch('/api/users/update', newPlatformData).then(router.push("/profile"));
         } catch (err) {
             Dialog.alert({
                 title: 'Error',

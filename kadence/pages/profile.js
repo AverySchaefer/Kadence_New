@@ -34,9 +34,11 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatforms }) {
 
     let platform = "";
     let alt = "";
+    let useLink = "";
     if (musicPlatforms === "Spotify") {
         platform = "/Spotify.jpg";
         alt = "Spotify Logo";
+        useLink = '/spotify/display';
     } else if (musicPlatforms === "Apple Music") {
         platform = "/apple-music.jpg";
         alt = "Apple Music Logo";
@@ -84,6 +86,7 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatforms }) {
                                 className={styles.platformImage}
                                 priority
                             />
+                            <Button variant="contained" onClick={() => router.push(useLink)}>Use Platform</Button>
                             <Button variant="contained" onClick={handleClick}>Change</Button>
                         </Stack>
                     </Box>
