@@ -7,6 +7,7 @@ const handler = async (req, res) => {
     } = await getSession({ req });
     const response = await getCurrentSong(accessToken);
     const songItem = await response.json();
+    console.log(songItem);
 
     return res.status(200).json(songItem);
 };
