@@ -17,7 +17,7 @@ handler.post(async (req, res) => {
         res.status(500).send('Request not acknowledged by database');
     } else {
         console.log('Document Created');
-        res.status(200).json({ id: result.insertedID });
+        res.status(200).json({ id: result.insertedId });
     }
 });
 
