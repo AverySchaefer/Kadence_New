@@ -24,50 +24,54 @@ export default function Register() {
     const [favoriteSong, setFaveSong] = useState('');
 
     const [allowExplicit, setAllowExplicit] = useState(false);
-    const [lyricalVsInstrumental, setLyricalVsInstrumental] = useState(80);
-    const [prefLanguage, setPrefLanguage] = useState('English');
+    const [lyricalInstrumental, setlyricalInstrumental] = useState(80);
+    const [lyricalLanguage, setlyricalLanguage] = useState('English');
     const [minSongLength, setMinSongLength] = useState(0);
     const [maxSongLength, setMaxSongLength] = useState(300);
     const [minPlaylistLength, setMinPlaylistLength] = useState(0);
     const [maxPlaylistLength, setMaxPlaylistLength] = useState(60);
     const [faveGenres, setFaveGenres] = useState('Lo-fi');
+    const [faveArtists, setFaveArtists] = useState([]);
 
     const [intervalShort, setIntervalShort] = useState(5);
     const [intervalLong, setIntervalLong] = useState(10);
     const [rampUpTime, setRampUpTime] = useState(0);
     const [rampDownTime, setRampDownTime] = useState(0);
     const [mood, setMood] = useState('Happy');
-    const [zipcode, setZipcode] = useState(69420);
+    const [zipCode, setZipCode] = useState(69420);
+    const [profilePic, setProfilePic] = useState('');
 
     const router = useRouter();
 
     async function submitData() {
-        console.log('Submitting Data');
-        console.log(localStorage.getItem('username'));
-        const musicPrefData = {
-            // Needs to be preference_id, can get that from getUsers api if the preference object
-            // already exists or create a new preference object here (might be better, but then
-            // must make updateUser api call to set the preference field to the inserted document
-            // id. Might just have to discuss tomorrow and see what everybody decides)
-            // Rest are fine
-            allowExplicit,
-            lyricalVsInstrumental,
-            prefLanguage,
-            minSongLength,
-            maxSongLength,
-            minPlaylistLength,
-            maxPlaylistLength,
-            faveGenres,
-            faveArtists: favoriteArtist,
-        };
-        
+        setFaveArtists(
+            faveArtists.push(favoriteArtist)
+        );
 
         try {
+            const musicPrefData = {
+                // Needs to be preference_id, can get that from getUsers api if the preference object
+                // already exists or create a new preference object here (might be better, but then
+                // must make updateUser api call to set the preference field to the inserted document
+                // id. Might just have to discuss tomorrow and see what everybody decides)
+                // Rest are fine
+                allowExplicit,
+                lyricalInstrumental,
+                lyricalLanguage,
+                minSongLength,
+                maxSongLength,
+                minPlaylistLength,
+                maxPlaylistLength,
+                faveGenres,
+                faveArtists,
+            };
             
             const {data} = await NetworkAPI.post('/api/preferences/insert', musicPrefData);
+            
             const userData = {
                 username: localStorage.getItem('username'),
                 private: profilePrivate,
+                waitToSave,
                 bio,
                 musicPrefs:data.id,
                 intervalShort,
@@ -75,10 +79,11 @@ export default function Register() {
                 rampUpTime,
                 rampDownTime,
                 mood,
-                zipcode,
+                zipCode,
                 favoriteArtist,
                 favoriteAlbum,
                 favoriteSong,
+                profilePic
             };
             await NetworkAPI.patch('/api/users/update', userData);
             Dialog.alert({
@@ -154,7 +159,7 @@ export default function Register() {
                             label="Set profile to private"
                             control={
                                 <Switch
-                                    defaultChecked
+                                    checked={profilePrivate}
                                     name="private"
                                     onChange={(e) =>
                                         setProfilePrivate(e.target.checked)
@@ -180,8 +185,10 @@ export default function Register() {
                                 <Switch
                                     checked={allowExplicit}
                                     name="explicit"
-                                    onChange={(e) =>
+                                    onChange={(e) =>  {
                                         setAllowExplicit(e.target.checked)
+                                        console.log(allowExplicit);
+                                    }
                                     }
                                 />
                             }
@@ -195,9 +202,9 @@ export default function Register() {
                             min="0"
                             max="100"
                             step="1"
-                            value={lyricalVsInstrumental}
+                            value={lyricalInstrumental}
                             onChange={(e) =>
-                                setLyricalVsInstrumental(
+                                setlyricalInstrumental(
                                     parseInt(e.target.value, 10)
                                 )
                             }
@@ -292,9 +299,9 @@ export default function Register() {
                             <select
                                 className={styles.select}
                                 onChange={(e) =>
-                                    setPrefLanguage(e.target.value)
+                                    setlyricalLanguage(e.target.value)
                                 }
-                                value={prefLanguage}
+                                value={lyricalLanguage}
                             >
                                 {languages.map((language) => (
                                     <option value={language} key={language}>
@@ -440,15 +447,27 @@ export default function Register() {
                                     min="0"
                                     max="99999"
                                     step="1"
-                                    value={zipcode}
+                                    value={zipCode}
                                     onChange={(e) =>
-                                        setZipcode(
+                                        setZipCode(
                                             parseInt(e.target.value, 10) % 99999
                                         )
                                     }
                                 />
                             </div>
                         </div>
+                        <br />
+                        <div className={styles.left}>
+                            <h3>Upload a profile picture!</h3>
+                        </div>
+                        <div className={styles.left}>
+                            <input type="file" name="profilePic"  accept="image/*" onChange={(e) => {
+                                setProfilePic((e.target.value).replace("C:\\fakepath\\", ""));
+                                console.log({profilePic});
+                            }
+                            }/>
+                        </div>
+                        <br />
                     </div>
                     <div className={styles.center}>
                         <Button onClick={submitData}>

@@ -10,15 +10,19 @@ import NetworkAPI from '@/lib/networkAPI';
 
 export default function Platform() {
     const router = useRouter();
-    const { data: session } = useSession();
+    const { data: session, status } = useSession();
+    console.log(status);
+    console.log(session);
 
     async function handleSpotify() {
         // This is for changing the platform (logout of one)
-        if (session) {
+        if (status === "authenticated" || session) {
             signOut();
+            console.log("Signed out");
         }
         
         signIn();
+        console.log("Signed in");
         const newPlatformData = {
             username: localStorage.getItem('username'),
             musicPlatforms: "Spotify",

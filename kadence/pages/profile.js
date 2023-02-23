@@ -34,12 +34,15 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatforms }) {
 
     let platform = "";
     let alt = "";
+    let accountLink = "";
     if (musicPlatforms === "Spotify") {
         platform = "/Spotify.jpg";
         alt = "Spotify Logo";
+        accountLink = "https://www.spotify.com/us/account/apps/"
     } else if (musicPlatforms === "Apple Music") {
         platform = "/apple-music.jpg";
         alt = "Apple Music Logo";
+        accountLink = "https://music.apple.com/login";
     }
 
     return (
@@ -84,6 +87,7 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatforms }) {
                                 className={styles.platformImage}
                                 priority
                             />
+                            <Button variant="contained" href={accountLink}>Account</Button>
                             <Button variant="contained" onClick={handleClick}>Change</Button>
                         </Stack>
                     </Box>
@@ -104,9 +108,10 @@ export default function Profile() {
     const [faveSong, setFaveSong] = React.useState('What About Me?');
     const [bio, setBio] = React.useState('Something about me...');
     const [musicPlatforms, setMusicPlatforms] = React.useState('Spotify');
+    const [profilePic, setProfilePic] = React.useState('');
 
     const [loaded, setLoaded] = React.useState(false);
-
+    
     // Fetch values from database
     React.useEffect(() => {
         async function fetchData() {
@@ -120,7 +125,7 @@ export default function Profile() {
                 setFaveSong(userData.favoriteSong);
                 setBio(userData.bio);
                 setMusicPlatforms(userData.musicPlatforms);
-                console.log(userData.musicPlatforms);
+                setProfilePic(userData.profilePic);
             } catch (err) {
                 Dialog.alert({
                     title: 'Error',
@@ -152,7 +157,7 @@ export default function Profile() {
             <main className={styles.main}>
                 <section>
                     <div className={styles.picture}>
-                        <Avatar alt="NS" sx={{ width: 150, height: 150 }}>
+                        <Avatar src={profilePic} alt="NS" sx={{ width: 150, height: 150 }}>
                             {localStorage.getItem('username')[0].toUpperCase()}
                         </Avatar>
                     </div>
