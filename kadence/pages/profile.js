@@ -20,13 +20,27 @@ function a11yProps(index) {
     };
 }
 
-function BasicTabs({ favArtist, favSong, favAlbum }) {
+function BasicTabs({ favArtist, favSong, favAlbum, musicPlatforms }) {
     const [value, setValue] = React.useState(0);
     const router = useRouter();
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
+
+    const handleClick = () => {
+        router.push('/platform');
+    };
+
+    let platform = "";
+    let alt = "";
+    if (musicPlatforms === "Spotify") {
+        platform = "/Spotify.jpg";
+        alt = "Spotify Logo";
+    } else if (musicPlatforms === "Apple Music") {
+        platform = "/apple-music.jpg";
+        alt = "Apple Music Logo";
+    }
 
     return (
         <Box sx={{ width: '100%' }}>
@@ -63,14 +77,14 @@ function BasicTabs({ favArtist, favSong, favAlbum }) {
                     <Box>
                         <Stack spacing={2} alignItems="center">
                             <Image
-                                src="/Spotify.jpg"
-                                alt="Spotify Logo"
+                                src={platform}
+                                alt={alt}
                                 width="300"
                                 height="150"
                                 className={styles.platformImage}
                                 priority
                             />
-                            <Button variant="contained">Change</Button>
+                            <Button variant="contained" onClick={handleClick}>Change</Button>
                         </Stack>
                     </Box>
                 )}
@@ -89,6 +103,7 @@ export default function Profile() {
     const [faveAlbum, setFaveAlbum] = React.useState('Lingus');
     const [faveSong, setFaveSong] = React.useState('What About Me?');
     const [bio, setBio] = React.useState('Something about me...');
+    const [musicPlatforms, setMusicPlatforms] = React.useState('Spotify');
 
     const [loaded, setLoaded] = React.useState(false);
 
@@ -104,6 +119,8 @@ export default function Profile() {
                 setFaveAlbum(userData.favoriteAlbum);
                 setFaveSong(userData.favoriteSong);
                 setBio(userData.bio);
+                setMusicPlatforms(userData.musicPlatforms);
+                console.log(userData.musicPlatforms);
             } catch (err) {
                 Dialog.alert({
                     title: 'Error',
@@ -111,9 +128,6 @@ export default function Profile() {
                 });
             } finally {
                 setLoaded(true);
-                console.log('faveArtist: ', faveArtist);
-                console.log('faveAlbum: ', faveAlbum);
-                console.log('faveSong: ', faveSong);
             }
         }
         fetchData();
@@ -153,6 +167,7 @@ export default function Profile() {
                     favArtist={faveArtist}
                     favAlbum={faveAlbum}
                     favSong={faveSong}
+                    musicPlatforms={musicPlatforms}
                 />
             </main>
             <Header title="Profile" />
