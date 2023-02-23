@@ -163,6 +163,8 @@ export default function Settings() {
     }
 
     async function deleteAccount() {
+        localStorage.removeItem('jwt');
+        localStorage.removeItem('username');
         try {
             const data = await NetworkAPI.delete('/api/users/delete', {
                 username: localStorage.getItem('username'),
