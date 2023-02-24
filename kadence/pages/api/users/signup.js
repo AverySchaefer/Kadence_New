@@ -1,8 +1,12 @@
 import { hash } from 'bcryptjs';
 import nextConnect from 'next-connect';
+import getConfig from 'next/config';
 import Password from '../../../lib/passwordStrength';
 import middleware from '../../../middleware/database';
 
+const jwt = require('jsonwebtoken');
+
+const { serverRuntimeConfig } = getConfig();
 const handler = nextConnect();
 handler.use(middleware);
 
@@ -108,9 +112,14 @@ handler.post(async (req, res) => {
             res.status(500).send('Request not acknowledged by database');
         } else {
             console.log(
-                `A document with the ID: ${result.insertedID} has been added`
+                `A document with the ID: ${result.insertedId} has been added`
             );
-            res.status(200).send();
+            const token = jwt.sign(
+                { sub: doc.username },
+                serverRuntimeConfig.secret,
+                { expiresIn: '7d' }
+            );
+            res.status(200).json({ token });
         }
     }
 });
