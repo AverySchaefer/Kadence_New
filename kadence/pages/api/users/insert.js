@@ -31,7 +31,6 @@ handler.post(async (req, res) => {
         favoriteSong: req.body.favoriteSong,
         favoriteAlbum: req.body.favoriteAlbum,
     };
-    //console.log(doc);
 
     if (!req.body.username) {
         console.log('No username sent in request');
