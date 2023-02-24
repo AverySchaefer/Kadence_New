@@ -102,14 +102,14 @@ export default function Settings() {
                         username: localStorage.getItem('username'),
                     }
                 );
-                setProfilePrivate(userData.private);
-                setWaitToSave(userData.waitToSave);
-                setIntervalShort(userData.intervalShort);
-                setIntervalLong(userData.intervalLong);
-                setRampUpTime(userData.rampUpTime);
-                setRampDownTime(userData.rampDownTime);
-                setMood(userData.mood);
-                setZipCode(userData.zipCode);
+                setProfilePrivate(userData.private ?? true);
+                setWaitToSave(userData.waitToSave ?? true);
+                setIntervalShort(userData.intervalShort ?? 5);
+                setIntervalLong(userData.intervalLong ?? 10);
+                setRampUpTime(userData.rampUpTime ?? 5);
+                setRampDownTime(userData.rampDownTime ?? 5);
+                setMood(userData.mood ?? 'Happy');
+                setZipCode(userData.zipCode ?? 47907);
                 setMusicPrefId(userData.musicPrefs);
 
                 // Get preference data second (using musicPrefs id)
@@ -119,17 +119,17 @@ export default function Settings() {
                         uid: userData.musicPrefs,
                     }
                 );
-                setAllowExplicit(prefData.allowExplicit);
-                setLyricalInstrumental(prefData.lyricalInstrumental);
-                setLyricalLanguage(prefData.lyricalLanguage);
-                setMinSongLength(prefData.minSongLength);
-                setMaxSongLength(prefData.maxSongLength);
-                setMinPlaylistLength(prefData.minPlaylistLength);
-                setMaxPlaylistLength(prefData.maxPlaylistLength);
-                setFaveGenres(prefData.faveGenres ?? 'Lo-fi');
-                setFaveArtists(prefData.faveArtists);
-                setBlacklistedArtists(prefData.blacklistedArtists);
-                setBlacklistedSongs(prefData.blacklistedSongs);
+                setAllowExplicit(prefData.allowExplicit ?? false);
+                setLyricalInstrumental(prefData.lyricalInstrumental ?? 50);
+                setLyricalLanguage(prefData.lyricalLanguage ?? 'English');
+                setMinSongLength(prefData.minSongLength ?? 60);
+                setMaxSongLength(prefData.maxSongLength ?? 360);
+                setMinPlaylistLength(prefData.minPlaylistLength ?? 10);
+                setMaxPlaylistLength(prefData.maxPlaylistLength ?? 120);
+                setFaveGenres(prefData.faveGenres ?? 'Rock');
+                setFaveArtists(prefData.faveArtists ?? []);
+                setBlacklistedArtists(prefData.blacklistedArtists ?? []);
+                setBlacklistedSongs(prefData.blacklistedSongs ?? []);
             } catch (err) {
                 Dialog.alert({
                     title: 'Error',
