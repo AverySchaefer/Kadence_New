@@ -73,7 +73,7 @@ export default function Settings() {
     const [maxSongLength, setMaxSongLength] = useState(300);
     const [minPlaylistLength, setMinPlaylistLength] = useState(0);
     const [maxPlaylistLength, setMaxPlaylistLength] = useState(60);
-    const [faveGenres, setFaveGenres] = useState('Lo-fi');
+    const [faveGenres, setFaveGenres] = useState([]);
     const [hideFavArtists, setHideFavArtists] = useState(true);
     const [hideBlacklistedArtists, setHideBlacklistedArtists] = useState(true);
     const [hideBlacklistedSongs, setHideBlacklistedSongs] = useState(true);
@@ -126,7 +126,7 @@ export default function Settings() {
                 setMaxSongLength(prefData.maxSongLength ?? 360);
                 setMinPlaylistLength(prefData.minPlaylistLength ?? 10);
                 setMaxPlaylistLength(prefData.maxPlaylistLength ?? 120);
-                setFaveGenres(prefData.faveGenres ?? 'Rock');
+                setFaveGenres(prefData.faveGenres ?? []);
                 setFaveArtists(prefData.faveArtists ?? []);
                 setBlacklistedArtists(prefData.blacklistedArtists ?? []);
                 setBlacklistedSongs(prefData.blacklistedSongs ?? []);
@@ -195,7 +195,7 @@ export default function Settings() {
             maxSongLength,
             minPlaylistLength,
             maxPlaylistLength,
-            faveGenres: [faveGenres],
+            faveGenres,
             faveArtists,
             blacklistedArtists,
             blacklistedSongs,
@@ -495,9 +495,9 @@ export default function Settings() {
                                 <select
                                     className={styles.select}
                                     onChange={(e) =>
-                                        setFaveGenres(e.target.value)
+                                        setFaveGenres([e.target.value])
                                     }
-                                    value={faveGenres}
+                                    value={faveGenres[0] ?? 'No Preference'}
                                 >
                                     {genres.map((genre) => (
                                         <option value={genre} key={genre}>
