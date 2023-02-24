@@ -6,6 +6,7 @@ const handler = nextConnect();
 handler.use(middleware);
 
 handler.post(async (req, res) => {
+    console.log(req.body.username);
     const doc = {
         username: req.body.username,
         email: req.body.email,
@@ -30,6 +31,7 @@ handler.post(async (req, res) => {
         favoriteSong: req.body.favoriteSong,
         favoriteAlbum: req.body.favoriteAlbum,
     };
+    //console.log(doc);
 
     if (!req.body.username) {
         console.log('No username sent in request');
