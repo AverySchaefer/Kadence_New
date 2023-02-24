@@ -64,7 +64,7 @@ export default function Settings() {
     const [profilePrivate, setProfilePrivate] = useState(true);
     const [waitToSave, setWaitToSave] = useState(true);
     const [defaultDevice, setDefaultDevice] = useState('None');
-    const [defaultMusicPlatform, setDefaultMusicPlatform] = useState('None');
+    const [musicPlatforms, setMusicPlatforms] = useState('None');
 
     const [allowExplicit, setAllowExplicit] = useState(false);
     const [lyricalInstrumental, setLyricalInstrumental] = useState(80);
@@ -111,6 +111,7 @@ export default function Settings() {
                 setMood(userData.mood ?? 'Happy');
                 setZipCode(userData.zipCode ?? 47907);
                 setMusicPrefId(userData.musicPrefs);
+                setMusicPlatforms(userData.musicPlatforms ?? 'None');
 
                 // Get preference data second (using musicPrefs id)
                 const { data: prefData } = await NetworkAPI.get(
@@ -144,7 +145,7 @@ export default function Settings() {
 
     // TODO: actually get devices and platforms from database
     const devices = ['Device 1', 'Device 2'];
-    const musicPlatforms = ['Spotify', 'Apple Music'];
+    const musicPlatformsOptions = ['Spotify', 'Apple Music'];
 
     const router = useRouter();
 
@@ -210,6 +211,7 @@ export default function Settings() {
             rampDownTime,
             mood,
             zipCode,
+            musicPlatforms,
         };
 
         try {
@@ -306,12 +308,12 @@ export default function Settings() {
                                 <select
                                     className={styles.select}
                                     onChange={(e) =>
-                                        setDefaultMusicPlatform(e.target.value)
+                                        setMusicPlatforms(e.target.value)
                                     }
-                                    value={defaultMusicPlatform}
+                                    value={musicPlatforms}
                                 >
                                     <option value={'None'}>None</option>
-                                    {musicPlatforms.map((mp) => (
+                                    {musicPlatformsOptions.map((mp) => (
                                         <option value={mp} key={mp}>
                                             {mp}
                                         </option>
