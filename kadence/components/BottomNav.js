@@ -13,7 +13,15 @@ import { BiSearchAlt } from 'react-icons/bi';
 const BottomNav = (props) => {
     const router = useRouter();
     const [activeTabs, setActiveTabs] = useState(props.name);
+    const [alreadyNavigated, setAlreadyNavigated] = useState(false);
+
+    function changeActiveTab(name) {
+        setAlreadyNavigated(false);
+        setActiveTabs(name);
+    }
+
     useEffect(() => {
+        if (alreadyNavigated) return;
         switch (activeTabs) {
             case 'home':
                 router.push('/home');
@@ -27,7 +35,8 @@ const BottomNav = (props) => {
             default:
                 break;
         }
-    }, [activeTabs]);
+        setAlreadyNavigated(true);
+    }, [router, activeTabs, alreadyNavigated]);
 
     return (
         <div className={`${Styles.bottomNav}`}>
@@ -36,13 +45,13 @@ const BottomNav = (props) => {
                     <RiHomeSmile2Fill
                         size="35"
                         color="#fff"
-                        onClick={() => setActiveTabs('home')}
+                        onClick={() => changeActiveTab('home')}
                     />
                 ) : (
                     <RiHomeSmile2Line
                         size="35"
                         color="#fff"
-                        onClick={() => setActiveTabs('home')}
+                        onClick={() => changeActiveTab('home')}
                     />
                 )}
             </div>
@@ -51,13 +60,13 @@ const BottomNav = (props) => {
                     <RiSearchEyeFill
                         size="35"
                         color="#fff"
-                        onClick={() => setActiveTabs('search')}
+                        onClick={() => changeActiveTab('search')}
                     />
                 ) : (
                     <BiSearchAlt
                         size="35"
                         color="#fff"
-                        onClick={() => setActiveTabs('search')}
+                        onClick={() => changeActiveTab('search')}
                     />
                 )}
             </div>
@@ -66,13 +75,13 @@ const BottomNav = (props) => {
                     <RiUser3Fill
                         size="35"
                         color="#fff"
-                        onClick={() => setActiveTabs('profile')}
+                        onClick={() => changeActiveTab('profile')}
                     />
                 ) : (
                     <RiUser3Line
                         size="35"
                         color="#fff"
-                        onClick={() => setActiveTabs('profile')}
+                        onClick={() => changeActiveTab('profile')}
                     />
                 )}
             </div>
