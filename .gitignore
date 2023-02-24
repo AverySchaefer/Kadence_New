@@ -1,0 +1,5 @@
+# vscode and android studio files in all subdirs
+**/.vscode/*
+**/.idea/*
+**/kadence/android/*
+**/kadence/ios/*

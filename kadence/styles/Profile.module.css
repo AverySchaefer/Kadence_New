@@ -1,0 +1,108 @@
+.header {
+    position: fixed;
+    display: flex;
+    width: 100%;
+    top: 0;
+    height: var(--nav-height);
+    background-color: black;
+    color: white;
+    justify-content: center;
+    align-items: center;
+    vertical-align: middle;
+}
+
+.settingsButton {
+    box-sizing: content-box;
+    position: absolute;
+    right: 50px;
+}
+
+.main {
+    position: fixed;
+    top: var(--nav-height);
+    bottom: var(--nav-height);
+    width: 100%;
+    overflow: scroll;
+    height: calc(100% - 2 * var(--nav-height));
+}
+
+.main::-webkit-scrollbar {
+    display: none;
+}
+
+.sticky {
+    height: 100%;
+    position: sticky;
+    top: calc(0 * var(--nav-height));
+    padding: 0.5rem;
+    color: white;
+}
+
+.center {
+    border: 5px solid;
+    display: flex;
+    justify-content: center;
+}
+
+.picture {
+    height: 100%;
+    top: calc(0 * var(--nav-height));
+    padding: 0.5rem;
+    display: flex;
+    justify-content: center;
+    color: white;
+}
+
+.editLinks {
+    box-sizing: content-box;
+    position: absolute;
+    left: 200px;
+    color: blue;
+}
+
+.card {
+    font-size: 1em;
+    overflow: hidden;
+    padding: 0;
+    border: none;
+    border-radius: 0.28571429rem;
+}
+
+.cardTitle {
+    font-size: 1.28571429em;
+    font-weight: 700;
+    display: flex;
+    justify-content: center;
+}
+
+.tabTitle {
+    font-size: 1.28571429em;
+    font-weight: 700;
+}
+
+.tab {
+    display: flex;
+    align-items: center;
+}
+
+.cardText {
+    clear: both;
+    margin-top: 0.5em;
+    padding: 0.5em 1em;
+    text-align: center;
+    color: rgb(0, 0, 0);
+    display: flex;
+    justify-content: center;
+}
+
+.platformImage {
+    display: flex;
+    align-items: center;
+    margin: 1rem;
+    width: 70%;
+    height: auto;
+    max-width: 380px;
+    border: 1px solid #eaeaea;
+    border-radius: 10px;
+    transition: color 0.15s ease, border-color 0.15s ease;
+}

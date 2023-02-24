@@ -1,0 +1,13 @@
+**/node_modules/
+**/dist
+**/.git
+**/npm-debug.log
+**/.coverage
+**/.coverage.*
+**/.env
+**/.aws
+**/README.md
+**/.vscode
+**/.pdf
+**/.next/
+**/.swc/

@@ -1,0 +1,32 @@
+{
+    "rules": {
+        "indent": ["error", 4, { "SwitchCase": 1 }],
+        "no-param-reassign": ["error", { "props": false }],
+        "comma-dangle": "off",
+        "class-methods-use-this": "off",
+        "linebreak-style": "off",
+        "no-console": "off",
+        "no-plusplus": "off",
+        "no-underscore-dangle": "off",
+        "import/no-extraneous-dependencies": [
+            "error",
+            { "devDependencies": true }
+        ],
+        "react/no-unescaped-entities": "warn"
+    },
+    "extends": [
+        "eslint:recommended",
+        "airbnb-base",
+        "next/core-web-vitals",
+        "prettier"
+    ],
+    "plugins": ["jest"],
+    "env": {
+        "jest/globals": true
+    },
+    "settings": {
+        "import/resolver": {
+            "alias": [["@/*", "./"]]
+        }
+    }
+}
