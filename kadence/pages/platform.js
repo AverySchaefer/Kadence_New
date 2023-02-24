@@ -17,7 +17,6 @@ export default function Platform() {
         };
         
         try {
-            console.log("Try1");
             await NetworkAPI.patch('/api/users/update', newPlatformData).then(router.push("/profile"));
         } catch (err) {
             Dialog.alert({
@@ -27,14 +26,13 @@ export default function Platform() {
         }
     }
 
-    async function handleAppleMusic() {
+    async function handleApple() {
         const newPlatformData = {
             username: localStorage.getItem('username'),
             musicPlatforms: "Apple Music",
         };
-
+        
         try {
-            console.log("Try1");
             await NetworkAPI.patch('/api/users/update', newPlatformData).then(router.push("/profile"));
         } catch (err) {
             Dialog.alert({
@@ -81,7 +79,7 @@ export default function Platform() {
                             className={styles.platformImage}
                             priority
                         />
-                        <Button variant="contained" onClick={handleAppleMusic}>
+                        <Button variant="contained" onClick={handleApple}>
                             Connect to Apple Music!
                         </Button>
                     </Stack>

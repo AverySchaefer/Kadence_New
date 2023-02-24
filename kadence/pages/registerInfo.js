@@ -71,7 +71,7 @@ export default function Register() {
                 maxSongLength,
                 minPlaylistLength,
                 maxPlaylistLength,
-                faveGenres,
+                faveGenres: [faveGenres],
                 faveArtists,
                 blacklistedArtists,
                 blacklistedSongs,
