@@ -126,7 +126,7 @@ export default function Settings() {
                 setMaxSongLength(prefData.maxSongLength);
                 setMinPlaylistLength(prefData.minPlaylistLength);
                 setMaxPlaylistLength(prefData.maxPlaylistLength);
-                setFaveGenres(prefData.faveGenres[0] ?? 'Lo-fi');
+                setFaveGenres(prefData.faveGenres ?? 'Lo-fi');
                 setFaveArtists(prefData.faveArtists);
                 setBlacklistedArtists(prefData.blacklistedArtists);
                 setBlacklistedSongs(prefData.blacklistedSongs);
