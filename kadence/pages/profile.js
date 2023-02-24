@@ -35,17 +35,16 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatforms }) {
     let platform = "";
     let alt = "";
     let useLink = "";
-    let visitLink = "";
+    let accountLink = "";
     if (musicPlatforms === "Spotify") {
         platform = "/Spotify.jpg";
         alt = "Spotify Logo";
+        accountLink = "https://www.spotify.com/us/account/apps/"
         useLink = '/spotify/display';
-        visitLink = 'https://open.spotify.com/';
     } else if (musicPlatforms === "Apple Music") {
         platform = "/apple-music.jpg";
         alt = "Apple Music Logo";
-        useLink = '/apple/display';
-        visitLink = 'https://music.apple.com/';
+        accountLink = "https://music.apple.com/login";
     }
 
     return (
@@ -90,8 +89,8 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatforms }) {
                                 className={styles.platformImage}
                                 priority
                             />
+                            <Button variant="contained" href={accountLink}>Account</Button>
                             <Button variant="contained" onClick={() => router.push(useLink)}>Use Platform</Button>
-                            <Button variant="contained" onClick={() => router.push(visitLink)}>Visit Platform</Button>
                             <Button variant="contained" onClick={handleClick}>Change</Button>
                         </Stack>
                     </Box>
@@ -114,7 +113,7 @@ export default function Profile() {
     const [musicPlatforms, setMusicPlatforms] = React.useState('Spotify');
 
     const [loaded, setLoaded] = React.useState(false);
-
+    
     // Fetch values from database
     React.useEffect(() => {
         async function fetchData() {
@@ -128,7 +127,6 @@ export default function Profile() {
                 setFaveSong(userData.favoriteSong);
                 setBio(userData.bio);
                 setMusicPlatforms(userData.musicPlatforms);
-                console.log(userData.musicPlatforms);
             } catch (err) {
                 Dialog.alert({
                     title: 'Error',

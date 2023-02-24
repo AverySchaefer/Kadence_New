@@ -64,7 +64,6 @@ export default function Settings() {
     const [profilePrivate, setProfilePrivate] = useState(true);
     const [waitToSave, setWaitToSave] = useState(true);
     const [defaultDevice, setDefaultDevice] = useState('None');
-    const [defaultMusicPlatform, setDefaultMusicPlatform] = useState('None');
 
     const [allowExplicit, setAllowExplicit] = useState(false);
     const [lyricalInstrumental, setLyricalInstrumental] = useState(80);
@@ -73,7 +72,7 @@ export default function Settings() {
     const [maxSongLength, setMaxSongLength] = useState(300);
     const [minPlaylistLength, setMinPlaylistLength] = useState(0);
     const [maxPlaylistLength, setMaxPlaylistLength] = useState(60);
-    const [faveGenres, setFaveGenres] = useState('Lo-fi');
+    const [faveGenres, setFaveGenres] = useState([]);
     const [hideFavArtists, setHideFavArtists] = useState(true);
     const [hideBlacklistedArtists, setHideBlacklistedArtists] = useState(true);
     const [hideBlacklistedSongs, setHideBlacklistedSongs] = useState(true);
@@ -102,14 +101,14 @@ export default function Settings() {
                         username: localStorage.getItem('username'),
                     }
                 );
-                setProfilePrivate(userData.private);
-                setWaitToSave(userData.waitToSave);
-                setIntervalShort(userData.intervalShort);
-                setIntervalLong(userData.intervalLong);
-                setRampUpTime(userData.rampUpTime);
-                setRampDownTime(userData.rampDownTime);
-                setMood(userData.mood);
-                setZipCode(userData.zipCode);
+                setProfilePrivate(userData.private ?? true);
+                setWaitToSave(userData.waitToSave ?? true);
+                setIntervalShort(userData.intervalShort ?? 5);
+                setIntervalLong(userData.intervalLong ?? 10);
+                setRampUpTime(userData.rampUpTime ?? 5);
+                setRampDownTime(userData.rampDownTime ?? 5);
+                setMood(userData.mood ?? 'Happy');
+                setZipCode(userData.zipCode ?? 47907);
                 setMusicPrefId(userData.musicPrefs);
 
                 // Get preference data second (using musicPrefs id)
@@ -119,17 +118,17 @@ export default function Settings() {
                         uid: userData.musicPrefs,
                     }
                 );
-                setAllowExplicit(prefData.allowExplicit);
-                setLyricalInstrumental(prefData.lyricalInstrumental);
-                setLyricalLanguage(prefData.lyricalLanguage);
-                setMinSongLength(prefData.minSongLength);
-                setMaxSongLength(prefData.maxSongLength);
-                setMinPlaylistLength(prefData.minPlaylistLength);
-                setMaxPlaylistLength(prefData.maxPlaylistLength);
-                setFaveGenres(prefData.faveGenres[0] ?? 'Lo-fi');
-                setFaveArtists(prefData.faveArtists);
-                setBlacklistedArtists(prefData.blacklistedArtists);
-                setBlacklistedSongs(prefData.blacklistedSongs);
+                setAllowExplicit(prefData.allowExplicit ?? false);
+                setLyricalInstrumental(prefData.lyricalInstrumental ?? 50);
+                setLyricalLanguage(prefData.lyricalLanguage ?? 'English');
+                setMinSongLength(prefData.minSongLength ?? 60);
+                setMaxSongLength(prefData.maxSongLength ?? 360);
+                setMinPlaylistLength(prefData.minPlaylistLength ?? 10);
+                setMaxPlaylistLength(prefData.maxPlaylistLength ?? 120);
+                setFaveGenres(prefData.faveGenres ?? []);
+                setFaveArtists(prefData.faveArtists ?? []);
+                setBlacklistedArtists(prefData.blacklistedArtists ?? []);
+                setBlacklistedSongs(prefData.blacklistedSongs ?? []);
             } catch (err) {
                 Dialog.alert({
                     title: 'Error',
@@ -142,9 +141,8 @@ export default function Settings() {
         fetchData();
     }, []);
 
-    // TODO: actually get devices and platforms from database
+    // TODO: actually get devices from database
     const devices = ['Device 1', 'Device 2'];
-    const musicPlatforms = ['Spotify', 'Apple Music'];
 
     const router = useRouter();
 
@@ -180,6 +178,9 @@ export default function Settings() {
                 title: 'Error Occurred',
                 message: `${err.status} ${err.message}`,
             });
+        } finally {
+            localStorage.removeItem('jwt');
+            localStorage.removeItem('username');
         }
     }
 
@@ -193,7 +194,7 @@ export default function Settings() {
             maxSongLength,
             minPlaylistLength,
             maxPlaylistLength,
-            faveGenres: [faveGenres],
+            faveGenres,
             faveArtists,
             blacklistedArtists,
             blacklistedSongs,
@@ -293,25 +294,6 @@ export default function Settings() {
                                     {devices.map((device) => (
                                         <option value={device} key={device}>
                                             {device}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
-                        <div>
-                            <div className={styles.flexWrapper}>
-                                <b>Selected Music Platform: </b>
-                                <select
-                                    className={styles.select}
-                                    onChange={(e) =>
-                                        setDefaultMusicPlatform(e.target.value)
-                                    }
-                                    value={defaultMusicPlatform}
-                                >
-                                    <option value={'None'}>None</option>
-                                    {musicPlatforms.map((mp) => (
-                                        <option value={mp} key={mp}>
-                                            {mp}
                                         </option>
                                     ))}
                                 </select>
@@ -493,9 +475,9 @@ export default function Settings() {
                                 <select
                                     className={styles.select}
                                     onChange={(e) =>
-                                        setFaveGenres(e.target.value)
+                                        setFaveGenres([e.target.value])
                                     }
-                                    value={faveGenres}
+                                    value={faveGenres[0] ?? 'No Preference'}
                                 >
                                     {genres.map((genre) => (
                                         <option value={genre} key={genre}>

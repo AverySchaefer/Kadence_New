@@ -6,6 +6,7 @@ const handler = nextConnect();
 handler.use(middleware);
 
 handler.post(async (req, res) => {
+    console.log(req.body.username);
     const doc = {
         username: req.body.username,
         email: req.body.email,
