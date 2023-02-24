@@ -21,7 +21,8 @@ handler.get(async (req, res) => {
         res.status(400).send('Database item could not be found');
     } else {
         console.log('Account Found');
-        res.status(200).json(result);
+        const { password, ...rest } = result;
+        res.status(200).json(rest);
     }
 });
 
