@@ -1,0 +1,41 @@
+.main {
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4rem 1.5rem;
+    min-height: 100vh;
+    max-width: 500px;
+}
+
+.platformImage {
+    display: flex;
+    align-items: center;
+    margin: 1rem;
+    width: 100%;
+    height: auto;
+    max-width: 700px;
+    border: 1px solid #eaeaea;
+    border-radius: 10px;
+    transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.img {
+    width: 100%;
+    height: auto;
+    max-width: 380px;
+}
+
+.header {
+    position: fixed;
+    display: flex;
+    width: 100%;
+    top: 0;
+    height: var(--nav-height);
+    background-color: black;
+    color: white;
+    justify-content: center;
+    align-items: center;
+    vertical-align: middle;
+}

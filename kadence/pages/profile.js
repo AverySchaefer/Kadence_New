@@ -89,8 +89,8 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatforms }) {
                                 className={styles.platformImage}
                                 priority
                             />
-                            <Button variant="contained" href={accountLink}>Account</Button>
                             <Button variant="contained" onClick={() => router.push(useLink)}>Use Platform</Button>
+                            <Button variant="contained" href={accountLink}>Account</Button>
                             <Button variant="contained" onClick={handleClick}>Change</Button>
                         </Stack>
                     </Box>

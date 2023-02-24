@@ -32,6 +32,10 @@ export default function Register() {
     const [maxPlaylistLength, setMaxPlaylistLength] = useState(60);
     const [faveGenres, setFaveGenres] = useState('Lo-fi');
     const [faveArtists, setFaveArtists] = useState([]);
+    const [dislikeArtist, setDislikeArtist] = useState('');
+    const [dislikeSong, setDislikeSong] = useState('');
+    const [blacklistedArtists, setBlacklistedArtists] = useState([]);
+    const [blacklistedSongs, setBlacklistedSongs] = useState([]);
 
     const [intervalShort, setIntervalShort] = useState(5);
     const [intervalLong, setIntervalLong] = useState(10);
@@ -43,7 +47,15 @@ export default function Register() {
     const router = useRouter();
 
     async function submitData() {
-        setFaveArtists(faveArtists.push(favoriteArtist));
+        setFaveArtists(
+            faveArtists.push(favoriteArtist)
+        );
+        setBlacklistedArtists(
+            blacklistedArtists.push(dislikeArtist)
+        );
+        setBlacklistedSongs(
+            blacklistedSongs.push(dislikeSong)
+        );
 
         try {
             const musicPrefData = {
@@ -61,6 +73,8 @@ export default function Register() {
                 maxPlaylistLength,
                 faveGenres: [faveGenres],
                 faveArtists,
+                blacklistedArtists,
+                blacklistedSongs,
             };
 
             const { data } = await NetworkAPI.post(
@@ -150,6 +164,24 @@ export default function Register() {
                         placeholder="Album"
                         onChange={(e) => setFaveAlbum(e.target.value)}
                         value={favoriteAlbum}
+                        required
+                    />
+                    <h3>{"Who is an artist you don't like?"}</h3>
+                    <Textbox
+                        name="dislikeArtist"
+                        type="text"
+                        placeholder="Artist"
+                        onChange={(e) => setDislikeArtist(e.target.value)}
+                        value={dislikeArtist}
+                        required
+                    />
+                    <h3>{"What is a song you don't like?"}</h3>
+                    <Textbox
+                        name="dislikeSong"
+                        type="text"
+                        placeholder="Song"
+                        onChange={(e) => setDislikeSong(e.target.value)}
+                        value={dislikeSong}
                         required
                     />
                     <h2>Set your preferences!</h2>
