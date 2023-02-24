@@ -27,7 +27,7 @@ const BottomNav = (props) => {
             default:
                 break;
         }
-    }, [activeTabs]);
+    });
 
     return (
         <div className={`${Styles.bottomNav}`}>
