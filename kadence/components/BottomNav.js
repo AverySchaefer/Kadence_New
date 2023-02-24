@@ -25,7 +25,6 @@ const BottomNav = (props) => {
                 router.push('/profile');
                 break;
             default:
-                router.push('/home');
                 break;
         }
     }, [activeTabs]);

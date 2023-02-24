@@ -27,6 +27,23 @@ export default function Platform() {
         }
     }
 
+    async function handleAppleMusic() {
+        const newPlatformData = {
+            username: localStorage.getItem('username'),
+            musicPlatforms: "Apple Music",
+        };
+
+        try {
+            console.log("Try1");
+            await NetworkAPI.patch('/api/users/update', newPlatformData).then(router.push("/profile"));
+        } catch (err) {
+            Dialog.alert({
+                title: 'Error',
+                message: `An error occurred while submitting your data: ${err.message}.`,
+            });
+        }
+    }
+
     return (
         <>
             <Head>
@@ -64,7 +81,7 @@ export default function Platform() {
                             className={styles.platformImage}
                             priority
                         />
-                        <Button variant="contained" onClick={handleSpotify}>
+                        <Button variant="contained" onClick={handleAppleMusic}>
                             Connect to Apple Music!
                         </Button>
                     </Stack>
