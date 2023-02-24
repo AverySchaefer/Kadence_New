@@ -45,6 +45,7 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatforms }) {
         platform = "/apple-music.jpg";
         alt = "Apple Music Logo";
         accountLink = "https://music.apple.com/login";
+        useLink = '/spotify/display';
     }
 
     return (
