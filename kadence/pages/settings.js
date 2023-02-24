@@ -64,7 +64,6 @@ export default function Settings() {
     const [profilePrivate, setProfilePrivate] = useState(true);
     const [waitToSave, setWaitToSave] = useState(true);
     const [defaultDevice, setDefaultDevice] = useState('None');
-    const [defaultMusicPlatform, setDefaultMusicPlatform] = useState('None');
 
     const [allowExplicit, setAllowExplicit] = useState(false);
     const [lyricalInstrumental, setLyricalInstrumental] = useState(80);
@@ -142,9 +141,8 @@ export default function Settings() {
         fetchData();
     }, []);
 
-    // TODO: actually get devices and platforms from database
+    // TODO: actually get devices from database
     const devices = ['Device 1', 'Device 2'];
-    const musicPlatforms = ['Spotify', 'Apple Music'];
 
     const router = useRouter();
 
@@ -295,25 +293,6 @@ export default function Settings() {
                                     {devices.map((device) => (
                                         <option value={device} key={device}>
                                             {device}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
-                        <div>
-                            <div className={styles.flexWrapper}>
-                                <b>Selected Music Platform: </b>
-                                <select
-                                    className={styles.select}
-                                    onChange={(e) =>
-                                        setDefaultMusicPlatform(e.target.value)
-                                    }
-                                    value={defaultMusicPlatform}
-                                >
-                                    <option value={'None'}>None</option>
-                                    {musicPlatforms.map((mp) => (
-                                        <option value={mp} key={mp}>
-                                            {mp}
                                         </option>
                                     ))}
                                 </select>
