@@ -38,14 +38,12 @@ export default function Register() {
     const [rampUpTime, setRampUpTime] = useState(0);
     const [rampDownTime, setRampDownTime] = useState(0);
     const [mood, setMood] = useState('Happy');
-    const [zipCode, setZipCode] = useState(69420);
+    const [zipCode, setZipCode] = useState(47907);
 
     const router = useRouter();
 
     async function submitData() {
-        setFaveArtists(
-            faveArtists.push(favoriteArtist)
-        );
+        setFaveArtists(faveArtists.push(favoriteArtist));
 
         try {
             const musicPrefData = {
@@ -64,15 +62,18 @@ export default function Register() {
                 faveGenres,
                 faveArtists,
             };
-            
-            const {data} = await NetworkAPI.post('/api/preferences/insert', musicPrefData);
-            
+
+            const { data } = await NetworkAPI.post(
+                '/api/preferences/insert',
+                musicPrefData
+            );
+
             const userData = {
                 username: localStorage.getItem('username'),
                 private: profilePrivate,
                 waitToSave,
                 bio,
-                musicPrefs:data.id,
+                musicPrefs: data.id,
                 intervalShort,
                 intervalLong,
                 rampUpTime,
@@ -183,11 +184,10 @@ export default function Register() {
                                 <Switch
                                     checked={allowExplicit}
                                     name="explicit"
-                                    onChange={(e) =>  {
-                                        setAllowExplicit(e.target.checked)
+                                    onChange={(e) => {
+                                        setAllowExplicit(e.target.checked);
                                         console.log(allowExplicit);
-                                    }
-                                    }
+                                    }}
                                 />
                             }
                         />
