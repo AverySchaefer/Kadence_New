@@ -143,7 +143,7 @@ export default function Settings() {
         fetchData();
     }, []);
 
-    // TODO: actually get devices and platforms from database
+    // TODO: actually get devices from database
     const devices = ['Device 1', 'Device 2'];
     const musicPlatformsOptions = ['Spotify', 'Apple Music'];
 
@@ -164,8 +164,6 @@ export default function Settings() {
     }
 
     async function deleteAccount() {
-        localStorage.removeItem('jwt');
-        localStorage.removeItem('username');
         try {
             const data = await NetworkAPI.delete('/api/users/delete', {
                 username: localStorage.getItem('username'),
@@ -183,6 +181,9 @@ export default function Settings() {
                 title: 'Error Occurred',
                 message: `${err.status} ${err.message}`,
             });
+        } finally {
+            localStorage.removeItem('jwt');
+            localStorage.removeItem('username');
         }
     }
 
