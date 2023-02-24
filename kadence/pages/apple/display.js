@@ -1,18 +1,16 @@
 import { useSession, signIn, signOut } from 'next-auth/react';
 import Head from 'next/head';
 import Image from 'next/image';
-import Button from '@mui/material/Button';
+import styles from '@/styles/Register.module.css';
+import Button from '@/components/Button';
 import { useState } from 'react';
 import { Inter } from '@next/font/google';
-import styles from '@/styles/Spotify.module.css';
-import { BottomNav } from '@/components/';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export default function Display() {
     const { data: session } = useSession();
     const [songName, setSongItem] = useState('');
-    console.log(session);
 
     const getMyCurrentSong = async () => {
         const res = await fetch('/api/spotify/currentSong');
@@ -37,25 +35,21 @@ export default function Display() {
                     <link rel="icon" href="/favicon.ico" />
                 </Head>
                 <main className={[inter.className, styles.main].join(' ')}>
-                    <div className={styles.header}>
-                        <h1>Kadence</h1>
-                    </div>
                     <Image
-                        className={styles.platformImage}
-                        src="/Spotify.jpg"
-                        alt="Spotify Logo"
-                        width={700}
-                        height={350}
+                        className={styles.img}
+                        src="/logo.png"
+                        alt="Kadence Logo"
+                        width={380}
+                        height={200}
                         priority
                     />
-                    <Button variant="contained" size="large" onClick={() => getMyCurrentSong()}>
+                    <Button onClick={() => getMyCurrentSong()}>
                         Get Song!
                     </Button>
                     <h3>Your song: {songName}</h3>
                     Signed in as {session?.token?.email} <br />
-                    <Button variant="contained" size="large" onClick={() => signOut()}>Sign out</Button>
+                    <Button onClick={() => signOut()}>Sign out</Button>
                 </main>
-                <BottomNav name="Spotify" />
             </>
         );
     }
@@ -74,20 +68,16 @@ export default function Display() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <main className={[inter.className, styles.main].join(' ')}>
-                <div className={styles.header}>
-                    <h1>Kadence</h1>
-                </div>
                 <Image
-                    className={styles.platformImage}
-                    src="/Spotify.jpg"
-                    alt="Spotify Logo"
-                    width={700}
-                    height={350}
+                    className={styles.img}
+                    src="/logo.png"
+                    alt="Kadence Logo"
+                    width={380}
+                    height={200}
                     priority
                 />
-                <Button variant="contained" size="large" onClick={() => signIn()}>Sign In!</Button>
+                <Button onClick={() => signIn()}>Sign In To Spotify!</Button>
             </main>
-            <BottomNav name="Spotify" />
         </>
     );
 }

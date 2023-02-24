@@ -43,7 +43,7 @@ export default function Register() {
 
         // Send Request
         try {
-            const data = await NetworkAPI.post('/api/users/signup', {
+            const { data } = await NetworkAPI.post('/api/users/signup', {
                 email: email.value,
                 username: username.value,
                 password: password.value,
