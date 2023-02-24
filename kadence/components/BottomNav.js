@@ -9,7 +9,6 @@ import {
     RiUser3Fill,
 } from 'react-icons/ri';
 import { BiSearchAlt } from 'react-icons/bi';
-// import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 
 const BottomNav = (props) => {
     const router = useRouter();
@@ -72,7 +71,6 @@ const BottomNav = (props) => {
                     />
                 ) : (
                     <RiUser3Line
-                        RiUser3Line
                         size="35"
                         color="#fff"
                         onClick={() => setActiveTabs('profile')}

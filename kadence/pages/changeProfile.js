@@ -16,6 +16,7 @@ export default function ChangeProfile() {
     const [favoriteArtist, setFaveArtist] = React.useState('');
     const [favoriteAlbum, setFaveAlbum] = React.useState('');
     const [favoriteSong, setFaveSong] = React.useState('');
+    const [bio, setBio] = React.useState('');
 
     const [loaded, setLoaded] = React.useState(false);
 
@@ -32,6 +33,7 @@ export default function ChangeProfile() {
                 setFaveArtist(userData.favoriteArtist);
                 setFaveAlbum(userData.favoriteAlbum);
                 setFaveSong(userData.favoriteSong);
+                setBio(userData.bio);
             } catch (err) {
                 Dialog.alert({
                     title: 'Error',
@@ -50,6 +52,7 @@ export default function ChangeProfile() {
             favoriteArtist,
             favoriteAlbum,
             favoriteSong,
+            bio,
         };
 
         try {
@@ -82,6 +85,15 @@ export default function ChangeProfile() {
             <main className={[inter.className, styles.main].join(' ')}>
                 <Box>
                     <Stack spacing={2} alignItems="center">
+                        <h2>Write a short bio!</h2>
+                        <textarea
+                            name="bio"
+                            rows="3"
+                            cols="40"
+                            placeholder="Bio"
+                            onChange={(e) => setBio(e.target.value)}
+                            value={bio}
+                        />
                         <h2>Favorite Artist</h2>
                         <Textbox
                             name="favoriteArtist"

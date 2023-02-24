@@ -11,6 +11,7 @@ const inter = Inter({ subsets: ['latin'] });
 export default function Display() {
     const { data: session } = useSession();
     const [songName, setSongItem] = useState('');
+    console.log(session);
 
     const getMyCurrentSong = async () => {
         const res = await fetch('/api/spotify/currentSong');
