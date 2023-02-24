@@ -81,6 +81,9 @@ export default function Login() {
                     <Link className={styles.note} href="/register">
                         {"Don't have an account? Register here!"}
                     </Link>
+                    <Link className={styles.note} href="/forgotPass">
+                        {"Forgot password? Recover it here!"}
+                    </Link>
                     <Button type="submit">Login</Button>
                 </form>
             </main>
