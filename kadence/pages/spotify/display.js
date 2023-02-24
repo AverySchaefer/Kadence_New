@@ -38,7 +38,7 @@ export default function Display() {
                 </Head>
                 <main className={[inter.className, styles.main].join(' ')}>
                     <div className={styles.header}>
-                        <h1></h1>
+                        <h1>Kadence</h1>
                     </div>
                     <Image
                         className={styles.platformImage}
@@ -74,6 +74,9 @@ export default function Display() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <main className={[inter.className, styles.main].join(' ')}>
+                <div className={styles.header}>
+                    <h1>Kadence</h1>
+                </div>
                 <Image
                     className={styles.platformImage}
                     src="/Spotify.jpg"
@@ -84,6 +87,7 @@ export default function Display() {
                 />
                 <Button variant="contained" size="large" onClick={() => signIn()}>Sign In!</Button>
             </main>
+            <BottomNav name="Spotify" />
         </>
     );
 }
