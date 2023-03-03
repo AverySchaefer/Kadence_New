@@ -39,6 +39,33 @@
     -   200: Request Successful
     -   400: Account cannot be found (incorrect or missing username)
 
+### GET `/api/users/search`
+
+-   Request Query Elements
+    -   username: STRING
+-   Return Body Elements
+    -   results: (array of objects with fields (username, profilePic) that match query)
+-   Response Status Codes
+    -   200: Request Successful (can return empty array)
+    -   400: No username query given
+
+### GET `/api/users/profileInfo`
+
+-   Request Query Elements
+    -   username: STRING
+-   Return Body Elements
+    -   username: STRING
+    -   bio: STRING
+    -   profilePic: STRING
+    -   private: BOOLEAN
+    -   favoriteAlbum: STRING
+    -   favoriteArtist: STRING
+    -   favoriteSong: STRING
+    -   ... (Others need added if public, all above are always sent)
+-   Response Status Codes
+    -   200: Request Successful (can return empty array)
+    -   400: No username query given
+
 ### DELETE `/api/users/delete`
 
 -   Request Body Elements
