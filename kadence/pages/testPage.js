@@ -55,6 +55,12 @@ const API = {
             dataReqs: [{ field: 'username' }],
         },
         {
+            title: 'Search',
+            url: '/api/users/profileInfo',
+            method: 'GET',
+            dataReqs: [{ field: 'username' }],
+        },
+        {
             title: 'Delete',
             url: '/api/users/delete',
             method: 'DELETE',
