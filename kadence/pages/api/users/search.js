@@ -13,7 +13,7 @@ handler.get(async (req, res) => {
     }
 
     // Get matching usernames
-    const regex = new RegExp(`^${req.query.username}`);
+    const regex = new RegExp(`^${req.query.username}`, 'i');
     const cursor = await req.db
         .collection('Users')
         .find({ username: { $regex: regex } })

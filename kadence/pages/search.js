@@ -43,6 +43,14 @@ export default function Search() {
         }
     }, [query, debouncedFetchMatches]);
 
+    // Second check in case race condition leaves query field empty
+    // but still shows results (doesn't make sense)
+    useEffect(() => {
+        if (query === '' && matches.length > 0) {
+            setMatches([]);
+        }
+    }, [query, matches]);
+
     return (
         <div className={inter.className}>
             <Header title="Search" />
@@ -57,7 +65,7 @@ export default function Search() {
                 </div>
                 <h2 className={styles.resultsHeader}>Results</h2>
 
-                {matches.length === 0 || loading ? (
+                {matches.length === 0 || loading || query === '' ? (
                     <div>
                         {loading ? 'Loading results...' : 'No results found!'}
                     </div>
