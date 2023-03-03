@@ -32,19 +32,19 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatforms }) {
         router.push('/platform');
     };
 
-    let platform = "";
-    let alt = "";
-    let useLink = "";
-    let accountLink = "";
-    if (musicPlatforms === "Spotify") {
-        platform = "/Spotify.jpg";
-        alt = "Spotify Logo";
-        accountLink = "https://www.spotify.com/us/account/apps/"
+    let platform = '';
+    let alt = '';
+    let useLink = '';
+    let accountLink = '';
+    if (musicPlatforms === 'Spotify') {
+        platform = '/Spotify.jpg';
+        alt = 'Spotify Logo';
+        accountLink = 'https://open.spotify.com';
         useLink = '/spotify/display';
-    } else if (musicPlatforms === "Apple Music") {
-        platform = "/apple-music.jpg";
-        alt = "Apple Music Logo";
-        accountLink = "https://music.apple.com/login";
+    } else if (musicPlatforms === 'Apple Music') {
+        platform = '/apple-music.jpg';
+        alt = 'Apple Music Logo';
+        accountLink = 'https://music.apple.com/login';
         useLink = '/spotify/display';
     }
 
@@ -75,7 +75,12 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatforms }) {
                             <h4 className={styles.tabTitle}>Favorite Album</h4>
                             <p>{favAlbum}</p>
                             <br />
-                            <Button variant="contained" onClick={() => router.push('/changeProfile')}>Edit</Button>
+                            <Button
+                                variant="contained"
+                                onClick={() => router.push('/changeProfile')}
+                            >
+                                Edit
+                            </Button>
                         </Stack>
                     </Box>
                 )}
@@ -90,9 +95,18 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatforms }) {
                                 className={styles.platformImage}
                                 priority
                             />
-                            <Button variant="contained" onClick={() => router.push(useLink)}>Use Platform</Button>
-                            <Button variant="contained" href={accountLink}>Account</Button>
-                            <Button variant="contained" onClick={handleClick}>Change</Button>
+                            <Button
+                                variant="contained"
+                                onClick={() => router.push(useLink)}
+                            >
+                                Use Platform
+                            </Button>
+                            <Button variant="contained" href={accountLink}>
+                                Account
+                            </Button>
+                            <Button variant="contained" onClick={handleClick}>
+                                Change
+                            </Button>
                         </Stack>
                     </Box>
                 )}
@@ -114,15 +128,18 @@ export default function Profile() {
     const [musicPlatforms, setMusicPlatforms] = React.useState('Spotify');
 
     const [loaded, setLoaded] = React.useState(false);
-    
+
     // Fetch values from database
     React.useEffect(() => {
         async function fetchData() {
             try {
                 // Get User Data first
-                const { data: userData } = await NetworkAPI.get('/api/users/getUsers', {
-                    username: localStorage.getItem('username'),
-                });
+                const { data: userData } = await NetworkAPI.get(
+                    '/api/users/getUsers',
+                    {
+                        username: localStorage.getItem('username'),
+                    }
+                );
                 setFaveArtist(userData.favoriteArtist);
                 setFaveAlbum(userData.favoriteAlbum);
                 setFaveSong(userData.favoriteSong);
