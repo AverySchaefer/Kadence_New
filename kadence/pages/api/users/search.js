@@ -12,8 +12,6 @@ handler.get(async (req, res) => {
         return;
     }
 
-    console.log(req.query.username);
-
     // Get matching usernames
     const regex = new RegExp(`^${req.query.username}`);
     const cursor = await req.db
