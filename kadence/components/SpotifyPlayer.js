@@ -24,6 +24,7 @@ function convertSecondsToTimeString(s) {
 export default function SpotifyPlayer() {
     const [playerData, setPlayerData] = useState({});
     const [timer, setTimer] = useState(0);
+    const [pausedTimer, setPausedTimer] = useState(0);
 
     function getPlayerInfo() {
         NetworkAPI.get('/api/spotify/playerInfo')
@@ -110,10 +111,15 @@ export default function SpotifyPlayer() {
                 getPlayerInfo();
             } else if (playerData && playerData.isPlaying) {
                 setTimer((old) => old + 1);
+            } else if (pausedTimer + 1 === playerRefreshRateSeconds) {
+                getPlayerInfo();
+                setPausedTimer(0);
+            } else {
+                setPausedTimer((old) => old + 1);
             }
         }, 1000);
         return () => clearInterval(counterID);
-    }, [timer, playerData]);
+    }, [timer, playerData, pausedTimer]);
 
     const progress = convertSecondsToTimeString(
         playerData.progressSeconds + timer
