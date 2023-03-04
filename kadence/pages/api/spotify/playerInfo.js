@@ -65,12 +65,14 @@ handler.get(async (req, res) => {
 
     res.status(200).json({
         isPlaying: json.is_playing,
-        progressSeconds: Math.floor(json.progress_ms / 1000),
-        songDurationSeconds: Math.ceil(json.item.duration_ms / 1000),
+        progressSeconds: Math.round(json.progress_ms / 1000),
+        songDurationSeconds: Math.round(json.item.duration_ms / 1000),
         songName: json.item.name,
         artistName: json.item.artists[0].name,
         albumName: json.item.album.name,
-        albumImageSrc: json.item.album.images.at(-1).url,
+        albumImageSrc:
+            json.item.album.images.at(-1)?.url ??
+            'https://demofree.sirv.com/nope-not-here.jpg',
     });
 });
 
