@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import { useState } from 'react';
 import { Inter } from '@next/font/google';
 import styles from '@/styles/Spotify.module.css';
-import { BottomNav } from '@/components/';
+import { BottomNav, SpotifyPlayer } from '@/components/';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -48,12 +48,23 @@ export default function Display() {
                         height={350}
                         priority
                     />
-                    <Button variant="contained" size="large" onClick={() => getMyCurrentSong()}>
+                    <Button
+                        variant="contained"
+                        size="large"
+                        onClick={() => getMyCurrentSong()}
+                    >
                         Get Song!
                     </Button>
                     <h3>Your song: {songName}</h3>
                     Signed in as {session?.token?.email} <br />
-                    <Button variant="contained" size="large" onClick={() => signOut()}>Sign out</Button>
+                    <SpotifyPlayer />
+                    <Button
+                        variant="contained"
+                        size="large"
+                        onClick={() => signOut()}
+                    >
+                        Sign out
+                    </Button>
                 </main>
                 <BottomNav name="Spotify" />
             </>
@@ -85,7 +96,13 @@ export default function Display() {
                     height={350}
                     priority
                 />
-                <Button variant="contained" size="large" onClick={() => signIn()}>Sign In!</Button>
+                <Button
+                    variant="contained"
+                    size="large"
+                    onClick={() => signIn()}
+                >
+                    Sign In!
+                </Button>
             </main>
             <BottomNav name="Spotify" />
         </>
