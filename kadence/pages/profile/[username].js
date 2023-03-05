@@ -144,7 +144,6 @@ export default function OtherProfile() {
                         username,
                     }
                 );
-                console.log(data);
                 setUserData(data);
             } catch (err) {
                 Dialog.alert({
