@@ -1,7 +1,10 @@
 import { Dialog } from '@capacitor/dialog';
-import styles from '@/styles/Settings.module.css';
+
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+
+import styles from '@/styles/Settings.module.css';
+
 import { languages, genres, moods } from '@/lib/promptOptions';
 import { removeFromArray, appendToArray } from '@/lib/arrayUtil';
 import NetworkAPI from '@/lib/networkAPI';
