@@ -1,15 +1,10 @@
 .main {
-    position: fixed;
-    top: 50px;
-    bottom: calc(var(--nav-height) + var(--music-player-height));
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    padding: 4rem 1.5rem;
-    width: 100%;
-    overflow-y: scroll;
-    overflow-x: hidden;
+    padding: 1.5rem;
+    height: 100%;
 }
 
 .platformImage {
@@ -28,17 +23,4 @@
     width: 100%;
     height: auto;
     max-width: 380px;
-}
-
-.header {
-    position: fixed;
-    display: flex;
-    width: 100%;
-    top: 0;
-    height: var(--nav-height);
-    background-color: black;
-    color: white;
-    justify-content: center;
-    align-items: center;
-    vertical-align: middle;
 }
