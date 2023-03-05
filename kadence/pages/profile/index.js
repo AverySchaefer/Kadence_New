@@ -152,31 +152,33 @@ export default function Profile() {
         fetchData();
     }, []);
 
-    if (!loaded) return '';
-
     return (
         <PageLayout activeTab="profile" title="Profile">
-            <main className={styles.main}>
-                <section>
-                    <div className={styles.picture}>
-                        <Avatar alt="NS" sx={{ width: 150, height: 150 }}>
-                            {localStorage.getItem('username')[0].toUpperCase()}
-                        </Avatar>
+            {loaded && (
+                <main className={styles.main}>
+                    <section>
+                        <div className={styles.picture}>
+                            <Avatar alt="NS" sx={{ width: 150, height: 150 }}>
+                                {localStorage
+                                    .getItem('username')[0]
+                                    .toUpperCase()}
+                            </Avatar>
+                        </div>
+                    </section>
+                    <div className={styles.card}>
+                        <h4 className={styles.cardTitle}>
+                            {localStorage.getItem('username')}
+                        </h4>
                     </div>
-                </section>
-                <div className={styles.card}>
-                    <h4 className={styles.cardTitle}>
-                        {localStorage.getItem('username')}
-                    </h4>
-                </div>
-                <div className={styles.cardText}>{bio}</div>
-                <BasicTabs
-                    favArtist={faveArtist}
-                    favAlbum={faveAlbum}
-                    favSong={faveSong}
-                    musicPlatforms={musicPlatforms}
-                />
-            </main>
+                    <div className={styles.cardText}>{bio}</div>
+                    <BasicTabs
+                        favArtist={faveArtist}
+                        favAlbum={faveAlbum}
+                        favSong={faveSong}
+                        musicPlatforms={musicPlatforms}
+                    />
+                </main>
+            )}
         </PageLayout>
     );
 }
