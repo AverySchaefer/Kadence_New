@@ -25,7 +25,7 @@ function convertSecondsToTimeString(s) {
     return `${minutes}:${seconds}`;
 }
 
-export default function SpotifyPlayer() {
+function SpotifyPlayer() {
     const [playerData, setPlayerData] = useState(Default.spotifyPlayerData);
     const [timer, setTimer] = useState(0);
     const [pausedTimer, setPausedTimer] = useState(0);
@@ -187,4 +187,17 @@ export default function SpotifyPlayer() {
             </button>
         </div>
     );
+}
+
+function AppleMusicPlayer() {
+    return <SpotifyPlayer />;
+}
+
+export default function Player({ type = '' }) {
+    if (typeof type === 'string') {
+        const playerName = type.toLowerCase().trim();
+        if (playerName === 'spotify') return <SpotifyPlayer />;
+        if (playerName === 'apple') return <AppleMusicPlayer />;
+    }
+    return '';
 }
