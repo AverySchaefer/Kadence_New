@@ -41,6 +41,7 @@
     flex-grow: 1;
     flex-shrink: 0;
     overflow: scroll;
+    position: relative;
 }
 
 .playerContainer {

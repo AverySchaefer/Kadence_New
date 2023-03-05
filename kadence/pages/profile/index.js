@@ -153,7 +153,7 @@ export default function Profile() {
     }, []);
 
     return (
-        <PageLayout activeTab="profile" title="Profile">
+        <PageLayout activeTab="profile" title="Profile" includeSettings>
             {loaded && (
                 <main className={styles.main}>
                     <section>
