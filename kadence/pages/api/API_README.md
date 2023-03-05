@@ -326,3 +326,56 @@
     -   Song Item (in JSON format)
 -   Response Status Codes
     -   200: Request Successful, song item sent
+
+### GET `/api/spotify/playerInfo`
+
+-   Request token elements
+    -   accessToken
+-   Return Body
+    -   isPlaying: BOOLEAN
+    -   progressSeconds: INT
+    -   songDurationSeconds: INT
+    -   songName: STRING
+    -   artistName: STRING
+    -   albumImageSrc: STRING
+-   Response Status Codes
+    -   200: Request Successful, player information sent
+    -   400: No device is currently active
+    -   401: Bad token, user needs to sign in again
+    -   Others: random Spotify errors, message returned with status code
+
+### PUT `/api/spotify/pause`
+
+-   Request token elements
+    -   accessToken
+-   Return Body
+    -   NONE
+-   Response Status Codes
+    -   200: Request Successful
+    -   400: No device is currently active
+    -   401: Bad token, user needs to sign in again
+    -   Others: random Spotify errors, message returned with status code
+
+### PUT `/api/spotify/play`
+
+-   Request token elements
+    -   accessToken
+-   Return Body
+    -   NONE
+-   Response Status Codes
+    -   200: Request Successful
+    -   400: No device is currently active
+    -   401: Bad token, user needs to sign in again
+    -   Others: random Spotify errors, message returned with status code
+
+### POST `/api/spotify/skip`
+
+-   Request token elements
+    -   accessToken
+-   Return Body
+    -   NONE
+-   Response Status Codes
+    -   200: Request Successful
+    -   400: No device is currently active
+    -   401: Bad token, user needs to sign in again
+    -   Others: random Spotify errors, message returned with status code

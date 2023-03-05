@@ -260,7 +260,31 @@ const API = {
             title: 'Get Current Song',
             url: '/api/spotify/currentSong',
             method: 'GET',
-            dataReqs: [{ field: 'accessToken' }],
+            dataReqs: [],
+        },
+        {
+            title: 'Get Player Info',
+            url: '/api/spotify/playerInfo',
+            method: 'GET',
+            dataReqs: [],
+        },
+        {
+            title: 'Pause',
+            url: '/api/spotify/pause',
+            method: 'PUT',
+            dataReqs: [],
+        },
+        {
+            title: 'Play',
+            url: '/api/spotify/play',
+            method: 'PUT',
+            dataReqs: [],
+        },
+        {
+            title: 'Skip',
+            url: '/api/spotify/skip',
+            method: 'SKIP',
+            dataReqs: [],
         },
     ],
 };
