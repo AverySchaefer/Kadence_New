@@ -1,12 +1,15 @@
 .main {
-    margin: auto;
+    position: fixed;
+    top: 50px;
+    bottom: calc(var(--nav-height) + var(--music-player-height));
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
     padding: 4rem 1.5rem;
-    min-height: 100vh;
-    max-width: 500px;
+    width: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 .platformImage {

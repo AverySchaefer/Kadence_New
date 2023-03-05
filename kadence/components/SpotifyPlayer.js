@@ -1,13 +1,17 @@
 import NetworkAPI from '@/lib/networkAPI';
 import styles from '@/styles/Player.module.css';
+import Default from '@/lib/default';
 
 import { Dialog } from '@capacitor/dialog';
 import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import SkipNextIcon from '@mui/icons-material/SkipNext';
+import { Inter } from '@next/font/google';
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
+
+const inter = Inter({ subsets: ['latin'] });
 
 const playerRefreshRateSeconds = 10;
 const fetchAfterSkipDelayMs = 250;
@@ -22,7 +26,7 @@ function convertSecondsToTimeString(s) {
 }
 
 export default function SpotifyPlayer() {
-    const [playerData, setPlayerData] = useState({});
+    const [playerData, setPlayerData] = useState(Default.spotifyPlayerData);
     const [timer, setTimer] = useState(0);
     const [pausedTimer, setPausedTimer] = useState(0);
 
@@ -127,29 +131,46 @@ export default function SpotifyPlayer() {
     const duration = convertSecondsToTimeString(playerData.songDurationSeconds);
 
     return (
-        <div className={styles.container}>
-            <button onClick={togglePlayState}>
+        <div className={[styles.player, inter.className].join(' ')}>
+            <button
+                disabled={playerData.artistName === 'N/A'}
+                className={styles.togglePlayBtn}
+                onClick={togglePlayState}
+            >
                 {playerData.isPlaying ? (
                     <PauseIcon sx={{ width: '100%', height: '100%' }} />
                 ) : (
                     <PlayArrowIcon sx={{ width: '100%', height: '100%' }} />
                 )}
             </button>
-            <button onClick={handleSkip}>
+            <div className={styles.topInfoContainer}>
+                <div className={styles.song}>{playerData.songName}</div>
+                <div className={styles.artistAndProgressContainer}>
+                    <div className={styles.artist}>{playerData.artistName}</div>
+                    <div className={styles.progress}>
+                        {progress} / {duration}
+                    </div>
+                </div>
+            </div>
+
+            <div className={styles.albumImgContainer}>
+                <Image
+                    src={
+                        playerData.albumImageSrc ??
+                        'https://demofree.sirv.com/nope-not-here.jpg'
+                    }
+                    alt="Album Cover"
+                    width={50}
+                    height={50}
+                />
+            </div>
+            <button
+                disabled={playerData.artistName === 'N/A'}
+                className={styles.skipBtn}
+                onClick={handleSkip}
+            >
                 <SkipNextIcon sx={{ width: '100%', height: '100%' }} />
             </button>
-            <p>Current Song: {playerData.songName}</p>
-            <p>Artist: {playerData.artistName}</p>
-            <p>Album: {playerData.albumName}</p>
-            <p>
-                Progress: {progress} / {duration}
-            </p>
-            <Image
-                src={playerData.albumImageSrc}
-                alt="Album Cover"
-                width={64}
-                height={64}
-            />
         </div>
     );
 }

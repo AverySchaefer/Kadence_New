@@ -1,6 +1,7 @@
 import { getSession } from 'next-auth/react';
 import nextConnect from 'next-connect';
 
+import Default from '@/lib/default';
 import refreshToken from '@/lib/spotify/refreshToken';
 import middleware from '../../../middleware/database';
 
@@ -27,15 +28,7 @@ handler.get(async (req, res) => {
     const response = await getPlayerInfo(accessToken);
 
     if (response.status === 204 && response.statusText === 'No Content') {
-        res.status(200).json({
-            isPlaying: false,
-            progressSeconds: 0,
-            songDurationSeconds: 1,
-            songName: 'Spotify is not currently active!',
-            artistName: 'N/A',
-            albumName: 'N/A',
-            albumImageSrc: 'https://demofree.sirv.com/nope-not-here.jpg',
-        });
+        res.status(200).json(Default.spotifyPlayerData);
         return;
     }
 
@@ -69,7 +62,6 @@ handler.get(async (req, res) => {
         songDurationSeconds: Math.round(json.item.duration_ms / 1000),
         songName: json.item.name,
         artistName: json.item.artists[0].name,
-        albumName: json.item.album.name,
         albumImageSrc:
             json.item.album.images.at(-1)?.url ??
             'https://demofree.sirv.com/nope-not-here.jpg',

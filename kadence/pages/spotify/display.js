@@ -57,7 +57,6 @@ export default function Display() {
                     </Button>
                     <h3>Your song: {songName}</h3>
                     Signed in as {session?.token?.email} <br />
-                    <SpotifyPlayer />
                     <Button
                         variant="contained"
                         size="large"
@@ -66,6 +65,7 @@ export default function Display() {
                         Sign out
                     </Button>
                 </main>
+                <SpotifyPlayer />
                 <BottomNav name="Spotify" />
             </>
         );
