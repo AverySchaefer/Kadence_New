@@ -10,6 +10,7 @@ import { Dialog } from '@capacitor/dialog';
 import { useRouter } from 'next/router';
 import { Avatar, Box, Button, Fab, Stack, Tab, Tabs } from '@mui/material/';
 import NetworkAPI from '@/lib/networkAPI';
+import Default from '@/lib/default';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -39,7 +40,7 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatforms }) {
     if (musicPlatforms === 'Spotify') {
         platform = '/Spotify.jpg';
         alt = 'Spotify Logo';
-        accountLink = 'https://open.spotify.com';
+        accountLink = Default.spotifyPlayerData.songURI;
         useLink = '/spotify/display';
     } else if (musicPlatforms === 'Apple Music') {
         platform = '/apple-music.jpg';

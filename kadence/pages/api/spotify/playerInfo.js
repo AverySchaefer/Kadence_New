@@ -61,6 +61,7 @@ handler.get(async (req, res) => {
         progressSeconds: Math.round(json.progress_ms / 1000),
         songDurationSeconds: Math.round(json.item.duration_ms / 1000),
         songName: json.item.name,
+        songURI: json.item.uri,
         artistName: json.item.artists[0].name,
         albumImageSrc:
             json.item.album.images.at(-1)?.url ??

@@ -144,25 +144,39 @@ export default function SpotifyPlayer() {
                 )}
             </button>
             <div className={styles.topInfoContainer}>
-                <div className={styles.song}>{playerData.songName}</div>
-                <div className={styles.artistAndProgressContainer}>
-                    <div className={styles.artist}>{playerData.artistName}</div>
-                    <div className={styles.progress}>
-                        {progress} / {duration}
+                <a
+                    href={playerData.songURI}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <div className={styles.song}>{playerData.songName}</div>
+                    <div className={styles.artistAndProgressContainer}>
+                        <div className={styles.artist}>
+                            {playerData.artistName}
+                        </div>
+                        <div className={styles.progress}>
+                            {progress} / {duration}
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
 
             <div className={styles.albumImgContainer}>
-                <Image
-                    src={
-                        playerData.albumImageSrc ??
-                        'https://demofree.sirv.com/nope-not-here.jpg'
-                    }
-                    alt="Album Cover"
-                    width={50}
-                    height={50}
-                />
+                <a
+                    href={playerData.songURI}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <Image
+                        src={
+                            playerData.albumImageSrc ??
+                            'https://demofree.sirv.com/nope-not-here.jpg'
+                        }
+                        alt="Album Cover"
+                        width={50}
+                        height={50}
+                    />
+                </a>
             </div>
             <button
                 disabled={playerData.artistName === 'N/A'}

@@ -336,6 +336,7 @@
     -   progressSeconds: INT
     -   songDurationSeconds: INT
     -   songName: STRING
+    -   songURI: STRING
     -   artistName: STRING
     -   albumImageSrc: STRING
 -   Response Status Codes
