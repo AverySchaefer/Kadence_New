@@ -1,17 +1,15 @@
-import { Header, BottomNav } from '@/components/';
-import NetworkAPI from '@/lib/networkAPI';
 import { Dialog } from '@capacitor/dialog';
-import { Inter } from '@next/font/google';
-import Link from 'next/link';
 
-import styles from '@/styles/Search.module.css';
+import Link from 'next/link';
 import { Avatar } from '@mui/material/';
 
 import { useState, useEffect, useCallback } from 'react';
+
+import styles from '@/styles/Search.module.css';
+
+import NetworkAPI from '@/lib/networkAPI';
 import debounce from '@/lib/debounce';
 import PageLayout from '@/components/PageLayout';
-
-const inter = Inter({ subsets: ['latin'] });
 
 export default function Search() {
     const [query, setQuery] = useState('');

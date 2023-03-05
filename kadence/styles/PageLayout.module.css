@@ -2,17 +2,18 @@
     display: flex;
     flex-direction: column;
     height: 100vh;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .headerContainer {
-    position: relative;
     display: flex;
     height: var(--nav-height);
     background-color: black;
     color: white;
     justify-content: center;
     align-items: center;
+    flex-shrink: 0;
+    flex-grow: 0;
 }
 
 .backButton {
@@ -35,14 +36,23 @@
     right: 10px;
 }
 
+.mainContainer {
+    flex-basis: 0;
+    flex-grow: 1;
+    flex-shrink: 0;
+    overflow: scroll;
+}
+
 .playerContainer {
     flex-grow: 0;
+    flex-shrink: 0;
     height: var(--music-player-height);
     overflow: hidden;
 }
 
 .navContainer {
     flex-grow: 0;
+    flex-shrink: 0;
     height: var(--nav-height);
     overflow: hidden;
     background-color: black;
@@ -50,9 +60,4 @@
     justify-content: center;
     align-items: center;
     color: white;
-}
-
-.mainContainer {
-    flex-grow: 1;
-    overflow: scroll;
 }
