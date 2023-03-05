@@ -6,6 +6,7 @@ export default function NewPage() {
             prevLink="/settings"
             player="spotify"
             footer={<button>Yo bros!</button>}
+            includeNav
         >
             Hello!
         </PageLayout>

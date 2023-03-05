@@ -4,8 +4,6 @@
     height: var(--music-player-height);
     padding: 0.5rem;
     font-size: 0.8em;
-    position: fixed;
-    bottom: var(--nav-height);
     overflow: hidden;
 
     display: flex;
