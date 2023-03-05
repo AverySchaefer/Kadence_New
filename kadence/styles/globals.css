@@ -9,6 +9,7 @@
     --background-color: rgb(45, 201, 149);
     --menu-option-color: rgb(217, 217, 217);
     --nav-height: 50px;
+    --music-player-height: 65px;
 }
 
 @media (prefers-color-scheme: dark) {

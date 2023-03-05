@@ -1,16 +1,15 @@
-import { Header, BottomNav } from '@/components/';
-import NetworkAPI from '@/lib/networkAPI';
 import { Dialog } from '@capacitor/dialog';
-import { Inter } from '@next/font/google';
-import Link from 'next/link';
 
-import styles from '@/styles/Search.module.css';
+import Link from 'next/link';
 import { Avatar } from '@mui/material/';
 
 import { useState, useEffect, useCallback } from 'react';
-import debounce from '@/lib/debounce';
 
-const inter = Inter({ subsets: ['latin'] });
+import styles from '@/styles/Search.module.css';
+
+import NetworkAPI from '@/lib/networkAPI';
+import debounce from '@/lib/debounce';
+import PageLayout from '@/components/PageLayout';
 
 export default function Search() {
     const [query, setQuery] = useState('');
@@ -52,8 +51,7 @@ export default function Search() {
     }, [query, matches]);
 
     return (
-        <div className={inter.className}>
-            <Header title="Search" />
+        <PageLayout activeTab="search" title="Search">
             <main className={styles.main}>
                 <div className={styles.searchBarContainer}>
                     <input
@@ -96,7 +94,6 @@ export default function Search() {
                     </div>
                 )}
             </main>
-            <BottomNav name="search" />
-        </div>
+        </PageLayout>
     );
 }

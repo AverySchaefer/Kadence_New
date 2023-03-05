@@ -10,7 +10,7 @@ describe('PATCH /users/update', () => {
         ({ mongoServer, client, db } = await initTestDB(handler));
         await db
             .collection('Users')
-            .insertOne({ _id: '1', username: "JohnDoe", password: "passw0rd" });
+            .insertOne({ _id: '1', username: 'JohnDoe', password: 'passw0rd' });
     });
 
     afterAll(async () => {
@@ -34,7 +34,7 @@ describe('PATCH /users/update', () => {
                         profilePic: '',
                         private: true,
                         devices: [],
-                        musicPlatforms: [],
+                        musicPlatform: '',
                         musicPrefs: [],
                         waitToSave: true,
                         intervalShort: 1,
@@ -72,7 +72,7 @@ describe('PATCH /users/update', () => {
                         profilePic: '',
                         private: true,
                         devices: [],
-                        musicPlatforms: [],
+                        musicPlatform: '',
                         musicPrefs: [],
                         waitToSave: true,
                         intervalShort: 1,
@@ -93,7 +93,7 @@ describe('PATCH /users/update', () => {
         });
     });
 
-    it('should respond with 400 status code if account can\'t be found', async () => {
+    it("should respond with 400 status code if account can't be found", async () => {
         await testApiHandler({
             handler,
             test: async ({ fetch }) => {
@@ -110,7 +110,7 @@ describe('PATCH /users/update', () => {
                         profilePic: '',
                         private: true,
                         devices: [],
-                        musicPlatforms: [],
+                        musicPlatform: '',
                         musicPrefs: [],
                         waitToSave: true,
                         intervalShort: 1,

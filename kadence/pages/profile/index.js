@@ -1,17 +1,13 @@
 import * as React from 'react';
 import Image from 'next/image';
-import SettingsIcon from '@mui/icons-material/Settings';
-import Link from 'next/link';
-import Head from 'next/head';
 import styles from '@/styles/Profile.module.css';
-import { BottomNav } from '@/components/';
-import { Inter } from '@next/font/google';
 import { Dialog } from '@capacitor/dialog';
 import { useRouter } from 'next/router';
-import { Avatar, Box, Button, Fab, Stack, Tab, Tabs } from '@mui/material/';
+import { Avatar, Box, Button, Stack, Tab, Tabs } from '@mui/material/';
 import NetworkAPI from '@/lib/networkAPI';
-
-const inter = Inter({ subsets: ['latin'] });
+import Default from '@/lib/default';
+import PageLayout from '@/components/PageLayout';
+import { signOut } from 'next-auth/react';
 
 function a11yProps(index) {
     return {
@@ -20,7 +16,7 @@ function a11yProps(index) {
     };
 }
 
-function BasicTabs({ favArtist, favSong, favAlbum, musicPlatforms }) {
+function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
     const [value, setValue] = React.useState(0);
     const router = useRouter();
 
@@ -29,23 +25,38 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatforms }) {
     };
 
     const handleClick = () => {
-        router.push('/platform');
+        const newPlatformData = {
+            username: localStorage.getItem('username'),
+            musicPlatform: '',
+        };
+        try {
+            NetworkAPI.patch('/api/users/update', newPlatformData);
+        } catch (err) {
+            console.log(err);
+        } finally {
+            signOut({ callbackUrl: '/platform' });
+        }
     };
 
     let platform = '';
     let alt = '';
     let useLink = '';
     let accountLink = '';
-    if (musicPlatforms === 'Spotify') {
+    if (musicPlatform === 'Spotify') {
         platform = '/Spotify.jpg';
         alt = 'Spotify Logo';
-        accountLink = 'https://open.spotify.com';
+        accountLink = Default.spotifyPlayerData.songURI;
         useLink = '/spotify/display';
-    } else if (musicPlatforms === 'Apple Music') {
+    } else if (musicPlatform === 'Apple Music') {
         platform = '/apple-music.jpg';
         alt = 'Apple Music Logo';
         accountLink = 'https://music.apple.com/login';
         useLink = '/spotify/display';
+    } else {
+        platform = '';
+        alt = 'No platform chosen!';
+        accountLink = '';
+        useLink = '';
     }
 
     return (
@@ -87,32 +98,41 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatforms }) {
                 {value === 1 && (
                     <Box>
                         <Stack spacing={2} alignItems="center">
-                            <Image
-                                src={platform}
-                                alt={alt}
-                                width="300"
-                                height="150"
-                                className={styles.platformImage}
-                                priority
-                            />
-                            <Button
-                                variant="contained"
-                                onClick={() => router.push(useLink)}
-                            >
-                                Use Platform
-                            </Button>
-                            <Button variant="contained" href={accountLink}>
-                                Account
-                            </Button>
+                            {platform && (
+                                <>
+                                    <Image
+                                        src={platform}
+                                        alt={alt}
+                                        width="300"
+                                        height="150"
+                                        className={styles.platformImage}
+                                        priority
+                                    />
+                                    <Button
+                                        variant="contained"
+                                        onClick={() => router.push(useLink)}
+                                    >
+                                        Configure Account
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        href={accountLink}
+                                    >
+                                        View Account In App
+                                    </Button>
+                                </>
+                            )}
                             <Button variant="contained" onClick={handleClick}>
-                                Change
+                                {platform ? 'Change' : 'Choose'} Platform
                             </Button>
                         </Stack>
                     </Box>
                 )}
                 {value === 2 && (
                     <Box>
-                        <Button variant="contained">Connect</Button>
+                        <Stack spacing={2} alignItems="center">
+                            <Button variant="contained">Connect</Button>
+                        </Stack>
                     </Box>
                 )}
             </Box>
@@ -125,7 +145,7 @@ export default function Profile() {
     const [faveAlbum, setFaveAlbum] = React.useState('Lingus');
     const [faveSong, setFaveSong] = React.useState('What About Me?');
     const [bio, setBio] = React.useState('Something about me...');
-    const [musicPlatforms, setMusicPlatforms] = React.useState('Spotify');
+    const [musicPlatform, setMusicPlatform] = React.useState('Spotify');
 
     const [loaded, setLoaded] = React.useState(false);
 
@@ -144,7 +164,7 @@ export default function Profile() {
                 setFaveAlbum(userData.favoriteAlbum);
                 setFaveSong(userData.favoriteSong);
                 setBio(userData.bio);
-                setMusicPlatforms(userData.musicPlatforms);
+                setMusicPlatform(userData.musicPlatform);
             } catch (err) {
                 Dialog.alert({
                     title: 'Error',
@@ -157,60 +177,33 @@ export default function Profile() {
         fetchData();
     }, []);
 
-    if (!loaded) return '';
-
     return (
-        <div className={inter.className}>
-            <Head>
-                <title>Profile</title>
-                <meta
-                    name="description"
-                    content="Generated by create next app"
-                />
-                <meta
-                    name="viewport"
-                    content="width=device-width, initial-scale=1"
-                />
-                <link rel="icon" href="/favicon.ico" />
-            </Head>
-            <main className={styles.main}>
-                <section>
-                    <div className={styles.picture}>
-                        <Avatar alt="NS" sx={{ width: 150, height: 150 }}>
-                            {localStorage.getItem('username')[0].toUpperCase()}
-                        </Avatar>
+        <PageLayout activeTab="profile" title="Profile" includeSettings>
+            {loaded && (
+                <main className={styles.main}>
+                    <section>
+                        <div className={styles.picture}>
+                            <Avatar alt="NS" sx={{ width: 150, height: 150 }}>
+                                {localStorage
+                                    .getItem('username')[0]
+                                    .toUpperCase()}
+                            </Avatar>
+                        </div>
+                    </section>
+                    <div className={styles.card}>
+                        <h4 className={styles.cardTitle}>
+                            {localStorage.getItem('username')}
+                        </h4>
                     </div>
-                </section>
-                <div className={styles.card}>
-                    <h4 className={styles.cardTitle}>
-                        {localStorage.getItem('username')}
-                    </h4>
-                </div>
-                <div className={styles.cardText}>{bio}</div>
-                <BasicTabs
-                    favArtist={faveArtist}
-                    favAlbum={faveAlbum}
-                    favSong={faveSong}
-                    musicPlatforms={musicPlatforms}
-                />
-            </main>
-            <Header title="Profile" />
-            <BottomNav name="profile" />
-        </div>
-    );
-}
-
-function Header({ title }) {
-    return (
-        <div className={styles.header}>
-            <h1>{title}</h1>
-            <div className={styles.settingsButton}>
-                <Link href="/settings">
-                    <Fab size="small" aria-label="settings">
-                        <SettingsIcon />
-                    </Fab>
-                </Link>
-            </div>
-        </div>
+                    <div className={styles.cardText}>{bio}</div>
+                    <BasicTabs
+                        favArtist={faveArtist}
+                        favAlbum={faveAlbum}
+                        favSong={faveSong}
+                        musicPlatform={musicPlatform}
+                    />
+                </main>
+            )}
+        </PageLayout>
     );
 }

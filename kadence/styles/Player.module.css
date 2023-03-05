@@ -1,0 +1,83 @@
+.player {
+    background-color: #ddd;
+    width: 100%;
+    height: var(--music-player-height);
+    padding: 0.5rem;
+    font-size: 0.8em;
+    overflow: hidden;
+
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Get rid of unexpected extra height? */
+.player * {
+    vertical-align: middle;
+}
+
+.player a {
+    text-decoration: none;
+    display: block;
+}
+
+.togglePlayBtn,
+.skipBtn {
+    width: 50px;
+    aspect-ratio: 1/1;
+    background-color: inherit;
+    border: none;
+    cursor: pointer;
+    margin: -0.5rem;
+    flex-shrink: 0;
+}
+
+.togglePlayBtn:disabled,
+.skipBtn:disabled {
+    color: #555;
+    cursor: default;
+}
+
+.artistAndProgressContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.song {
+    font-weight: bold;
+}
+
+.song,
+.artist {
+    white-space: nowrap;
+    overflow-x: scroll;
+    /* Hide scrollbar */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+/* Hide scrollbar for Chrome, Safari, etc. */
+.song::-webkit-scrollbar,
+.artist::-webkit-scrollbar {
+    display: none;
+}
+
+.topInfoContainer {
+    flex-grow: 1;
+    flex-shrink: 0;
+    max-width: 60%;
+}
+
+.albumImgContainer img {
+    height: 100%;
+    aspect-ratio: 1/1;
+}
+
+.progress {
+    flex-grow: 1;
+    flex-shrink: 0;
+    text-align: right;
+}
