@@ -61,7 +61,8 @@
     -   favoriteAlbum: STRING
     -   favoriteArtist: STRING
     -   favoriteSong: STRING
-    -   ... (Others need added if public, all above are always sent)
+    -   (Above are always sent, below are sent only for public users)
+    -   musicPlatform: STRING
 -   Response Status Codes
     -   200: Request Successful (can return empty array)
     -   400: No username query given
@@ -86,7 +87,7 @@
     -   profilePic: STRING
     -   private: BOOLEAN
     -   devices: DEVICES_ID
-    -   musicPlatforms: MUSICS_ID
+    -   musicPlatform: STRING
     -   musicPrefs: PREFERENCES_ID
     -   waitToSave: BOOLEAN
     -   intervalShort: INT
@@ -134,7 +135,7 @@
     -   profilePic: STRING
     -   private: BOOLEAN
     -   devices: DEVICES_ID
-    -   musicPlatforms: MUSICS_ID
+    -   musicPlatform: STRING
     -   musicPrefs: PREFERENCES_ID
     -   waitToSave: BOOLEAN
     -   intervalShort: INT

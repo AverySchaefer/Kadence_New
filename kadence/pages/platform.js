@@ -14,7 +14,7 @@ export default function Platform() {
     async function handleSpotify() {
         const newPlatformData = {
             username: localStorage.getItem('username'),
-            musicPlatforms: 'Spotify',
+            musicPlatform: 'Spotify',
         };
 
         try {
@@ -32,7 +32,7 @@ export default function Platform() {
     async function handleApple() {
         const newPlatformData = {
             username: localStorage.getItem('username'),
-            musicPlatforms: 'Apple Music',
+            musicPlatform: 'Apple Music',
         };
 
         try {

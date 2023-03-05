@@ -39,7 +39,7 @@ handler.get(async (req, res) => {
         console.log('Sending public user');
         res.status(200).json({
             ...alwaysAvailableData,
-            musicPlatforms: user.musicPlatforms,
+            musicPlatform: user.musicPlatform,
             // Other private information (device?)
         });
     }

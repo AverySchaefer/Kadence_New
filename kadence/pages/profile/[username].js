@@ -24,11 +24,11 @@ function BasicTabs({ userData }) {
     let platform = '';
     let alt = '';
     let accountLink = '';
-    if (userData.musicPlatforms === 'Spotify') {
+    if (userData.musicPlatform === 'Spotify') {
         platform = '/Spotify.jpg';
         alt = 'Spotify Logo';
         accountLink = '';
-    } else if (userData.musicPlatforms === 'Apple Music') {
+    } else if (userData.musicPlatform === 'Apple Music') {
         platform = '/apple-music.jpg';
         alt = 'Apple Music Logo';
         accountLink = '';
@@ -78,7 +78,7 @@ function BasicTabs({ userData }) {
                                 </p>
                             ) : (
                                 <>
-                                    {userData.musicPlatforms ? (
+                                    {userData.musicPlatform ? (
                                         <>
                                             <Image
                                                 src={platform}

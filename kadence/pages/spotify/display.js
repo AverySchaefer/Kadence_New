@@ -22,7 +22,7 @@ export default function Display() {
     function doSignOut() {
         const newPlatformData = {
             username: localStorage.getItem('username'),
-            musicPlatforms: '',
+            musicPlatform: '',
         };
 
         try {

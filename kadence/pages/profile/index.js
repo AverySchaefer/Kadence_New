@@ -16,7 +16,7 @@ function a11yProps(index) {
     };
 }
 
-function BasicTabs({ favArtist, favSong, favAlbum, musicPlatforms }) {
+function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
     const [value, setValue] = React.useState(0);
     const router = useRouter();
 
@@ -27,7 +27,7 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatforms }) {
     const handleClick = () => {
         const newPlatformData = {
             username: localStorage.getItem('username'),
-            musicPlatforms: '',
+            musicPlatform: '',
         };
         try {
             NetworkAPI.patch('/api/users/update', newPlatformData);
@@ -42,12 +42,12 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatforms }) {
     let alt = '';
     let useLink = '';
     let accountLink = '';
-    if (musicPlatforms === 'Spotify') {
+    if (musicPlatform === 'Spotify') {
         platform = '/Spotify.jpg';
         alt = 'Spotify Logo';
         accountLink = Default.spotifyPlayerData.songURI;
         useLink = '/spotify/display';
-    } else if (musicPlatforms === 'Apple Music') {
+    } else if (musicPlatform === 'Apple Music') {
         platform = '/apple-music.jpg';
         alt = 'Apple Music Logo';
         accountLink = 'https://music.apple.com/login';
@@ -145,7 +145,7 @@ export default function Profile() {
     const [faveAlbum, setFaveAlbum] = React.useState('Lingus');
     const [faveSong, setFaveSong] = React.useState('What About Me?');
     const [bio, setBio] = React.useState('Something about me...');
-    const [musicPlatforms, setMusicPlatforms] = React.useState('Spotify');
+    const [musicPlatform, setMusicPlatform] = React.useState('Spotify');
 
     const [loaded, setLoaded] = React.useState(false);
 
@@ -164,7 +164,7 @@ export default function Profile() {
                 setFaveAlbum(userData.favoriteAlbum);
                 setFaveSong(userData.favoriteSong);
                 setBio(userData.bio);
-                setMusicPlatforms(userData.musicPlatforms);
+                setMusicPlatform(userData.musicPlatform);
             } catch (err) {
                 Dialog.alert({
                     title: 'Error',
@@ -200,7 +200,7 @@ export default function Profile() {
                         favArtist={faveArtist}
                         favAlbum={faveAlbum}
                         favSong={faveSong}
-                        musicPlatforms={musicPlatforms}
+                        musicPlatform={musicPlatform}
                     />
                 </main>
             )}
