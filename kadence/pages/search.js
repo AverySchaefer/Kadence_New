@@ -9,6 +9,7 @@ import { Avatar } from '@mui/material/';
 
 import { useState, useEffect, useCallback } from 'react';
 import debounce from '@/lib/debounce';
+import PageLayout from '@/components/PageLayout';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -52,8 +53,7 @@ export default function Search() {
     }, [query, matches]);
 
     return (
-        <div className={inter.className}>
-            <Header title="Search" />
+        <PageLayout activeTab="search" title="Search">
             <main className={styles.main}>
                 <div className={styles.searchBarContainer}>
                     <input
@@ -96,7 +96,6 @@ export default function Search() {
                     </div>
                 )}
             </main>
-            <BottomNav name="search" />
-        </div>
+        </PageLayout>
     );
 }
