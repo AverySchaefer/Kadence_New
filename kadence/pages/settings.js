@@ -42,8 +42,6 @@ function SubList({ addNew, remove, items }) {
 export default function Settings() {
     const [profilePrivate, setProfilePrivate] = useState(true);
     const [waitToSave, setWaitToSave] = useState(true);
-    const [defaultDevice, setDefaultDevice] = useState('None');
-    const [musicPlatforms, setMusicPlatforms] = useState('None');
 
     const [allowExplicit, setAllowExplicit] = useState(false);
     const [lyricalInstrumental, setLyricalInstrumental] = useState(80);
@@ -90,7 +88,6 @@ export default function Settings() {
                 setMood(userData.mood ?? 'Happy');
                 setZipCode(userData.zipCode ?? 47907);
                 setMusicPrefId(userData.musicPrefs);
-                setMusicPlatforms(userData.musicPlatforms ?? 'None');
 
                 // Get preference data second (using musicPrefs id)
                 const { data: prefData } = await NetworkAPI.get(
@@ -121,10 +118,6 @@ export default function Settings() {
         }
         fetchData();
     }, []);
-
-    // TODO: actually get devices from database
-    const devices = ['Device 1', 'Device 2'];
-    const musicPlatformsOptions = ['Spotify', 'Apple Music'];
 
     const router = useRouter();
 
@@ -191,7 +184,6 @@ export default function Settings() {
             rampDownTime,
             mood,
             zipCode,
-            musicPlatforms,
         };
 
         try {
@@ -272,44 +264,6 @@ export default function Settings() {
                                 >
                                     <option value={true}>Yes</option>
                                     <option value={false}>No</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div>
-                            <div className={styles.flexWrapper}>
-                                <b>Selected Device: </b>
-                                <select
-                                    className={styles.select}
-                                    onChange={(e) =>
-                                        setDefaultDevice(e.target.value)
-                                    }
-                                    value={defaultDevice}
-                                >
-                                    <option value={'None'}>None</option>
-                                    {devices.map((device) => (
-                                        <option value={device} key={device}>
-                                            {device}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
-                        <div>
-                            <div className={styles.flexWrapper}>
-                                <b>Selected Music Platform: </b>
-                                <select
-                                    className={styles.select}
-                                    onChange={(e) =>
-                                        setMusicPlatforms(e.target.value)
-                                    }
-                                    value={musicPlatforms}
-                                >
-                                    <option value={'None'}>None</option>
-                                    {musicPlatformsOptions.map((mp) => (
-                                        <option value={mp} key={mp}>
-                                            {mp}
-                                        </option>
-                                    ))}
                                 </select>
                             </div>
                         </div>
