@@ -283,7 +283,7 @@ const API = {
         {
             title: 'Skip',
             url: '/api/spotify/skip',
-            method: 'SKIP',
+            method: 'POST',
             dataReqs: [],
         },
     ],
