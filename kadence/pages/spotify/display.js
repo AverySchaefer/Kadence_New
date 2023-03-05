@@ -1,9 +1,13 @@
+import Button from '@mui/material/Button';
+
 import { useSession, signIn, signOut } from 'next-auth/react';
 import Image from 'next/image';
-import Button from '@mui/material/Button';
 import { useState } from 'react';
+
 import styles from '@/styles/Spotify.module.css';
+
 import PageLayout from '@/components/PageLayout';
+import NetworkAPI from '@/lib/networkAPI';
 
 export default function Display() {
     const { data: session } = useSession();
@@ -14,6 +18,21 @@ export default function Display() {
         const songItem = await res.json();
         setSongItem(songItem.item.name);
     };
+
+    function doSignOut() {
+        const newPlatformData = {
+            username: localStorage.getItem('username'),
+            musicPlatforms: '',
+        };
+
+        try {
+            NetworkAPI.patch('/api/users/update', newPlatformData);
+        } catch (err) {
+            console.log(err);
+        } finally {
+            signOut({ callbackUrl: '/profile' });
+        }
+    }
 
     return (
         <PageLayout player={session ? 'spotify' : ''}>
@@ -40,7 +59,7 @@ export default function Display() {
                         <Button
                             variant="contained"
                             size="large"
-                            onClick={() => signOut()}
+                            onClick={doSignOut}
                         >
                             Sign out
                         </Button>
@@ -49,7 +68,7 @@ export default function Display() {
                     <Button
                         variant="contained"
                         size="large"
-                        onClick={() => signIn()}
+                        onClick={() => signIn('spotify')}
                     >
                         Sign In!
                     </Button>

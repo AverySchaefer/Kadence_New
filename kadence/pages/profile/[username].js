@@ -24,18 +24,18 @@ function BasicTabs({ userData }) {
     let platform = '';
     let alt = '';
     let accountLink = '';
-    if (!userData.musicPlatforms) {
-        platform = '/Empty.jpg';
-        alt = 'No Selection';
-        accountLink = `/profile/${userData.username}`;
-    } else if (userData.musicPlatforms === 'Spotify') {
+    if (userData.musicPlatforms === 'Spotify') {
         platform = '/Spotify.jpg';
         alt = 'Spotify Logo';
-        accountLink = 'https://www.spotify.com/us/account/apps/';
+        accountLink = '';
     } else if (userData.musicPlatforms === 'Apple Music') {
         platform = '/apple-music.jpg';
         alt = 'Apple Music Logo';
-        accountLink = 'https://music.apple.com/login';
+        accountLink = '';
+    } else {
+        platform = '';
+        alt = 'No Selection';
+        accountLink = '';
     }
 
     return (
@@ -78,20 +78,29 @@ function BasicTabs({ userData }) {
                                 </p>
                             ) : (
                                 <>
-                                    <Image
-                                        src={platform}
-                                        alt={alt}
-                                        width="300"
-                                        height="150"
-                                        className={styles.platformImage}
-                                        priority
-                                    />
-                                    <Button
-                                        variant="contained"
-                                        href={accountLink}
-                                    >
-                                        Account
-                                    </Button>
+                                    {userData.musicPlatforms ? (
+                                        <>
+                                            <Image
+                                                src={platform}
+                                                alt={alt}
+                                                width="300"
+                                                height="150"
+                                                className={styles.platformImage}
+                                                priority
+                                            />
+                                            <Button
+                                                variant="contained"
+                                                href={accountLink}
+                                            >
+                                                View Account
+                                            </Button>
+                                        </>
+                                    ) : (
+                                        <p>
+                                            This user has not selected a music
+                                            platform!
+                                        </p>
+                                    )}
                                 </>
                             )}
                         </Stack>
@@ -135,6 +144,7 @@ export default function OtherProfile() {
                         username,
                     }
                 );
+                console.log(data);
                 setUserData(data);
             } catch (err) {
                 Dialog.alert({

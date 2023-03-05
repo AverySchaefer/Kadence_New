@@ -7,6 +7,7 @@ import { Avatar, Box, Button, Stack, Tab, Tabs } from '@mui/material/';
 import NetworkAPI from '@/lib/networkAPI';
 import Default from '@/lib/default';
 import PageLayout from '@/components/PageLayout';
+import { signOut } from 'next-auth/react';
 
 function a11yProps(index) {
     return {
@@ -24,7 +25,17 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatforms }) {
     };
 
     const handleClick = () => {
-        router.push('/platform');
+        const newPlatformData = {
+            username: localStorage.getItem('username'),
+            musicPlatforms: '',
+        };
+        try {
+            NetworkAPI.patch('/api/users/update', newPlatformData);
+        } catch (err) {
+            console.log(err);
+        } finally {
+            signOut({ callbackUrl: '/platform' });
+        }
     };
 
     let platform = '';
@@ -41,6 +52,11 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatforms }) {
         alt = 'Apple Music Logo';
         accountLink = 'https://music.apple.com/login';
         useLink = '/spotify/display';
+    } else {
+        platform = '';
+        alt = 'No platform chosen!';
+        accountLink = '';
+        useLink = '';
     }
 
     return (
@@ -82,32 +98,41 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatforms }) {
                 {value === 1 && (
                     <Box>
                         <Stack spacing={2} alignItems="center">
-                            <Image
-                                src={platform}
-                                alt={alt}
-                                width="300"
-                                height="150"
-                                className={styles.platformImage}
-                                priority
-                            />
-                            <Button
-                                variant="contained"
-                                onClick={() => router.push(useLink)}
-                            >
-                                Use Platform
-                            </Button>
-                            <Button variant="contained" href={accountLink}>
-                                Account
-                            </Button>
+                            {platform && (
+                                <>
+                                    <Image
+                                        src={platform}
+                                        alt={alt}
+                                        width="300"
+                                        height="150"
+                                        className={styles.platformImage}
+                                        priority
+                                    />
+                                    <Button
+                                        variant="contained"
+                                        onClick={() => router.push(useLink)}
+                                    >
+                                        Configure Account
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        href={accountLink}
+                                    >
+                                        View Account In App
+                                    </Button>
+                                </>
+                            )}
                             <Button variant="contained" onClick={handleClick}>
-                                Change
+                                {platform ? 'Change' : 'Choose'} Platform
                             </Button>
                         </Stack>
                     </Box>
                 )}
                 {value === 2 && (
                     <Box>
-                        <Button variant="contained">Connect</Button>
+                        <Stack spacing={2} alignItems="center">
+                            <Button variant="contained">Connect</Button>
+                        </Stack>
                     </Box>
                 )}
             </Box>
