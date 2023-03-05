@@ -409,10 +409,13 @@ export default function Settings() {
                                             value={minSongLength}
                                             onChange={(e) =>
                                                 setMinSongLength(
-                                                    parseInt(
-                                                        e.target.value,
-                                                        10
-                                                    ) % 10000
+                                                    Math.min(
+                                                        parseInt(
+                                                            e.target.value,
+                                                            10
+                                                        ),
+                                                        9999
+                                                    )
                                                 )
                                             }
                                         />{' '}
@@ -428,10 +431,13 @@ export default function Settings() {
                                             value={maxSongLength}
                                             onChange={(e) =>
                                                 setMaxSongLength(
-                                                    parseInt(
-                                                        e.target.value,
-                                                        10
-                                                    ) % 10000
+                                                    Math.min(
+                                                        parseInt(
+                                                            e.target.value,
+                                                            10
+                                                        ),
+                                                        9999
+                                                    )
                                                 )
                                             }
                                         />{' '}
@@ -452,10 +458,13 @@ export default function Settings() {
                                             value={minPlaylistLength}
                                             onChange={(e) =>
                                                 setMinPlaylistLength(
-                                                    parseInt(
-                                                        e.target.value,
-                                                        10
-                                                    ) % 10000
+                                                    Math.min(
+                                                        parseInt(
+                                                            e.target.value,
+                                                            10
+                                                        ),
+                                                        9999
+                                                    )
                                                 )
                                             }
                                         />{' '}
@@ -471,10 +480,13 @@ export default function Settings() {
                                             value={maxPlaylistLength}
                                             onChange={(e) =>
                                                 setMaxPlaylistLength(
-                                                    parseInt(
-                                                        e.target.value,
-                                                        10
-                                                    ) % 10000
+                                                    Math.min(
+                                                        parseInt(
+                                                            e.target.value,
+                                                            10
+                                                        ),
+                                                        9999
+                                                    )
                                                 )
                                             }
                                         />{' '}
@@ -670,10 +682,13 @@ export default function Settings() {
                                             value={intervalShort}
                                             onChange={(e) =>
                                                 setIntervalShort(
-                                                    parseInt(
-                                                        e.target.value,
-                                                        10
-                                                    ) % 10000
+                                                    Math.min(
+                                                        parseInt(
+                                                            e.target.value,
+                                                            10
+                                                        ),
+                                                        9999
+                                                    )
                                                 )
                                             }
                                         />{' '}
@@ -689,10 +704,13 @@ export default function Settings() {
                                             value={intervalLong}
                                             onChange={(e) =>
                                                 setIntervalLong(
-                                                    parseInt(
-                                                        e.target.value,
-                                                        10
-                                                    ) % 10000
+                                                    Math.min(
+                                                        parseInt(
+                                                            e.target.value,
+                                                            10
+                                                        ),
+                                                        9999
+                                                    )
                                                 )
                                             }
                                         />{' '}
@@ -713,10 +731,13 @@ export default function Settings() {
                                             value={rampUpTime}
                                             onChange={(e) =>
                                                 setRampUpTime(
-                                                    parseInt(
-                                                        e.target.value,
-                                                        10
-                                                    ) % 10000
+                                                    Math.min(
+                                                        parseInt(
+                                                            e.target.value,
+                                                            10
+                                                        ),
+                                                        9999
+                                                    )
                                                 )
                                             }
                                         />{' '}
@@ -732,10 +753,13 @@ export default function Settings() {
                                             value={rampDownTime}
                                             onChange={(e) =>
                                                 setRampDownTime(
-                                                    parseInt(
-                                                        e.target.value,
-                                                        10
-                                                    ) % 10000
+                                                    Math.min(
+                                                        parseInt(
+                                                            e.target.value,
+                                                            10
+                                                        ),
+                                                        9999
+                                                    )
                                                 )
                                             }
                                         />{' '}
@@ -772,7 +796,10 @@ export default function Settings() {
                                     value={zipCode}
                                     onChange={(e) =>
                                         setZipCode(
-                                            parseInt(e.target.value, 10) % 99999
+                                            Math.min(
+                                                parseInt(e.target.value, 10),
+                                                99999
+                                            )
                                         )
                                     }
                                 />
