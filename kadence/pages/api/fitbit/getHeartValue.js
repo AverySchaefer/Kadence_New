@@ -21,6 +21,21 @@ async function getValue(token) {
 
 handler.get(async (req, res) => {
     const response = await getValue();
+
+    // Check response
+    if (response.status === 401) {
+        res.status(401).message("User authentication required");
+    }
+    if (response.status === 400) {
+        res.status(400).message("Error in request syntax");
+    }
+
+    // Handle correct response
+    const responseDoc = await response.json();
+    const valuesArray = responseDoc["activities-heart"]["activities-heart-intraday"]["dataset"];
+    const mostRecentVal = valuesArray[0].value;
+    console.log(mostRecentVal);
+    res.status(200).json(mostRecentVal);
 })
 
 export default handler;
