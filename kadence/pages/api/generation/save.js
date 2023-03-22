@@ -34,6 +34,7 @@ async function createPlaylist(token, playlistName) {
 async function addToPlaylist(token, playlistId, playlistArray) {
     const { access_token: accessToken } = await refreshToken(token);
     const ADD_TO_PLAYLIST_ENDPOINT = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`
+    console.log(playlistId);
 
     return fetch(ADD_TO_PLAYLIST_ENDPOINT, {
         method: 'POST',
@@ -53,12 +54,17 @@ handler.post(async (req, res) => {
         token: { accessToken },
     } = await getSession({ req });
     
-    const createResponse = await createPlaylist(accessToken, req.playlistName);
-    const playlistId = await createResponse.id
+    const reqBody = await JSON.parse(req.body);
+    const name = reqBody.playlistName;
+    const array = reqBody.playlistArray;
+
+    const createResponse = await createPlaylist(accessToken, name);
+    const created = await createResponse.json();
+    const playlistId = await created.id;
 
     if (createResponse.ok) {
         // NOTE: PlaylistArray can be max length of 100
-        const addResponse = await addToPlaylist(accessToken, playlistId, req.playlistArray);
+        const addResponse = await addToPlaylist(accessToken, playlistId, array);
         if (addResponse.ok) {
             res.status(200).send();
             return;
