@@ -244,7 +244,6 @@ export default function Register() {
                                         name="explicit"
                                         onChange={(e) => {
                                             setAllowExplicit(e.target.checked);
-                                            console.log(allowExplicit);
                                         }}
                                     />
                                 }
@@ -289,6 +288,8 @@ export default function Register() {
                                         )
                                     }
                                 />
+                            </div>
+                            <div className={styles.subsetting}>
                                 <TextField
                                     required
                                     color='primary'
@@ -330,6 +331,8 @@ export default function Register() {
                                         )
                                     }
                                 />
+                            </div>
+                            <div className={styles.subsetting}>
                                 <TextField
                                     required
                                     color='primary'
@@ -378,24 +381,39 @@ export default function Register() {
                                             </MenuItem>
                                         ))}
                                     </Select>
-
                                 </FormControl>
                             </div>
                         </div>
                         <div>
-                            <div className={styles.flexWrapper}>
-                                <b>Preferred Genre: &nbsp;</b>
-                                <select
-                                    className={styles.select}
-                                    onChange={(e) => setFaveGenres(e.target.value)}
+                            <h3>Preferred Genre:</h3>
+                            <div className={styles.subsetting}>
+
+                            <FormControl required sx={{ m: 1, width : '25ch' }}>
+                                <InputLabel id="genre-select-input-label" sx={{ color: '#69e267' }}>Genre</InputLabel>
+                                <Select
+                                    labelId="genre-select-input-label"
+                                    id="genre-select-input"
                                     value={faveGenres}
+                                    label="Genre"
+                                    sx={{ color: 'white',
+                                        '& .MuiOutlinedInput-notchedOutline': {
+                                            borderColor: '#69e267'
+                                        },
+                                        '& .MuiSvgIcon-root': {
+                                            color: '#69e267'
+                                        }
+                                    }}
+                                    onChange={(e) =>
+                                        setFaveGenres(e.target.value)
+                                    }
                                 >
                                     {genres.map((genre) => (
-                                        <option value={genre} key={genre}>
+                                        <MenuItem value={genre} key={genre}>
                                             {genre}
-                                        </option>
+                                        </MenuItem>
                                     ))}
-                                </select>
+                                </Select>
+                            </FormControl>
                             </div>
                         </div>
                         <h2 className={styles.text}>
@@ -405,125 +423,150 @@ export default function Register() {
                             <div>
                                 <h3>Interval Mode Times: </h3>
                                 <div className={styles.subsetting}>
-                                    <div className={styles.left}>
-                                        <i>Short: &nbsp;</i>
-                                        <div>
-                                            <input
-                                                type="number"
-                                                placeholder="5"
-                                                className={styles.input}
-                                                value={intervalShort}
-                                                onChange={(e) =>
-                                                    setIntervalShort(
-                                                        parseInt(
-                                                            e.target.value,
-                                                            10
-                                                        ) % 10000
-                                                    )
-                                                }
-                                            />{' '}
-                                            minutes
-                                        </div>
-                                    </div>
-                                    <div className={styles.left}>
-                                        <i>Long: &nbsp;</i>
-                                        <div>
-                                            <input
-                                                type="number"
-                                                placeholder="10"
-                                                className={styles.input}
-                                                value={intervalLong}
-                                                onChange={(e) =>
-                                                    setIntervalLong(
-                                                        parseInt(
-                                                            e.target.value,
-                                                            10
-                                                        ) % 10000
-                                                    )
-                                                }
-                                            />{' '}
-                                            minutes
-                                        </div>
-                                    </div>
+                                    <TextField
+                                        required
+                                        color='primary'
+                                        focused 
+                                        label="Short"
+                                        type="number"
+                                        sx={{ m: 1, width: '25ch', input: { color: 'white' } }}
+                                        value={intervalShort}
+                                        InputProps={{
+                                            endAdornment: (<InputAdornment position="end" sx={{ color: '#69e267' }}><p>minutes</p></InputAdornment>),
+                                        }}
+                                        onChange={(e) =>
+                                            setIntervalShort(
+                                                parseInt(
+                                                    e.target.value,
+                                                    10
+                                                ) % 10000
+                                            )
+                                        }
+                                    />
+                                </div>
+                                <div className={styles.subsetting}>
+                                    <TextField
+                                        required
+                                        color='primary'
+                                        focused 
+                                        label="Long"
+                                        type="number"
+                                        sx={{ m: 1, width: '25ch', input: { color: 'white' } }}
+                                        value={intervalLong}
+                                        InputProps={{
+                                            endAdornment: (<InputAdornment position="end" sx={{ color: '#69e267' }}><p>minutes</p></InputAdornment>),
+                                        }}
+                                        onChange={(e) =>
+                                            setIntervalLong(
+                                                parseInt(
+                                                    e.target.value,
+                                                    10
+                                                ) % 10000
+                                            )
+                                        }
+                                    />
                                 </div>
                             </div>
                             <div>
                                 <h3>Fitness Mode Ramp Up/Down: </h3>
                                 <div className={styles.subsetting}>
-                                    <div className={styles.left}>
-                                        <i>Ramp Up: &nbsp;</i>
-                                        <div>
-                                            <input
-                                                type="number"
-                                                placeholder="0"
-                                                className={styles.input}
-                                                value={rampUpTime}
-                                                onChange={(e) =>
-                                                    setRampUpTime(
-                                                        parseInt(
-                                                            e.target.value,
-                                                            10
-                                                        ) % 10000
-                                                    )
-                                                }
-                                            />{' '}
-                                            minutes
-                                        </div>
-                                    </div>
-                                    <div className={styles.left}>
-                                        <i>Ramp Down: &nbsp;</i>
-                                        <div>
-                                            <input
-                                                type="number"
-                                                placeholder="0"
-                                                className={styles.input}
-                                                value={rampDownTime}
-                                                onChange={(e) =>
-                                                    setRampDownTime(
-                                                        parseInt(
-                                                            e.target.value,
-                                                            10
-                                                        ) % 10000
-                                                    )
-                                                }
-                                            />{' '}
-                                            minutes
-                                        </div>
-                                    </div>
+                                    <TextField
+                                        required
+                                        color='primary'
+                                        focused 
+                                        label="Ramp Up"
+                                        type="number"
+                                        sx={{ m: 1, width: '25ch', input: { color: 'white' } }}
+                                        value={rampUpTime}
+                                        InputProps={{
+                                            endAdornment: (<InputAdornment position="end" sx={{ color: '#69e267' }}><p>minutes</p></InputAdornment>),
+                                        }}
+                                        onChange={(e) =>
+                                            setRampUpTime(
+                                                parseInt(
+                                                    e.target.value,
+                                                    10
+                                                ) % 10000
+                                            )
+                                        }
+                                    />
+                                </div>
+                                <div className={styles.subsetting}>
+                                    <TextField
+                                        required
+                                        color='primary'
+                                        focused 
+                                        label="Ramp Down"
+                                        type="number"
+                                        sx={{ m: 1, width: '25ch', input: { color: 'white' } }}
+                                        value={rampDownTime}
+                                        InputProps={{
+                                            endAdornment: (<InputAdornment position="end" sx={{ color: '#69e267' }}><p>minutes</p></InputAdornment>),
+                                        }}
+                                        onChange={(e) =>
+                                            setRampDownTime(
+                                                parseInt(
+                                                    e.target.value,
+                                                    10
+                                                ) % 10000
+                                            )
+                                        }
+                                    />
                                 </div>
                             </div>
-                            <div className={styles.left}>
-                                <div className={styles.flexWrapper}>
-                                    <b>Mood Mode Selection: &nbsp;</b>
-                                    <select
-                                        className={styles.select}
-                                        onChange={(e) => setMood(e.target.value)}
-                                        value={mood}
-                                    >
-                                        {moods.map((m) => (
-                                            <option value={m} key={m}>
-                                                {m}
-                                            </option>
-                                        ))}
-                                    </select>
+                            <div>
+                                <h3>Mood Mode Selection:</h3>
+                                <div className={styles.subsetting}>
+                                    <FormControl required sx={{ m: 1, width : '25ch' }}>
+                                        <InputLabel id="mood-select-input-label" sx={{ color: '#69e267' }}>Mood</InputLabel>
+                                        <Select
+                                            labelId="mood-select-input-label"
+                                            id="mood-select-input"
+                                            value={mood}
+                                            label="Mood"
+                                            sx={{ color: 'white',
+                                                '& .MuiOutlinedInput-notchedOutline': {
+                                                    borderColor: '#69e267'
+                                                },
+                                                '& .MuiSvgIcon-root': {
+                                                    color: '#69e267'
+                                                }
+                                            }}
+                                            onChange={(e) =>
+                                                setMood(e.target.value)
+                                            }
+                                        >
+                                            {moods.map((m) => (
+                                                <MenuItem value={m} key={m}>
+                                                    {m}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
                                 </div>
                             </div>
                             <br />
-                            <div className={styles.left}>
-                                <div className={styles.flexWrapper}>
-                                    <b>Local Mode Zip Code: &nbsp;</b>
-                                    <input
-                                        className={styles.zipCode}
+                            <div>
+                                <h3>Local Mode Zip Code:</h3>
+                                <div className={styles.subsetting}>
+                                    <TextField
+                                        required
+                                        color='primary'
+                                        focused
+                                        label="Zip Code"
                                         type="number"
-                                        min="0"
-                                        max="99999"
-                                        step="1"
+                                        
+                                        sx={{ m: 1, width: '25ch', input: { color: 'white' } }}
                                         value={zipCode}
-                                        onChange={(e) =>
-                                            setZipCode(
-                                                parseInt(e.target.value, 10) % 99999
-                                            )
-                                        }
+                                        InputProps={{}}
+                                        onChange={(e) => {
+                                            var value = parseInt(e.target.value, 10);
+
+                                            if (value < 0) value = 0;
+                                            if (value > 99999) value = 99999;
+
+                                            setZipCode(value)
+                                        }}
                                     />
                                 </div>
                             </div>
