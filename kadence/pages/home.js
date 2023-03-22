@@ -54,7 +54,7 @@ export default function Home() {
     const [username, setUsername] = useState('Unknown User');
     useEffect(() => {
         setUsername(localStorage.getItem('username'));
-    });
+    }, []);
 
     return (
         <PageLayout title="Home" activeTab="home">
@@ -81,11 +81,8 @@ export default function Home() {
                     >
                         Local Artist
                     </Button>
-                    <Button className={styles.generateBtn}>
-                        Generate Playlist
-                    </Button>
                 </Card>
-                <Button className={styles.logoutBtn} onClick={handleClick}>
+                <Button className={`${styles.logoutBtn}`} onClick={handleClick}>
                     Log Out
                 </Button>
             </main>
