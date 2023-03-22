@@ -1,19 +1,38 @@
 import * as React from 'react';
 import Head from 'next/head';
+import Image from 'next/image';
 import styles from '@/styles/Register.module.css';
 import Button from '@/components/Button';
 import Switch from '@mui/material/Switch';
+import Slider from '@mui/material/Slider';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
 import Textbox from '@/components/Textbox';
+import TextArea from '@/components/TextArea';
 import { languages, genres, moods } from '@/lib/promptOptions';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { Inter } from '@next/font/google';
 import { Dialog } from '@capacitor/dialog';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import NetworkAPI from '@/lib/networkAPI';
 
 const inter = Inter({ subsets: ['latin'] });
+
+const theme = createTheme({
+    palette: {
+      primary: {
+        main: '#69e267',
+      },
+    },
+  });
 
 export default function Register() {
     const [profilePrivate, setProfilePrivate] = useState(true);
@@ -128,13 +147,18 @@ export default function Register() {
             <main className={[inter.className, styles.main].join(' ')}>
                 <div className={styles.formInfo}>
                     <h1 className={styles.title}>Get set up with</h1>
-                    <h1 className={styles.title}>Kadence!!</h1>
+                    <Image
+                    className={styles.img}
+                    src="/KadenceLogo_green.svg"
+                    alt="Kadence Logo"
+                    width={380}
+                    height={200}
+                    priority
+                />
                     <br />
                     <h2>Write a short bio!</h2>
-                    <textarea
+                    <TextArea
                         name="bio"
-                        rows="3"
-                        cols="40"
                         placeholder="Bio"
                         onChange={(e) => setBio(e.target.value)}
                         value={bio}
@@ -185,309 +209,327 @@ export default function Register() {
                         required
                     />
                     <h2>Set your preferences!</h2>
-                    <div className={styles.switch}>
-                        <FormControlLabel
-                            label="Set profile to private"
-                            control={
-                                <Switch
-                                    checked={profilePrivate}
-                                    name="private"
-                                    onChange={(e) =>
-                                        setProfilePrivate(e.target.checked)
-                                    }
-                                />
-                            }
-                        />
-                        <FormControlLabel
-                            label="Wait to save playlists"
-                            control={
-                                <Switch
-                                    checked={waitToSave}
-                                    name="waitToSave"
-                                    onChange={(e) =>
-                                        setWaitToSave(e.target.checked)
-                                    }
-                                />
-                            }
-                        />
-                        <FormControlLabel
-                            label="Allow explicit songs"
-                            control={
-                                <Switch
-                                    checked={allowExplicit}
-                                    name="explicit"
-                                    onChange={(e) => {
-                                        setAllowExplicit(e.target.checked);
-                                        console.log(allowExplicit);
-                                    }}
-                                />
-                            }
-                        />
-                    </div>
-                    <h3>Lyrical vs. Instrumental: </h3>
-                    <div className={styles.sliderContainer}>
-                        <span className={styles.sliderLabel}>Lyrical</span>
-                        <input
-                            type="range"
-                            min="0"
-                            max="100"
-                            step="1"
-                            value={lyricalInstrumental}
-                            onChange={(e) =>
-                                setlyricalInstrumental(
-                                    parseInt(e.target.value, 10)
-                                )
-                            }
-                        />
-                        <span className={styles.sliderLabel}>Instrumental</span>
-                    </div>
-                    <div>
-                        <h3>Song Length Preferences: </h3>
-                        <div className={styles.subsetting}>
-                            <div className={styles.flexWrapper}>
-                                <i>Minimum: &nbsp;</i>
-                                <div>
-                                    <input
-                                        type="number"
-                                        placeholder="0"
-                                        className={styles.input}
-                                        value={minSongLength}
+                    <ThemeProvider theme={theme}>
+                        <div className={styles.switch}>
+                            <FormControlLabel
+                                label="Set profile to private"
+                                control={
+                                    <Switch
+                                        checked={profilePrivate}
+                                        name="private"
+                                        color="primary"
                                         onChange={(e) =>
-                                            setMinSongLength(
-                                                parseInt(e.target.value, 10) %
-                                                    10000
-                                            )
+                                            setProfilePrivate(e.target.checked)
                                         }
-                                    />{' '}
-                                    seconds
-                                </div>
-                            </div>
-                            <div className={styles.flexWrapper}>
-                                <i>Maximum: &nbsp;</i>
-                                <div>
-                                    <input
-                                        type="number"
-                                        placeholder="300"
-                                        className={styles.input}
-                                        value={maxSongLength}
-                                        onChange={(e) =>
-                                            setMaxSongLength(
-                                                parseInt(e.target.value, 10) %
-                                                    10000
-                                            )
-                                        }
-                                    />{' '}
-                                    seconds
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <h3>Playlist Length Preferences: </h3>
-                        <div className={styles.subsetting}>
-                            <div className={styles.flexWrapper}>
-                                <i>Minimum: &nbsp;</i>
-                                <div>
-                                    <input
-                                        type="number"
-                                        placeholder="0"
-                                        className={styles.input}
-                                        value={minPlaylistLength}
-                                        onChange={(e) =>
-                                            setMinPlaylistLength(
-                                                parseInt(e.target.value, 10) %
-                                                    10000
-                                            )
-                                        }
-                                    />{' '}
-                                    minutes
-                                </div>
-                            </div>
-                            <div className={styles.flexWrapper}>
-                                <i>Maximum: &nbsp;</i>
-                                <div>
-                                    <input
-                                        type="number"
-                                        placeholder="60"
-                                        className={styles.input}
-                                        value={maxPlaylistLength}
-                                        onChange={(e) =>
-                                            setMaxPlaylistLength(
-                                                parseInt(e.target.value, 10) %
-                                                    10000
-                                            )
-                                        }
-                                    />{' '}
-                                    minutes
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <div className={styles.flexWrapper}>
-                            <b>Preferred Language: &nbsp;</b>
-                            <select
-                                className={styles.select}
-                                onChange={(e) =>
-                                    setlyricalLanguage(e.target.value)
+                                    />
                                 }
-                                value={lyricalLanguage}
-                            >
-                                {languages.map((language) => (
-                                    <option value={language} key={language}>
-                                        {language}
-                                    </option>
-                                ))}
-                            </select>
+                            />
+                            <FormControlLabel
+                                label="Wait to save playlists"
+                                control={
+                                    <Switch
+                                        checked={waitToSave}
+                                        name="waitToSave"
+                                        onChange={(e) =>
+                                            setWaitToSave(e.target.checked)
+                                        }
+                                    />
+                                }
+                            />
+                            <FormControlLabel
+                                label="Allow explicit songs"
+                                control={
+                                    <Switch
+                                        checked={allowExplicit}
+                                        name="explicit"
+                                        onChange={(e) => {
+                                            setAllowExplicit(e.target.checked);
+                                            console.log(allowExplicit);
+                                        }}
+                                    />
+                                }
+                            />
                         </div>
-                    </div>
-                    <div>
-                        <div className={styles.flexWrapper}>
-                            <b>Preferred Genre: &nbsp;</b>
-                            <select
-                                className={styles.select}
-                                onChange={(e) => setFaveGenres(e.target.value)}
-                                value={faveGenres}
-                            >
-                                {genres.map((genre) => (
-                                    <option value={genre} key={genre}>
-                                        {genre}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    </div>
-                    <h2 className={styles.text}>
-                        Set Your Mode-Specific Preferences!
-                    </h2>
-                    <div className={styles.settingsSection}>
-                        <div>
-                            <h3>Interval Mode Times: </h3>
-                            <div className={styles.subsetting}>
-                                <div className={styles.left}>
-                                    <i>Short: &nbsp;</i>
-                                    <div>
-                                        <input
-                                            type="number"
-                                            placeholder="5"
-                                            className={styles.input}
-                                            value={intervalShort}
-                                            onChange={(e) =>
-                                                setIntervalShort(
-                                                    parseInt(
-                                                        e.target.value,
-                                                        10
-                                                    ) % 10000
-                                                )
-                                            }
-                                        />{' '}
-                                        minutes
-                                    </div>
-                                </div>
-                                <div className={styles.left}>
-                                    <i>Long: &nbsp;</i>
-                                    <div>
-                                        <input
-                                            type="number"
-                                            placeholder="10"
-                                            className={styles.input}
-                                            value={intervalLong}
-                                            onChange={(e) =>
-                                                setIntervalLong(
-                                                    parseInt(
-                                                        e.target.value,
-                                                        10
-                                                    ) % 10000
-                                                )
-                                            }
-                                        />{' '}
-                                        minutes
-                                    </div>
-                                </div>
-                            </div>
+                        <h3>Lyrical vs. Instrumental: </h3>
+                        <div className={styles.sliderContainer}>
+                            <Stack spacing={2} direction="row" sx={{ mb: 1 }} alignItems="center" >
+                            <i className={styles.muiSliderLabel}>Lyrical</i>
+                            <Slider
+                                min={0}
+                                step={1}
+                                max={100}                              
+                                value={lyricalInstrumental}
+                                onChange={(e) =>
+                                    setlyricalInstrumental(
+                                        parseInt(e.target.value, 10)
+                                    )
+                                }
+                            />
+                            <i className={styles.muiSliderLabel}>Instrumental</i>
+                            </Stack>
                         </div>
                         <div>
-                            <h3>Fitness Mode Ramp Up/Down: </h3>
+                            <h3>Song Length Preferences: </h3>
                             <div className={styles.subsetting}>
-                                <div className={styles.left}>
-                                    <i>Ramp Up: &nbsp;</i>
-                                    <div>
-                                        <input
-                                            type="number"
-                                            placeholder="0"
-                                            className={styles.input}
-                                            value={rampUpTime}
-                                            onChange={(e) =>
-                                                setRampUpTime(
-                                                    parseInt(
-                                                        e.target.value,
-                                                        10
-                                                    ) % 10000
-                                                )
-                                            }
-                                        />{' '}
-                                        minutes
-                                    </div>
-                                </div>
-                                <div className={styles.left}>
-                                    <i>Ramp Down: &nbsp;</i>
-                                    <div>
-                                        <input
-                                            type="number"
-                                            placeholder="0"
-                                            className={styles.input}
-                                            value={rampDownTime}
-                                            onChange={(e) =>
-                                                setRampDownTime(
-                                                    parseInt(
-                                                        e.target.value,
-                                                        10
-                                                    ) % 10000
-                                                )
-                                            }
-                                        />{' '}
-                                        minutes
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className={styles.left}>
-                            <div className={styles.flexWrapper}>
-                                <b>Mood Mode Selection: &nbsp;</b>
-                                <select
-                                    className={styles.select}
-                                    onChange={(e) => setMood(e.target.value)}
-                                    value={mood}
-                                >
-                                    {moods.map((m) => (
-                                        <option value={m} key={m}>
-                                            {m}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
-                        <br />
-                        <div className={styles.left}>
-                            <div className={styles.flexWrapper}>
-                                <b>Local Mode Zip Code: &nbsp;</b>
-                                <input
-                                    className={styles.zipCode}
+                                <TextField
+                                    required
+                                    color='primary'
+                                    focused 
+                                    label="Minimum"
                                     type="number"
-                                    min="0"
-                                    max="99999"
-                                    step="1"
-                                    value={zipCode}
+                                    sx={{ m: 1, width: '25ch', input: { color: 'white' } }}
+                                    value={minSongLength}
+                                    InputProps={{
+                                        endAdornment: (<InputAdornment position="end" sx={{ color: '#69e267' }}><p>seconds</p></InputAdornment>),
+                                    }}
                                     onChange={(e) =>
-                                        setZipCode(
-                                            parseInt(e.target.value, 10) % 99999
+                                        setMinSongLength(
+                                            parseInt(e.target.value, 10) %
+                                                10000
+                                        )
+                                    }
+                                />
+                                <TextField
+                                    required
+                                    color='primary'
+                                    focused 
+                                    label="Maximum"
+                                    type="number"
+                                    sx={{ m: 1, width: '25ch', input: { color: 'white' } }}
+                                    value={maxSongLength}
+                                    InputProps={{
+                                        endAdornment: (<InputAdornment position="end" sx={{ color: '#69e267' }}><p>seconds</p></InputAdornment>),
+                                    }}
+                                    onChange={(e) =>
+                                        setMaxSongLength(
+                                            parseInt(e.target.value, 10) %
+                                                10000
                                         )
                                     }
                                 />
                             </div>
                         </div>
-                        <br />
-                    </div>
+                        <div>
+                            <h3>Playlist Length Preferences: </h3>
+                            <div className={styles.subsetting}>
+                            <TextField
+                                    required
+                                    color='primary'
+                                    focused 
+                                    label="Minimum"
+                                    type="number"
+                                    sx={{ m: 1, width: '25ch', input: { color: 'white' } }}
+                                    value={minPlaylistLength}
+                                    InputProps={{
+                                        endAdornment: (<InputAdornment position="end" sx={{ color: '#69e267' }}><p>minutes</p></InputAdornment>),
+                                    }}
+                                    onChange={(e) =>
+                                        setMinPlaylistLength(
+                                            parseInt(e.target.value, 10) %
+                                                10000
+                                        )
+                                    }
+                                />
+                                <TextField
+                                    required
+                                    color='primary'
+                                    focused 
+                                    label="Maximum"
+                                    type="number"
+                                    sx={{ m: 1, width: '25ch', input: { color: 'white' } }}
+                                    value={maxPlaylistLength}
+                                    InputProps={{
+                                        endAdornment: (<InputAdornment position="end" sx={{ color: '#69e267' }}><p>minutes</p></InputAdornment>),
+                                    }}
+                                    onChange={(e) =>
+                                        setMaxPlaylistLength(
+                                            parseInt(e.target.value, 10) %
+                                                10000
+                                        )
+                                    }
+                                />
+                            </div>
+                        </div>
+                        <div>
+                            <h3>Preferred Language: </h3>
+                            <div className={styles.subsetting}>
+                                <FormControl required sx={{ m: 1, width : '25ch' }}>
+                                    <InputLabel id="language-select-input-label" sx={{ color: '#69e267' }}>Language</InputLabel>
+                                    <Select
+                                        labelId="language-select-input-label"
+                                        id="language-select-input"
+                                        value={lyricalLanguage}
+                                        label="Language"
+                                        sx={{ color: 'white', 
+                                            '& .MuiOutlinedInput-notchedOutline': {
+                                                borderColor: '#69e267'
+                                            },
+                                            '& .MuiSvgIcon-root': {
+                                                color: '#69e267'
+                                            } 
+                                        }}
+                                        onChange={(e) =>
+                                            setlyricalLanguage(e.target.value)
+                                        }
+                                    >
+                                        {languages.map((language) => (
+                                            <MenuItem value={language} key={language}>
+                                                {language}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+
+                                </FormControl>
+                            </div>
+                        </div>
+                        <div>
+                            <div className={styles.flexWrapper}>
+                                <b>Preferred Genre: &nbsp;</b>
+                                <select
+                                    className={styles.select}
+                                    onChange={(e) => setFaveGenres(e.target.value)}
+                                    value={faveGenres}
+                                >
+                                    {genres.map((genre) => (
+                                        <option value={genre} key={genre}>
+                                            {genre}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                        <h2 className={styles.text}>
+                            Set Your Mode-Specific Preferences!
+                        </h2>
+                        <div className={styles.settingsSection}>
+                            <div>
+                                <h3>Interval Mode Times: </h3>
+                                <div className={styles.subsetting}>
+                                    <div className={styles.left}>
+                                        <i>Short: &nbsp;</i>
+                                        <div>
+                                            <input
+                                                type="number"
+                                                placeholder="5"
+                                                className={styles.input}
+                                                value={intervalShort}
+                                                onChange={(e) =>
+                                                    setIntervalShort(
+                                                        parseInt(
+                                                            e.target.value,
+                                                            10
+                                                        ) % 10000
+                                                    )
+                                                }
+                                            />{' '}
+                                            minutes
+                                        </div>
+                                    </div>
+                                    <div className={styles.left}>
+                                        <i>Long: &nbsp;</i>
+                                        <div>
+                                            <input
+                                                type="number"
+                                                placeholder="10"
+                                                className={styles.input}
+                                                value={intervalLong}
+                                                onChange={(e) =>
+                                                    setIntervalLong(
+                                                        parseInt(
+                                                            e.target.value,
+                                                            10
+                                                        ) % 10000
+                                                    )
+                                                }
+                                            />{' '}
+                                            minutes
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h3>Fitness Mode Ramp Up/Down: </h3>
+                                <div className={styles.subsetting}>
+                                    <div className={styles.left}>
+                                        <i>Ramp Up: &nbsp;</i>
+                                        <div>
+                                            <input
+                                                type="number"
+                                                placeholder="0"
+                                                className={styles.input}
+                                                value={rampUpTime}
+                                                onChange={(e) =>
+                                                    setRampUpTime(
+                                                        parseInt(
+                                                            e.target.value,
+                                                            10
+                                                        ) % 10000
+                                                    )
+                                                }
+                                            />{' '}
+                                            minutes
+                                        </div>
+                                    </div>
+                                    <div className={styles.left}>
+                                        <i>Ramp Down: &nbsp;</i>
+                                        <div>
+                                            <input
+                                                type="number"
+                                                placeholder="0"
+                                                className={styles.input}
+                                                value={rampDownTime}
+                                                onChange={(e) =>
+                                                    setRampDownTime(
+                                                        parseInt(
+                                                            e.target.value,
+                                                            10
+                                                        ) % 10000
+                                                    )
+                                                }
+                                            />{' '}
+                                            minutes
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className={styles.left}>
+                                <div className={styles.flexWrapper}>
+                                    <b>Mood Mode Selection: &nbsp;</b>
+                                    <select
+                                        className={styles.select}
+                                        onChange={(e) => setMood(e.target.value)}
+                                        value={mood}
+                                    >
+                                        {moods.map((m) => (
+                                            <option value={m} key={m}>
+                                                {m}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+                            <br />
+                            <div className={styles.left}>
+                                <div className={styles.flexWrapper}>
+                                    <b>Local Mode Zip Code: &nbsp;</b>
+                                    <input
+                                        className={styles.zipCode}
+                                        type="number"
+                                        min="0"
+                                        max="99999"
+                                        step="1"
+                                        value={zipCode}
+                                        onChange={(e) =>
+                                            setZipCode(
+                                                parseInt(e.target.value, 10) % 99999
+                                            )
+                                        }
+                                    />
+                                </div>
+                            </div>
+                            <br />
+                        </div>
+                    </ThemeProvider>
                     <div className={styles.center}>
                         <Button onClick={submitData}>
                             {/* <Link href="/home">Register</Link> */}

@@ -17,6 +17,7 @@
     "extends": [
         "eslint:recommended",
         "airbnb-base",
+        "next/babel",
         "next/core-web-vitals",
         "prettier"
     ],

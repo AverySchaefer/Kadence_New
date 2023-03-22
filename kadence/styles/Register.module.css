@@ -38,7 +38,8 @@
 
 .title {
     text-align: center;
-    color: black;
+    color: #69e267;
+
 }
 
 .text {
@@ -80,6 +81,13 @@
     display: inline-block;
     text-align: center;
     width: 12ch;
+}
+
+.muiSliderLabel {
+    font-size: 0.75em;
+    display: inline-block;
+    text-align: center;
+    width: 16ch;
 }
 
 .flexWrapper {
