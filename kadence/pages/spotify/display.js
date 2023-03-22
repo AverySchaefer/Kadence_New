@@ -18,6 +18,7 @@ export default function Display() {
         const moodMode = '/api/generation/mood?';
         const res = await fetch(moodMode + new URLSearchParams({
             chosenMood: 'happy',
+            playlistLength: 30,
         }));
         const songItems = await res.json();
         console.log("Back on the display side");

@@ -48,9 +48,11 @@ handler.get(async (req, res) => {
         token: { accessToken },
     } = await getSession({ req });
 
-    const query = await req.query;
-    const searchType = await req.type;
-    
+    const reqJSON = await JSON.parse(req);
+    console.log(reqJSON);
+    const query = await reqJSON.query;
+    const searchType = await reqJSON.type;
+
     if (searchType === "artist") {
         const response = await searchArtist(accessToken, query);
         const artistData = await response.json();
