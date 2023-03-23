@@ -13,12 +13,25 @@ const SpotifyScopeString = [
     'playlist-modify-public',
 ].join(',');
 
+const FitbitScopeString = [
+    'cardio_fitness',
+    'heartrate',
+    'electrocardiogram',
+    'profile',
+    'settings',
+].join(' ');
+
 export default NextAuth({
     providers: [
         SpotifyProvider({
             authorization: `https://accounts.spotify.com/authorize?scope=${SpotifyScopeString}`,
             clientId: process.env.SPOTIFY_CLIENT_ID,
             clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+        }),
+        FitbitProvider({
+            authorization: `https://www.fitbit.com/oauth2/authorize?scope=${FitbitScopeString}`,
+            clientId: process.env.FITBIT_CLIENT_ID, 
+            clientSecret: process.env.FITBIT_CLIENT_SECRET, 
         }),
     ],
     secret: process.env.NEXTAUTH_SECRET,

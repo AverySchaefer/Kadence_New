@@ -9,6 +9,8 @@ const handler = nextConnect();
 
 handler.use(middleware);
 
+// TODO Change this to only get values within 1 minute of current time!!! (cuz right now it gets the whole day)
+
 async function getValue(token) {
     const { access_token: accessToken } = await refreshToken(token) //TODO Switch this to the Fitbit token refresh!!!
     return fetch(GET_VALUE_URL, {
