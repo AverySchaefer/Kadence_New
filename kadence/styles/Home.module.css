@@ -10,14 +10,15 @@
     display: grid;
     grid-template-areas:
         'heart-rate    interval'
-        'mood   local-artist '
-        'generate   generate';
-    grid-template-rows: 3fr 3fr 1fr;
+        'mood   local-artist ';
+    grid-template-rows: 6.25rem 6.25rem;
     gap: 10px;
+    padding: 0.5rem;
 }
 
 .modeBtn {
     color: #ffffff;
+    text-transform: none;
 }
 
 .heartRateBtn {
@@ -39,17 +40,16 @@
     grid-area: local-artist;
     background-color: #008fa4;
 }
-.generateBtn {
+/* .generateBtn {
     grid-area: generate;
     color: #242b2e;
     background-color: #69e267;
     width: 100%;
-}
+} */
 
 .logoutBtn {
-    /* TODO: make this responsive, button should stay at bottom */
-    margin-top: 40vh;
     color: #ffffff;
     background-color: #b11414;
     width: 100%;
+    text-transform: none;
 }
