@@ -9,7 +9,7 @@ import { Inter } from '@next/font/google';
 import styles from '@/styles/PageLayout.module.css';
 
 import BottomNav from './BottomNav';
-import Player from './Player';
+import MusicPlayer from './MusicPlayer';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -62,7 +62,7 @@ export default function PageLayout({
                 <main className={styles.mainContainer}>{children}</main>
                 {showPlayer && (
                     <div className={styles.playerContainer}>
-                        <Player type={playerName} />
+                        <MusicPlayer type={playerName} size="small" />
                     </div>
                 )}
                 {includeNav && (
