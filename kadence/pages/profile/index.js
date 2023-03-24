@@ -8,6 +8,8 @@ import NetworkAPI from '@/lib/networkAPI';
 import Default from '@/lib/default';
 import PageLayout from '@/components/PageLayout';
 import { signOut } from 'next-auth/react';
+import { useTheme, createTheme, ThemeProvider } from '@mui/material/styles';
+
 
 function a11yProps(index) {
     return {
@@ -19,6 +21,13 @@ function a11yProps(index) {
 function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
     const [value, setValue] = React.useState(0);
     const router = useRouter();
+    const theme = createTheme({
+        palette: {
+          backgroud: {
+            main: '#1e1e1e',
+          },
+        },
+      });
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -60,13 +69,16 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
     }
 
     return (
-        <Box sx={{ width: '100%' }}>
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <ThemeProvider theme={theme}>
+        <div className={styles.profileTabs}>
+        <Box sx={{ width: '98%', bgcolor: '#222222', borderRadius: 4 }}>
+            <Box sx={{ borderTop: 1, borderColor: 'divider', bgcolor: '#1e1e1e', borderRadius: 4   }}>
                 <Tabs
                     value={value}
                     onChange={handleChange}
-                    aria-label="basic tabs example"
                     variant="fullWidth"
+                    textColor="inherit"
+                    TabIndicatorProps={{style: {backgroundColor: "#69E267"}}}
                 >
                     <Tab label="About Me" {...a11yProps(0)} />
                     <Tab label="Platform" {...a11yProps(1)} />
@@ -137,6 +149,8 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
                 )}
             </Box>
         </Box>
+        </div>
+        </ThemeProvider>
     );
 }
 
