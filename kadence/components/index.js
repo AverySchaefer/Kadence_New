@@ -2,4 +2,4 @@
 export { default as BottomNav } from './BottomNav';
 export { default as Button } from './Button';
 export { default as Textbox } from './Textbox';
-export { default as Player } from './SmallMusicPlayer';
+export { default as MusicPlayer } from './MusicPlayer';
