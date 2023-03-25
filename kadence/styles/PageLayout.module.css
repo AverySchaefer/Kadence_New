@@ -7,33 +7,28 @@
 
 .headerContainer {
     display: flex;
-    height: var(--nav-height);
-    background-color: black;
     color: white;
     justify-content: center;
     align-items: center;
     flex-shrink: 0;
     flex-grow: 0;
+    padding: 1rem 1rem 0rem 1rem;
+    box-sizing: content-box;
 }
 
-.backButton {
-    --arrow-size: calc(var(--nav-height) / 4);
-    box-sizing: content-box;
-    width: 0;
-    height: 0;
-    position: absolute;
-    left: 10px;
-    top: calc(var(--nav-height) / 4);
-    background-color: transparent;
-    border-top: var(--arrow-size) solid transparent;
-    border-bottom: var(--arrow-size) solid transparent;
-    border-right: calc(var(--arrow-size) * 1.5) solid white;
+.headerContainer svg {
+    display: block;
+    scale: 1.2;
 }
 
-.settingsButton {
-    box-sizing: content-box;
-    position: absolute;
-    right: 10px;
+.title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: auto;
+    gap: 1rem;
+    font-weight: bold;
+    font-size: 1.2em;
 }
 
 .mainContainer {
@@ -42,6 +37,8 @@
     flex-shrink: 0;
     overflow: scroll;
     position: relative;
+    padding-inline: 1rem;
+    margin-block: 1rem;
 }
 
 .playerContainer {
@@ -54,9 +51,7 @@
 .navContainer {
     flex-grow: 0;
     flex-shrink: 0;
-    height: var(--nav-height);
     overflow: hidden;
-    background-color: black;
     display: flex;
     justify-content: center;
     align-items: center;

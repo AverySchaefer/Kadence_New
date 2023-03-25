@@ -4,36 +4,9 @@ import { Button, Card } from '@mui/material';
 import { useState, useEffect } from 'react';
 import NetworkAPI from '@/lib/networkAPI';
 import styles from '@/styles/Home.module.css';
+import Link from 'next/link';
 
 export default function Home() {
-    /*
-  const [isLogged, setIsLogged] = useState();
-  useEffect(() => {
-      setIsLogged(!!localStorage.getItem('jwt'));
-  }, []);
-
-  function handleClick() {
-    console.log("Clicking the logout button!")
-  }
-
-  if (isLogged) {
-    return (
-      <div>
-        <h1>Home. The user is logged in.</h1>
-        <Button onClick={handleClick}>Logout</Button>
-        <BottomNav name="home" />
-      </div>
-    );
-  } else {
-    console.log("Not logged in.")
-    return (
-      <div>
-        <h1>Home. The user is not logged in.</h1>
-        <BottomNav name="home" />
-      </div>
-    );
-  }
-  */
     const router = useRouter();
 
     async function handleClick() {
@@ -70,6 +43,7 @@ export default function Home() {
                     </Button>
                     <Button
                         className={`${styles.modeBtn} ${styles.intervalBtn}`}
+                        onClick={() => router.push('/preInterval')}
                     >
                         Interval
                     </Button>
