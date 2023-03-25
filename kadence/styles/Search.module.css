@@ -28,12 +28,6 @@
     align-items: center;
 }
 
-.icon button {
-    border: none;
-    display: block;
-    background-color: transparent;
-}
-
 .icon svg {
     scale: 1.5;
     display: block;

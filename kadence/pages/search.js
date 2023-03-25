@@ -64,9 +64,7 @@ export default function Search() {
                         />
                     </div>
                     <div className={styles.icon}>
-                        <button onClick={() => setQuery('')}>
-                            <ClearIcon />
-                        </button>
+                        <ClearIcon onClick={() => setQuery('')} />
                     </div>
                 </div>
                 <div className={styles.searchResults}>
