@@ -44,7 +44,7 @@
 -   Request Query Elements
     -   username: STRING
 -   Return Body Elements
-    -   results: (array of objects with fields (username, profilePic) that match query)
+    -   results: (array of objects with fields (username, profilePic, bio) that match query)
 -   Response Status Codes
     -   200: Request Successful (can return empty array)
     -   400: No username query given
