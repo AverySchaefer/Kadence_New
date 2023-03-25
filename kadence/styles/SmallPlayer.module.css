@@ -10,6 +10,7 @@
     align-items: center;
     gap: 0.5rem;
     border-radius: 5px;
+    overflow: hidden;
 }
 
 /* Get rid of unexpected extra height? */
