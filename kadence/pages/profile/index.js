@@ -8,6 +8,8 @@ import NetworkAPI from '@/lib/networkAPI';
 import Default from '@/lib/default';
 import PageLayout from '@/components/PageLayout';
 import { signOut } from 'next-auth/react';
+import { useTheme, createTheme, ThemeProvider } from '@mui/material/styles';
+
 
 function a11yProps(index) {
     return {
@@ -19,6 +21,16 @@ function a11yProps(index) {
 function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
     const [value, setValue] = React.useState(0);
     const router = useRouter();
+    const theme = createTheme({
+        palette: {
+          backgroud: {
+            main: '#1e1e1e',
+          },
+          button: {
+            primary: '#69E267',
+          }
+        },
+      });
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -60,13 +72,16 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
     }
 
     return (
-        <Box sx={{ width: '100%' }}>
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <ThemeProvider theme={theme}>
+        <div className={styles.profileTabs}>
+        <Box sx={{ width: '98%', bgcolor: '#222222', borderRadius: 4 }}>
+            <Box sx={{ borderTop: 1, borderColor: 'divider', bgcolor: '#1e1e1e', borderRadius: 4   }}>
                 <Tabs
                     value={value}
                     onChange={handleChange}
-                    aria-label="basic tabs example"
                     variant="fullWidth"
+                    textColor="inherit"
+                    TabIndicatorProps={{style: {backgroundColor: "#69E267"}}}
                 >
                     <Tab label="About Me" {...a11yProps(0)} />
                     <Tab label="Platform" {...a11yProps(1)} />
@@ -86,8 +101,10 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
                             <h4 className={styles.tabTitle}>Favorite Album</h4>
                             <p>{favAlbum}</p>
                             <br />
+                            <br />
                             <Button
                                 variant="contained"
+                                sx={{ width: "25ch", backgroundColor: "button.primary" }}
                                 onClick={() => router.push('/changeProfile')}
                             >
                                 Edit
@@ -110,19 +127,21 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
                                     />
                                     <Button
                                         variant="contained"
+                                        sx={{ width: "25ch", backgroundColor: "button.primary" }}
                                         onClick={() => router.push(useLink)}
                                     >
-                                        Configure Account
+                                        Kadence Player
                                     </Button>
                                     <Button
                                         variant="contained"
+                                        sx={{ width: "25ch", backgroundColor: "button.primary" }}
                                         href={accountLink}
                                     >
-                                        View Account In App
+                                        Open {musicPlatform}
                                     </Button>
                                 </>
                             )}
-                            <Button variant="contained" onClick={handleClick}>
+                            <Button variant="contained" sx={{ width: "25ch", backgroundColor: "button.primary" }} onClick={handleClick}>
                                 {platform ? 'Change' : 'Choose'} Platform
                             </Button>
                         </Stack>
@@ -131,12 +150,19 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
                 {value === 2 && (
                     <Box>
                         <Stack spacing={2} alignItems="center">
-                            <Button variant="contained">Connect</Button>
+                            <Button 
+                                variant="contained"
+                                sx={{ width: "25ch", backgroundColor: "button.primary", "&:active": {backgroundColor: "button.primary"} }}
+                            >
+                                Connect
+                            </Button>
                         </Stack>
                     </Box>
                 )}
             </Box>
         </Box>
+        </div>
+        </ThemeProvider>
     );
 }
 

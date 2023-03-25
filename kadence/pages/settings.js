@@ -1,4 +1,6 @@
 import { Dialog } from '@capacitor/dialog';
+import { Tooltip } from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
@@ -240,7 +242,12 @@ export default function Settings() {
                     <div className={styles.settingsSection}>
                         <div>
                             <div className={styles.flexWrapper}>
-                                <b>Make Profile Private: </b>
+                                <b>Make Profile Private</b>
+                                <Tooltip title="This prevents other users from finding your profile.">
+                                    <InfoIcon
+                                        style={{ fontSize: '24px' }}
+                                    ></InfoIcon>
+                                </Tooltip>
                                 <select
                                     className={styles.select}
                                     onChange={(e) =>
@@ -257,7 +264,7 @@ export default function Settings() {
                         </div>
                         <div>
                             <div className={styles.flexWrapper}>
-                                <b>Wait to Save Playlist: </b>
+                                <b>Wait to Save Playlist</b>
                                 <select
                                     className={styles.select}
                                     onChange={(e) =>
@@ -298,7 +305,7 @@ export default function Settings() {
                     <div className={styles.settingsSection}>
                         <div>
                             <div className={styles.flexWrapper}>
-                                <b>Include Explicit Songs: </b>
+                                <b>Include Explicit Songs</b>
                                 <select
                                     className={styles.select}
                                     onChange={(e) =>
@@ -314,7 +321,7 @@ export default function Settings() {
                             </div>
                         </div>
                         <div>
-                            <b>Lyrical vs. Instrumental: </b>
+                            <b>Lyrical vs. Instrumental</b>
                             <div className={styles.sliderContainer}>
                                 <span className={styles.sliderLabel}>
                                     Lyrical
@@ -338,7 +345,7 @@ export default function Settings() {
                         </div>
                         <div>
                             <div className={styles.flexWrapper}>
-                                <b>Preferred Language: </b>
+                                <b>Preferred Language</b>
                                 <select
                                     className={styles.select}
                                     onChange={(e) =>
@@ -355,7 +362,7 @@ export default function Settings() {
                             </div>
                         </div>
                         <div>
-                            <b>Song Length Preferences: </b>
+                            <b>Song Length Preferences</b>
                             <div className={styles.subsetting}>
                                 <div className={styles.flexWrapper}>
                                     <i>Minimum: </i>
@@ -380,7 +387,7 @@ export default function Settings() {
                                     </div>
                                 </div>
                                 <div className={styles.flexWrapper}>
-                                    <i>Maximum: </i>
+                                    <i>Maximum</i>
                                     <div>
                                         <input
                                             type="number"
@@ -404,7 +411,7 @@ export default function Settings() {
                             </div>
                         </div>
                         <div>
-                            <b>Playlist Length Preferences: </b>
+                            <b>Playlist Length Preferences</b>
                             <div className={styles.subsetting}>
                                 <div className={styles.flexWrapper}>
                                     <i>Minimum: </i>
@@ -454,7 +461,7 @@ export default function Settings() {
                         </div>
                         <div>
                             <div className={styles.flexWrapper}>
-                                <b>Preferred Genre: </b>
+                                <b>Preferred Genre</b>
                                 <select
                                     className={styles.select}
                                     onChange={(e) =>
@@ -472,7 +479,7 @@ export default function Settings() {
                         </div>
                         <div>
                             <div className={styles.flexWrapper}>
-                                <b>Favorite Artists: </b>
+                                <b>Favorite Artists</b>
                                 <button
                                     className={styles.sublistShowButton}
                                     onClick={() =>
@@ -513,7 +520,7 @@ export default function Settings() {
                         </div>
                         <div>
                             <div className={styles.flexWrapper}>
-                                <b>Blacklisted Artists: </b>
+                                <b>Blacklisted Artists</b>
                                 <button
                                     className={styles.sublistShowButton}
                                     onClick={() =>
@@ -559,7 +566,7 @@ export default function Settings() {
                         </div>
                         <div>
                             <div className={styles.flexWrapper}>
-                                <b>Blacklisted Songs: </b>
+                                <b>Blacklisted Songs</b>
                                 <button
                                     className={styles.sublistShowButton}
                                     onClick={() =>
@@ -628,7 +635,7 @@ export default function Settings() {
                     </div>
                     <div className={styles.settingsSection}>
                         <div>
-                            <b>Interval Mode Times: </b>
+                            <b>Interval Mode Times</b>
                             <div className={styles.subsetting}>
                                 <div className={styles.flexWrapper}>
                                     <i>Short: </i>
@@ -677,7 +684,7 @@ export default function Settings() {
                             </div>
                         </div>
                         <div>
-                            <b>Fitness Mode Ramp Up/Down: </b>
+                            <b>Fitness Mode Ramp Up/Down</b>
                             <div className={styles.subsetting}>
                                 <div className={styles.flexWrapper}>
                                     <i>Ramp Up: </i>
@@ -727,7 +734,7 @@ export default function Settings() {
                         </div>
                         <div>
                             <div className={styles.flexWrapper}>
-                                <b>Mood Mode Selection: </b>
+                                <b>Mood Mode Selection</b>
                                 <select
                                     className={styles.select}
                                     onChange={(e) => setMood(e.target.value)}
@@ -743,7 +750,7 @@ export default function Settings() {
                         </div>
                         <div>
                             <div className={styles.flexWrapper}>
-                                <b>Local Mode Zip Code: </b>
+                                <b>Local Mode Zip Code</b>
                                 <input
                                     className={styles.zipCode}
                                     type="number"

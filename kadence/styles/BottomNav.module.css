@@ -10,10 +10,17 @@
     justify-content: center;
     align-items: center;
 }
+
 .bnTab {
     width: 33%;
     height: 100%;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+.bnTabName {
+    font-size: 10px;
+    margin-top: -1em;
 }

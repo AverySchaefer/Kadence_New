@@ -39,8 +39,8 @@ const BottomNav = (props) => {
     }, [router, activeTabs, alreadyNavigated]);
 
     return (
-        <div className={`${Styles.bottomNav}`}>
-            <div className={`${Styles.bnTab}`}>
+        <div className={Styles.bottomNav}>
+            <div className={Styles.bnTab}>
                 {activeTabs === 'home' ? (
                     <RiHomeSmile2Fill
                         size="35"
@@ -54,8 +54,9 @@ const BottomNav = (props) => {
                         onClick={() => changeActiveTab('home')}
                     />
                 )}
+                <div className={Styles.bnTabName}>Home</div>
             </div>
-            <div className={`${Styles.bnTab}`}>
+            <div className={Styles.bnTab}>
                 {activeTabs === 'search' ? (
                     <RiSearchEyeFill
                         size="35"
@@ -69,8 +70,9 @@ const BottomNav = (props) => {
                         onClick={() => changeActiveTab('search')}
                     />
                 )}
+                <div className={Styles.bnTabName}>Search</div>
             </div>
-            <div className={`${Styles.bnTab}`}>
+            <div className={Styles.bnTab}>
                 {activeTabs === 'profile' ? (
                     <RiUser3Fill
                         size="35"
@@ -84,6 +86,7 @@ const BottomNav = (props) => {
                         onClick={() => changeActiveTab('profile')}
                     />
                 )}
+                <div className={Styles.bnTabName}>Profile</div>
             </div>
         </div>
     );
