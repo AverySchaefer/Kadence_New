@@ -1,16 +1,10 @@
-import Styles from '@/styles/BottomNav.module.css';
+import styles from '@/styles/BottomNav.module.css';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import {
-    RiHomeSmile2Line,
-    RiHomeSmile2Fill,
-    RiSearchEyeFill,
-    RiUser3Line,
-    RiUser3Fill,
-} from 'react-icons/ri';
+import { RiHomeSmile2Line, RiUser3Fill } from 'react-icons/ri';
 import { BiSearchAlt } from 'react-icons/bi';
 
-const BottomNav = (props) => {
+export default function BottomNav(props) {
     const router = useRouter();
     const [activeTabs, setActiveTabs] = useState(props.name);
     const [alreadyNavigated, setAlreadyNavigated] = useState(false);
@@ -39,54 +33,43 @@ const BottomNav = (props) => {
     }, [router, activeTabs, alreadyNavigated]);
 
     return (
-        <div className={`${Styles.bottomNav}`}>
-            <div className={`${Styles.bnTab}`}>
-                {activeTabs === 'home' ? (
-                    <RiHomeSmile2Fill
-                        size="35"
-                        color="#fff"
-                        onClick={() => changeActiveTab('home')}
-                    />
-                ) : (
-                    <RiHomeSmile2Line
-                        size="35"
-                        color="#fff"
-                        onClick={() => changeActiveTab('home')}
-                    />
-                )}
+        <div className={styles.bottomNav}>
+            <div
+                className={[
+                    styles.bnTab,
+                    activeTabs === 'home' ? styles.active : '',
+                ].join(' ')}
+            >
+                <RiHomeSmile2Line
+                    size="35"
+                    onClick={() => changeActiveTab('home')}
+                />
+                Home
             </div>
-            <div className={`${Styles.bnTab}`}>
-                {activeTabs === 'search' ? (
-                    <RiSearchEyeFill
-                        size="35"
-                        color="#fff"
-                        onClick={() => changeActiveTab('search')}
-                    />
-                ) : (
-                    <BiSearchAlt
-                        size="35"
-                        color="#fff"
-                        onClick={() => changeActiveTab('search')}
-                    />
-                )}
+            <div
+                className={[
+                    styles.bnTab,
+                    activeTabs === 'search' ? styles.active : '',
+                ].join(' ')}
+            >
+                <BiSearchAlt
+                    size="35"
+                    onClick={() => changeActiveTab('search')}
+                />
+                Search
             </div>
-            <div className={`${Styles.bnTab}`}>
-                {activeTabs === 'profile' ? (
-                    <RiUser3Fill
-                        size="35"
-                        color="#fff"
-                        onClick={() => changeActiveTab('profile')}
-                    />
-                ) : (
-                    <RiUser3Line
-                        size="35"
-                        color="#fff"
-                        onClick={() => changeActiveTab('profile')}
-                    />
-                )}
+            <div
+                className={[
+                    styles.bnTab,
+                    activeTabs === 'profile' ? styles.active : '',
+                ].join(' ')}
+            >
+                <RiUser3Fill
+                    size="35"
+                    onClick={() => changeActiveTab('profile')}
+                />
+                Profile
             </div>
         </div>
     );
-};
-
-export default BottomNav;
+}

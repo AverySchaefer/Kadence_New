@@ -4,6 +4,10 @@
     align-items: center;
     width: 100%;
     margin-bottom: 1rem;
+    background-color: #222222;
+
+    --text-color: #e4dfe3;
+    --supporting-text-color: #cac4d0;
 }
 
 .searchBarContainer input {
@@ -34,10 +38,6 @@
     border-inline: 2px solid black;
 }
 
-.searchResult:nth-of-type(2n) {
-    background-color: #ddd;
-}
-
 .searchResult:first-child {
     border-top: 2px solid black;
     border-top-left-radius: 10px;
@@ -56,8 +56,4 @@
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-.main {
-    padding: 1rem;
 }

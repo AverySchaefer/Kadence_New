@@ -1,15 +1,15 @@
 .player {
-    background-color: #ddd;
-    width: 100%;
+    background-color: #1b171b;
+    margin-inline: 1rem;
     height: var(--music-player-height);
     padding: 0.5rem;
     font-size: 0.8em;
-    overflow: hidden;
 
     display: flex;
     justify-content: space-around;
     align-items: center;
     gap: 0.5rem;
+    border-radius: 5px;
 }
 
 /* Get rid of unexpected extra height? */
@@ -31,6 +31,7 @@
     cursor: pointer;
     margin: -0.5rem;
     flex-shrink: 0;
+    color: white;
 }
 
 .togglePlayBtn:disabled,

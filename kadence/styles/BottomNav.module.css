@@ -1,19 +1,30 @@
 .bottomNav {
     width: 100%;
-    height: 50px;
-    position: fixed;
-    bottom: 0;
+    height: var(--nav-height);
+    background-image: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 1),
+        rgba(0, 0, 0, 0)
+    );
     border-top: 1px solid var(--grey-color);
-    z-index: 3;
-    background-color: #000;
     display: flex;
     justify-content: center;
     align-items: center;
 }
+
 .bnTab {
-    width: 33%;
+    margin-bottom: -1rem;
+    flex-grow: 1;
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
+    font-size: 0.75em;
+    color: white;
+}
+
+.bnTab.active,
+.bnTab.active svg {
+    color: #69e267;
 }
