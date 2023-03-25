@@ -59,7 +59,11 @@ export default function Platform() {
                             className={styles.platformImage}
                             priority
                         />
-                        <Button variant="contained" onClick={handleSpotify}>
+                        <Button 
+                            variant="contained" 
+                            sx={{ backgroundColor: "#69e267", "&:active": {backgroundColor: "#69e267"} }}
+                            onClick={handleSpotify}
+                        >
                             Connect to Spotify!
                         </Button>
                         <br />
@@ -71,7 +75,12 @@ export default function Platform() {
                             className={styles.platformImage}
                             priority
                         />
-                        <Button variant="contained" onClick={handleApple}>
+                        <br />
+                        <Button 
+                            variant="contained" 
+                            sx={{ backgroundColor: "#69e267", "&:active": {backgroundColor: "#69e267"} }}
+                            onClick={handleApple}
+                        >
                             Connect to Apple Music!
                         </Button>
                     </Stack>
