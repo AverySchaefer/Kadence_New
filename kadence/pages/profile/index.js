@@ -10,7 +10,6 @@ import PageLayout from '@/components/PageLayout';
 import { signOut } from 'next-auth/react';
 import { useTheme, createTheme, ThemeProvider } from '@mui/material/styles';
 
-
 function a11yProps(index) {
     return {
         id: `simple-tab-${index}`,
@@ -23,14 +22,14 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
     const router = useRouter();
     const theme = createTheme({
         palette: {
-          backgroud: {
-            main: '#1e1e1e',
-          },
-          button: {
-            primary: '#69E267',
-          }
+            backgroud: {
+                main: '#1e1e1e',
+            },
+            button: {
+                primary: '#69E267',
+            },
         },
-      });
+    });
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -73,95 +72,140 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
 
     return (
         <ThemeProvider theme={theme}>
-        <div className={styles.profileTabs}>
-        <Box sx={{ width: '98%', bgcolor: '#222222', borderRadius: 4 }}>
-            <Box sx={{ borderTop: 1, borderColor: 'divider', bgcolor: '#1e1e1e', borderRadius: 4   }}>
-                <Tabs
-                    value={value}
-                    onChange={handleChange}
-                    variant="fullWidth"
-                    textColor="inherit"
-                    TabIndicatorProps={{style: {backgroundColor: "#69E267"}}}
-                >
-                    <Tab label="About Me" {...a11yProps(0)} />
-                    <Tab label="Platform" {...a11yProps(1)} />
-                    <Tab label="Devices" {...a11yProps(2)} />
-                </Tabs>
-            </Box>
-            <Box sx={{ padding: 2 }}>
-                {value === 0 && (
-                    <Box>
-                        <Stack spacing={2} alignItems="center">
-                            <h4 className={styles.tabTitle}>Favorite Artist</h4>
-                            <p>{favArtist}</p>
-                            <br />
-                            <h4 className={styles.tabTitle}>Favorite Song</h4>
-                            <p>{favSong}</p>
-                            <br />
-                            <h4 className={styles.tabTitle}>Favorite Album</h4>
-                            <p>{favAlbum}</p>
-                            <br />
-                            <br />
-                            <Button
-                                variant="contained"
-                                sx={{ width: "25ch", backgroundColor: "button.primary" }}
-                                onClick={() => router.push('/changeProfile')}
-                            >
-                                Edit
-                            </Button>
-                        </Stack>
+            <div className={styles.profileTabs}>
+                <Box sx={{ width: '98%', bgcolor: '#222222', borderRadius: 4 }}>
+                    <Box
+                        sx={{
+                            borderTop: 1,
+                            borderColor: 'divider',
+                            bgcolor: '#1e1e1e',
+                            borderRadius: 4,
+                        }}
+                    >
+                        <Tabs
+                            value={value}
+                            onChange={handleChange}
+                            variant="fullWidth"
+                            textColor="inherit"
+                            TabIndicatorProps={{
+                                style: { backgroundColor: '#69E267' },
+                            }}
+                        >
+                            <Tab label="About Me" {...a11yProps(0)} />
+                            <Tab label="Platform" {...a11yProps(1)} />
+                            <Tab label="Devices" {...a11yProps(2)} />
+                        </Tabs>
                     </Box>
-                )}
-                {value === 1 && (
-                    <Box>
-                        <Stack spacing={2} alignItems="center">
-                            {platform && (
-                                <>
-                                    <Image
-                                        src={platform}
-                                        alt={alt}
-                                        width="300"
-                                        height="150"
-                                        className={styles.platformImage}
-                                        priority
-                                    />
+                    <Box sx={{ padding: 2 }}>
+                        {value === 0 && (
+                            <Box>
+                                <Stack spacing={2} alignItems="center">
+                                    <h4 className={styles.tabTitle}>
+                                        Favorite Artist
+                                    </h4>
+                                    <p>{favArtist}</p>
+                                    <br />
+                                    <h4 className={styles.tabTitle}>
+                                        Favorite Song
+                                    </h4>
+                                    <p>{favSong}</p>
+                                    <br />
+                                    <h4 className={styles.tabTitle}>
+                                        Favorite Album
+                                    </h4>
+                                    <p>{favAlbum}</p>
+                                    <br />
+                                    <br />
                                     <Button
                                         variant="contained"
-                                        sx={{ width: "25ch", backgroundColor: "button.primary" }}
-                                        onClick={() => router.push(useLink)}
+                                        sx={{
+                                            width: '25ch',
+                                            backgroundColor: 'button.primary',
+                                        }}
+                                        onClick={() =>
+                                            router.push('/changeProfile')
+                                        }
                                     >
-                                        Kadence Player
+                                        Edit
                                     </Button>
+                                </Stack>
+                            </Box>
+                        )}
+                        {value === 1 && (
+                            <Box>
+                                <Stack spacing={2} alignItems="center">
+                                    {platform && (
+                                        <>
+                                            <Image
+                                                src={platform}
+                                                alt={alt}
+                                                width="300"
+                                                height="150"
+                                                className={styles.platformImage}
+                                                priority
+                                            />
+                                            <Button
+                                                variant="contained"
+                                                sx={{
+                                                    width: '25ch',
+                                                    backgroundColor:
+                                                        'button.primary',
+                                                }}
+                                                onClick={() =>
+                                                    router.push(useLink)
+                                                }
+                                            >
+                                                Kadence Player
+                                            </Button>
+                                            <Button
+                                                variant="contained"
+                                                sx={{
+                                                    width: '25ch',
+                                                    backgroundColor:
+                                                        'button.primary',
+                                                }}
+                                                href={accountLink}
+                                            >
+                                                Open {musicPlatform}
+                                            </Button>
+                                        </>
+                                    )}
                                     <Button
                                         variant="contained"
-                                        sx={{ width: "25ch", backgroundColor: "button.primary" }}
-                                        href={accountLink}
+                                        sx={{
+                                            width: '25ch',
+                                            backgroundColor: 'button.primary',
+                                        }}
+                                        onClick={handleClick}
                                     >
-                                        Open {musicPlatform}
+                                        {platform ? 'Change' : 'Choose'}{' '}
+                                        Platform
                                     </Button>
-                                </>
-                            )}
-                            <Button variant="contained" sx={{ width: "25ch", backgroundColor: "button.primary" }} onClick={handleClick}>
-                                {platform ? 'Change' : 'Choose'} Platform
-                            </Button>
-                        </Stack>
+                                </Stack>
+                            </Box>
+                        )}
+                        {value === 2 && (
+                            <Box>
+                                <Stack spacing={2} alignItems="center">
+                                    <Button
+                                        variant="contained"
+                                        sx={{
+                                            width: '25ch',
+                                            backgroundColor: 'button.primary',
+                                            '&:active': {
+                                                backgroundColor:
+                                                    'button.primary',
+                                            },
+                                        }}
+                                    >
+                                        Connect
+                                    </Button>
+                                </Stack>
+                            </Box>
+                        )}
                     </Box>
-                )}
-                {value === 2 && (
-                    <Box>
-                        <Stack spacing={2} alignItems="center">
-                            <Button 
-                                variant="contained"
-                                sx={{ width: "25ch", backgroundColor: "button.primary", "&:active": {backgroundColor: "button.primary"} }}
-                            >
-                                Connect
-                            </Button>
-                        </Stack>
-                    </Box>
-                )}
-            </Box>
-        </Box>
-        </div>
+                </Box>
+            </div>
         </ThemeProvider>
     );
 }
@@ -204,7 +248,7 @@ export default function Profile() {
     }, []);
 
     return (
-        <PageLayout activeTab="profile" title="Profile" includeSettings>
+        <PageLayout activeTab="profile" title="Profile" includeUpperRightIcon>
             {loaded && (
                 <main className={styles.main}>
                     <section>

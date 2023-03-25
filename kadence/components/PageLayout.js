@@ -15,7 +15,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export default function PageLayout({
     includeNav = true,
-    includeSettings = false,
+    includeUpperRightIcon = false,
     upperRightIcon = (
         <Link href="/settings">
             <SettingsIcon />
@@ -55,7 +55,7 @@ export default function PageLayout({
                         {title}
                     </div>
 
-                    {includeSettings && (
+                    {includeUpperRightIcon && (
                         <div className={styles.upperRightIcon}>
                             {upperRightIcon}
                         </div>
