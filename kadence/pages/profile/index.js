@@ -26,6 +26,9 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
           backgroud: {
             main: '#1e1e1e',
           },
+          button: {
+            primary: '#69E267',
+          }
         },
       });
 
@@ -98,8 +101,10 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
                             <h4 className={styles.tabTitle}>Favorite Album</h4>
                             <p>{favAlbum}</p>
                             <br />
+                            <br />
                             <Button
                                 variant="contained"
+                                sx={{ width: "25ch", backgroundColor: "button.primary" }}
                                 onClick={() => router.push('/changeProfile')}
                             >
                                 Edit
@@ -122,19 +127,21 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
                                     />
                                     <Button
                                         variant="contained"
+                                        sx={{ width: "25ch", backgroundColor: "button.primary" }}
                                         onClick={() => router.push(useLink)}
                                     >
-                                        Configure Account
+                                        Kadence Player
                                     </Button>
                                     <Button
                                         variant="contained"
+                                        sx={{ width: "25ch", backgroundColor: "button.primary" }}
                                         href={accountLink}
                                     >
-                                        View Account In App
+                                        Open {musicPlatform}
                                     </Button>
                                 </>
                             )}
-                            <Button variant="contained" onClick={handleClick}>
+                            <Button variant="contained" sx={{ width: "25ch", backgroundColor: "button.primary" }} onClick={handleClick}>
                                 {platform ? 'Change' : 'Choose'} Platform
                             </Button>
                         </Stack>
@@ -143,7 +150,12 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
                 {value === 2 && (
                     <Box>
                         <Stack spacing={2} alignItems="center">
-                            <Button variant="contained">Connect</Button>
+                            <Button 
+                                variant="contained"
+                                sx={{ width: "25ch", backgroundColor: "button.primary", "&:active": {backgroundColor: "button.primary"} }}
+                            >
+                                Connect
+                            </Button>
                         </Stack>
                     </Box>
                 )}
