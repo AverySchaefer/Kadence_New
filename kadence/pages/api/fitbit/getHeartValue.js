@@ -3,16 +3,22 @@ import nextConnect from 'next-connect';
 
 import middleware from '../../../middleware/database';
 
-const GET_VALUE_URL = 'https://api.fitbit.com/1/user/-/activities/heart/date/today/today/1sec.json';
+const GET_VALUE_BASE_URL = 'https://api.fitbit.com/1/user/-/activities/heart/date/today/today/1sec/time/';
 
 const handler = nextConnect();
 
 handler.use(middleware);
 
-// TODO Change this to only get values within 1 minute of current time!!! (cuz right now it gets the whole day)
+async function createURL() {
+    let time_obj = new Date();
+    let curr_hour = time_obj.getHours();
+    let curr_minute = time_obj.getMinutes();
+    return (GET_VALUE_BASE_URL + curr_hour + '/' + curr_minute + '.json');
+} 
 
 async function getValue(token) {
-    const { access_token: accessToken } = await refreshToken(token) //TODO Switch this to the Fitbit token refresh!!!
+    const { access_token: accessToken } = await refreshToken(token)
+    let GET_VALUE_URL = createURL()
     return fetch(GET_VALUE_URL, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
