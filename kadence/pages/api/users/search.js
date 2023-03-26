@@ -17,7 +17,7 @@ handler.get(async (req, res) => {
     const cursor = await req.db
         .collection('Users')
         .find({ username: { $regex: regex } })
-        .project({ _id: 0, username: 1, profilePic: 1 });
+        .project({ _id: 0, username: 1, profilePic: 1, bio: 1 });
 
     const matches = [];
     await cursor.forEach((match) => matches.push(match));

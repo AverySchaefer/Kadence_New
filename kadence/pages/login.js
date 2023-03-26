@@ -6,6 +6,7 @@ import { Button, Textbox } from '@/components/';
 import { Inter } from '@next/font/google';
 import { useRouter } from 'next/router';
 import { Dialog } from '@capacitor/dialog';
+import { Divider } from '@mui/material';
 
 import NetworkAPI from '@/lib/networkAPI';
 
@@ -42,6 +43,11 @@ export default function Login() {
         }
     }
 
+    const buttonStyle = {
+        color: '#242B2E',
+        backgroundColor: '#69E267',
+    };
+
     return (
         <>
             <Head>
@@ -59,7 +65,7 @@ export default function Login() {
             <main className={[inter.className, styles.main].join(' ')}>
                 <Image
                     className={styles.img}
-                    src="/logo.png"
+                    src="/KadenceLogo_green.svg"
                     alt="Kadence Logo"
                     width={380}
                     height={200}
@@ -78,13 +84,18 @@ export default function Login() {
                         type="password"
                         required
                     />
-                    <Link className={styles.note} href="/register">
-                        {"Don't have an account? Register here!"}
-                    </Link>
-                    <Link className={styles.note} href="/forgotPass">
-                        {"Forgot password? Recover it here!"}
-                    </Link>
-                    <Button type="submit">Login</Button>
+                    <Button type="submit" style={buttonStyle}>
+                        Login
+                    </Button>
+                    <Divider className={styles.divider} />
+                    <div className={styles.flexWrapper}>
+                        <Link className={styles.note} href="/register">
+                            {'Register account'}
+                        </Link>
+                        <Link className={styles.note} href="/forgotPass">
+                            {'Recover password'}
+                        </Link>
+                    </div>
                 </form>
             </main>
         </>

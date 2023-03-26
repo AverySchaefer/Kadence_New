@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 
 import SettingsIcon from '@mui/icons-material/Settings';
-import { Fab } from '@mui/material/';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Inter } from '@next/font/google';
 
 import styles from '@/styles/PageLayout.module.css';
@@ -15,10 +15,14 @@ const inter = Inter({ subsets: ['latin'] });
 
 export default function PageLayout({
     includeNav = true,
-    includeSettings = false,
+    includeUpperRightIcon = false,
+    upperRightIcon = (
+        <Link href="/settings">
+            <SettingsIcon />
+        </Link>
+    ),
     title = 'Kadence',
     activeTab = '',
-    footer = <BottomNav name={activeTab} />,
     player = '',
     prevLink = '',
     children,
@@ -42,20 +46,18 @@ export default function PageLayout({
             </Head>
             <div className={[styles.pageContainer, inter.className].join(' ')}>
                 <div className={styles.headerContainer}>
-                    {prevLink && (
-                        <Link href={prevLink}>
-                            <div className={styles.backButton}></div>
-                        </Link>
-                    )}
-                    <h1>{title}</h1>
-
-                    {includeSettings && (
-                        <div className={styles.settingsButton}>
-                            <Link href="/settings">
-                                <Fab size="small" aria-label="settings">
-                                    <SettingsIcon />
-                                </Fab>
+                    <div className={styles.title}>
+                        {prevLink && (
+                            <Link href={prevLink}>
+                                <ArrowBackIcon />
                             </Link>
+                        )}
+                        {title}
+                    </div>
+
+                    {includeUpperRightIcon && (
+                        <div className={styles.upperRightIcon}>
+                            {upperRightIcon}
                         </div>
                     )}
                 </div>
@@ -66,7 +68,9 @@ export default function PageLayout({
                     </div>
                 )}
                 {includeNav && (
-                    <div className={styles.navContainer}>{footer}</div>
+                    <div className={styles.navContainer}>
+                        <BottomNav name={activeTab} />
+                    </div>
                 )}
             </div>
         </>
