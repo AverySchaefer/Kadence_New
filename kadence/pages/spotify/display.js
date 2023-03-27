@@ -12,26 +12,16 @@ import NetworkAPI from '@/lib/networkAPI';
 export default function Display() {
     const { data: session } = useSession();
     const [songName, setSongItem] = useState('');
-    const [playlist, setPlaylist] = useState('');
 
     const getRecommendations = async () => {
         const moodMode = '/api/generation/mood?';
         const res = await fetch(moodMode + new URLSearchParams({
             chosenMood: 'happy',
             playlistLength: 30,
+            username: localStorage.getItem('username'),
         }));
-        const songItems = await res.json();
-        console.log("Back on the display side");
-        console.log(songItems);
-        let newPlaylist = '';
-        const playlistURIs = [];
-        for (let i = 0; i < songItems.tracks.length; i++) {
-            console.log(songItems.tracks[i].name);
-            newPlaylist += songItems.tracks[i].name;
-            playlistURIs.push(songItems.tracks[i].uri);
-            newPlaylist = newPlaylist.concat(", ");
-        }
-        setPlaylist(newPlaylist);
+        const playlistURIs = await res.json();
+        console.log(playlistURIs);
 
         const saveRoute = '/api/generation/save'
         const saveRes = await fetch(saveRoute, {
@@ -104,7 +94,7 @@ export default function Display() {
                         >
                             Get Recommendations!
                         </Button>
-                        <h3>Your recs: {playlist}</h3>
+                        <h3>Your recs: Click to generate!</h3>
                         Signed in as {session?.token?.email} <br />
                         <Button
                             variant="contained"

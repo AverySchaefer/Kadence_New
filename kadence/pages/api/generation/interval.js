@@ -18,7 +18,7 @@ async function getCurrentSong(token) {
     });
 }
 
-async function generateSearchParams(songSeedID, intervalStatus) {
+async function generateSearchParams(songSeedID, intervalStatus, timeRemaining) {
     if (intervalStatus === 1) {
         return new URLSearchParams({
             limit: 1,
@@ -31,12 +31,12 @@ async function generateSearchParams(songSeedID, intervalStatus) {
     });
 }
 
-async function getIntervalRecommendations(token, intervalStatus) {
+async function getIntervalRecommendations(token, intervalStatus, timeRemaining) {
     const { access_token: accessToken } = await refreshToken(token);
     const response = await getCurrentSong(token);
     const songItem = await response.json();
     const songSeedID = songItem.item.id;
-    const searchParameters = await generateSearchParams(songSeedID, intervalStatus);
+    const searchParameters = await generateSearchParams(songSeedID, intervalStatus, timeRemaining);
 
     const RECOMMENDATIONS_ENDPOINT = `https://api.spotify.com/v1/recommendations?`;
     return fetch(RECOMMENDATIONS_ENDPOINT + searchParameters, {
@@ -50,8 +50,11 @@ handler.get(async (req, res) => {
     const {
         token: { accessToken },
     } = await getSession({ req });
-    const intervalStatus = await req.status;
-    const response = await getIntervalRecommendations(accessToken, intervalStatus);
+
+    const queryURL = new URLSearchParams('?'.concat(req.url.split('?')[1]));
+    const intervalStatus = queryURL.get('status');
+    const timeRemaining = queryURL.get('timeRemaining');
+    const response = await getIntervalRecommendations(accessToken, intervalStatus, timeRemaining);
 
     // Check if nothing is currently active (was throwing error before)
     if (response.status === 204 && response.statusText === 'No Content') {
