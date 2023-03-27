@@ -140,15 +140,18 @@ async function getMoodRecommendations(token, prefData, chosenMood, totalSongs) {
     });
 }
 
-// TODO: Check for EXPLICIT vs CLEAN songs
 async function playlistScreening(songItems, userData) {
-    /* GET BLACKLISTED SONGS / ARTISTS HERE */
+    const explicitFlag = userData.allowExplicit;
     const blacklistedArtists = userData.blacklistedArtists;
     const blacklistedSongs = userData.blacklistedSongs;
     let blacklistFlag = false;
 
     const playlistURIs = [];
     for (let i = 0; i < songItems.tracks.length; i++) {
+        if (explicitFlag === false && songItems.tracks[i].explicit === true) {
+            blacklistFlag = true;
+        } 
+
         const songName = songItems.tracks[i].name;
         const songArtists = [];
         for (let j = 0; j < songItems.tracks[i].artists.length; j++) {
