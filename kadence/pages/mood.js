@@ -31,7 +31,7 @@ export default function moodModePage() {
     const [energeticIconColor, setEnergeticIconColor] = useState(unselectedColor);
     const [romanticIconColor, setRomanticIconColor] = useState(unselectedColor);
     const [melancholyIconColor, setMelancholyIconColor] = useState(unselectedColor);
-    const [numSongs, setNumSongs] = useState(10);
+    const [numSongs, setNumSongs] = useState(20);
 
     const initializeMood = (activeMood) => {
         switch(activeMood) {
@@ -178,9 +178,9 @@ export default function moodModePage() {
                     <Stack spacing={2} direction="row" sx={{ mb: 1 }} alignItems="center" >
                         <p className={styles.muiSliderLabel}>Length</p>
                         <Slider
-                            min={0}
+                            min={10}
                             step={1}
-                            max={100}
+                            max={30}
                             value={numSongs}
                             onChange={(e) =>
                                 setNumSongs(
