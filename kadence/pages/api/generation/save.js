@@ -34,7 +34,6 @@ async function createPlaylist(token, playlistName) {
 async function addToPlaylist(token, playlistId, playlistArray) {
     const { access_token: accessToken } = await refreshToken(token);
     const ADD_TO_PLAYLIST_ENDPOINT = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`
-    console.log(playlistId);
 
     return fetch(ADD_TO_PLAYLIST_ENDPOINT, {
         method: 'POST',

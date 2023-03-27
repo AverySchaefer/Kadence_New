@@ -3,7 +3,7 @@ import nextConnect from 'next-connect';
 
 import refreshToken from '@/lib/spotify/refreshToken';
 import middleware from '../../../middleware/database';
-import NetworkAPI from '@/lib/networkAPI';
+import { min } from 'rxjs';
 
 const handler = nextConnect();
 
@@ -20,76 +20,117 @@ async function getCurrentSong(token) {
 }
 
 // TODO: Stats for every mood: happy, sad, angry, relaxed, energetic, romantic, melancholy
-async function generateSearchParams(songSeedID, chosenMood, totalSongs) {
-    console.log(totalSongs);
+async function generateSearchParams(songSeedID, prefData, chosenMood, totalSongs) {
+    /* Generate the general search parameters */
+    const minSongLength = prefData.minSongLength * 1000; // convert to ms
+    const maxSongLength = prefData.maxSongLength * 1000; // convert to ms
+    const lyricalInstrumental = prefData.lyricalInstrumental / 100; // convert to 0-1 scale
+
     if (chosenMood === "happy") {
         return new URLSearchParams({
             limit: totalSongs,
             seed_tracks: songSeedID,
-            min_valence: 0.5,
+            target_instrumentalness: lyricalInstrumental,
+            min_duration_ms: minSongLength,
+            max_duration_ms: maxSongLength,
+            min_valence: 0.65,
             max_valence: 1.0,
+            target_enegry: 0.75,
+            target_danceability: 0.65,
         });
     }
     if (chosenMood === "sad") {
         return new URLSearchParams({
             limit: totalSongs,
             seed_tracks: songSeedID,
+            target_instrumentalness: lyricalInstrumental,
+            min_duration_ms: minSongLength,
+            max_duration_ms: maxSongLength,
             min_valence: 0.0,
-            max_valence: 0.5,
+            max_valence: 0.35,
+            target_enegry: 0.25,
         });
     }
     if (chosenMood === "angry") {
         return new URLSearchParams({
             limit: totalSongs,
             seed_tracks: songSeedID,
+            target_instrumentalness: lyricalInstrumental,
+            min_duration_ms: minSongLength,
+            max_duration_ms: maxSongLength,
             min_valence: 0.0,
-            max_valence: 0.5,
+            max_valence: 0.35,
+            target_energy: 0.75,
         });
     }
     if (chosenMood === "relaxed") {
         return new URLSearchParams({
             limit: totalSongs,
             seed_tracks: songSeedID,
-            min_valence: 0.0,
-            max_valence: 0.5,
+            target_instrumentalness: lyricalInstrumental,
+            min_duration_ms: minSongLength,
+            max_duration_ms: maxSongLength,
+            min_valence: 0.35,
+            max_valence: 0.65,
+            target_danceability: 0.25,
+            target_tempo: 80,
+            max_tempo: 100,
         });
     } 
     if (chosenMood === "energetic") {
         return new URLSearchParams({
             limit: totalSongs,
             seed_tracks: songSeedID,
-            min_valence: 0.0,
-            max_valence: 0.5,
+            target_instrumentalness: lyricalInstrumental,
+            min_duration_ms: minSongLength,
+            max_duration_ms: maxSongLength,
+            min_valence: 0.5,
+            max_valence: 0.75,
+            min_danceability: 0.65,
+            min_energy: 0.75,
+            target_enegry: 0.8,
         });
     } 
     if (chosenMood === "romantic") {
         return new URLSearchParams({
             limit: totalSongs,
             seed_tracks: songSeedID,
-            min_valence: 0.0,
-            max_valence: 0.5,
+            target_instrumentalness: lyricalInstrumental,
+            min_duration_ms: minSongLength,
+            max_duration_ms: maxSongLength,
+            min_valence: 0.5,
+            max_valence: 0.75,
         });
     } 
     if (chosenMood === "melancholy") {
         return new URLSearchParams({
             limit: totalSongs,
             seed_tracks: songSeedID,
+            target_instrumentalness: lyricalInstrumental,
+            min_duration_ms: minSongLength,
+            max_duration_ms: maxSongLength,
             min_valence: 0.0,
-            max_valence: 0.5,
+            max_valence: 0.35,
+            target_danceability: 0.25,
+            target_tempo: 80,
+            max_tempo: 100,
         });
     }
     return new URLSearchParams({
         limit: totalSongs,
         seed_tracks: songSeedID,
+        target_instrumentalness: lyricalInstrumental,
+        min_duration_ms: minSongLength,
+        max_duration_ms: maxSongLength,
     });
 }
 
-async function getMoodRecommendations(token, chosenMood, totalSongs) {
+async function getMoodRecommendations(token, prefData, chosenMood, totalSongs) {
     const { access_token: accessToken } = await refreshToken(token);
     const response = await getCurrentSong(token);
     const songItem = await response.json();
     const songSeedID = songItem.item.id;
-    const searchParameters = await generateSearchParams(songSeedID, chosenMood, totalSongs);
+    const searchParameters = await generateSearchParams(songSeedID, prefData, chosenMood, totalSongs);
 
     const RECOMMENDATIONS_ENDPOINT = `https://api.spotify.com/v1/recommendations?`;
     return fetch(RECOMMENDATIONS_ENDPOINT + searchParameters, {
@@ -99,11 +140,9 @@ async function getMoodRecommendations(token, chosenMood, totalSongs) {
     });
 }
 
-async function playlistScreening(songItems, username) {
+// TODO: Check for EXPLICIT vs CLEAN songs
+async function playlistScreening(songItems, userData) {
     /* GET BLACKLISTED SONGS / ARTISTS HERE */
-    const { data: userData } = await NetworkAPI.get('/api/users/getUsers', {
-        username: username,
-    });
     const blacklistedArtists = userData.blacklistedArtists;
     const blacklistedSongs = userData.blacklistedSongs;
     let blacklistFlag = false;
@@ -152,8 +191,21 @@ handler.get(async (req, res) => {
     const chosenMood = queryURL.get('chosenMood');
     const playlistLength = queryURL.get('playlistLength');
     const username = queryURL.get('username');
-    console.log(chosenMood);
-    const response = await getMoodRecommendations(accessToken, chosenMood, playlistLength);
+
+    /* CHECK THAT PREFERENCE DATA IS BEING FOUND CORRECTLY */
+    const userData = await req.db
+        .collection('Users')
+        .findOne({ username: username });
+
+    const prefData = await req.db
+        .collection('Preferences')
+        .findOne({ uid: userData.musicPrefs });
+    
+    console.log(userData.musicPrefs);
+    console.log(prefData);
+    /* END PREF DATA */
+
+    const response = await getMoodRecommendations(accessToken, prefData, chosenMood, playlistLength);
 
     // Check if nothing is currently active (was throwing error before)
     if (response.status === 204 && response.statusText === 'No Content') {
@@ -164,14 +216,14 @@ handler.get(async (req, res) => {
         });
         return;
     }
-
+    
     const songItems = await response.json();
-    const playlistURIs = await playlistScreening(songItems, username);
+    const playlistURIs = await playlistScreening(songItems, prefData);
     let lengthDifference = playlistLength - playlistURIs.length;
 
     while (lengthDifference > 0) {
         const newResponse = await getMoodRecommendations(accessToken, chosenMood, lengthDifference);
-        const newSongItems = await response.json();
+        const newSongItems = await newResponse.json();
         const newPlaylistURIs = await playlistScreening(newSongItems);
         playlistURIs.concat(newPlaylistURIs);
         lengthDifference = playlistLength - playlistURIs.length;

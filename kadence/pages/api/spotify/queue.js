@@ -11,7 +11,6 @@ handler.use(middleware);
 async function addToQueue(token, songURI) {
     const { access_token: accessToken } = await refreshToken(token);
     const ADD_TO_PLAYBACK_QUEUE_ENDPOINT = `https://api.spotify.com/v1/me/player/queue?`
-    console.log(songURI);
 
     return fetch(ADD_TO_PLAYBACK_QUEUE_ENDPOINT + new URLSearchParams({
         uri: songURI,
@@ -33,7 +32,6 @@ handler.post(async (req, res) => {
     const uri = reqBody.songURI;
 
     const response = await addToQueue(accessToken, uri);
-    console.log(response);
     if (response.ok) {
         res.status(200).send();
         return;

@@ -13,7 +13,7 @@ export default function Display() {
     const { data: session } = useSession();
     const [songName, setSongItem] = useState('');
 
-    const getRecommendations = async () => {
+    const getAndSaveRecommendations = async () => {
         const moodMode = '/api/generation/mood?';
         const res = await fetch(moodMode + new URLSearchParams({
             chosenMood: 'happy',
@@ -21,8 +21,8 @@ export default function Display() {
             username: localStorage.getItem('username'),
         }));
         const playlistURIs = await res.json();
-        console.log(playlistURIs);
 
+        /* NEED TO ADD A SAVE PREFERENCE */
         const saveRoute = '/api/generation/save'
         const saveRes = await fetch(saveRoute, {
             method: 'POST',
@@ -31,7 +31,6 @@ export default function Display() {
                 playlistArray: playlistURIs,
             })
         });
-        console.log(saveRes);
 
         const queueRoute = '/api/spotify/queue'
         for (let i = 0; i < playlistURIs.length; i++) {
@@ -43,6 +42,26 @@ export default function Display() {
             });
         }
     };
+
+    const getRecommendations = async () => {
+        const intervalMode = '/api/generation/interval?';
+        const res = await fetch(intervalMode + new URLSearchParams({
+            status: 0,
+            timeRemaining: 300,
+            username: localStorage.getItem('username'),
+        }));
+        const playlistURIs = await res.json();
+
+        const queueRoute = '/api/spotify/queue'
+        for (let i = 0; i < playlistURIs.length; i++) {
+            fetch(queueRoute, {
+                method: 'POST',
+                body: JSON.stringify({
+                    songURI: playlistURIs[i]
+                })
+            });
+        }
+    }
 
     const getMyCurrentSong = async () => {
         const res = await fetch('/api/spotify/currentSong');
@@ -93,6 +112,14 @@ export default function Display() {
                             onClick={() => getRecommendations()}
                         >
                             Get Recommendations!
+                        </Button>
+
+                        <Button
+                            variant="contained"
+                            size="large"
+                            onClick={() => getAndSaveRecommendations()}
+                        >
+                            Get And Save Recommendations To Profile!
                         </Button>
                         <h3>Your recs: Click to generate!</h3>
                         Signed in as {session?.token?.email} <br />
