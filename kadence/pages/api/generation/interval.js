@@ -24,9 +24,14 @@ async function generateSearchParams(songSeedID, prefData, intervalStatus, timeRe
     const maxSongLength = prefData.maxSongLength * 1000; // convert to ms
     const lyricalInstrumental = prefData.lyricalInstrumental / 100; // convert to 0-1 scale
 
+    let queueLimit = 2;
+    if (timeRemaining < 500) {
+        queueLimit = 1;
+    }
+
     if (intervalStatus === '1') {
         return new URLSearchParams({
-            limit: 2,
+            limit: queueLimit,
             seed_tracks: songSeedID,
             target_instrumentalness: lyricalInstrumental,
             min_duration_ms: minSongLength,
@@ -38,7 +43,7 @@ async function generateSearchParams(songSeedID, prefData, intervalStatus, timeRe
         });
     }
     return new URLSearchParams({
-        limit: 2,
+        limit: queueLimit,
         seed_tracks: songSeedID,
         target_instrumentalness: lyricalInstrumental,
         min_duration_ms: minSongLength,
@@ -77,7 +82,7 @@ async function playlistScreening(songItems, userData) {
         if (explicitFlag === false && songItems.tracks[i].explicit === true) {
             blacklistFlag = true;
         } 
-        
+
         const songName = songItems.tracks[i].name;
         const songArtists = [];
         for (let j = 0; j < songItems.tracks[i].artists.length; j++) {

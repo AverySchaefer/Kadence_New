@@ -65,7 +65,7 @@ handler.post(async (req, res) => {
         // NOTE: PlaylistArray can be max length of 100
         const addResponse = await addToPlaylist(accessToken, playlistId, array);
         if (addResponse.ok) {
-            res.status(200).send();
+            res.status(200).json(playlistId);
             return;
         }
         const {

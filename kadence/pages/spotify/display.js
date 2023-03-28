@@ -12,6 +12,7 @@ import NetworkAPI from '@/lib/networkAPI';
 export default function Display() {
     const { data: session } = useSession();
     const [songName, setSongItem] = useState('');
+    const [generatedItems, setAllItems] = useState('');
 
     const getAndSaveRecommendations = async () => {
         const moodMode = '/api/generation/mood?';
@@ -31,6 +32,7 @@ export default function Display() {
                 playlistArray: playlistURIs,
             })
         });
+        const playlistID = await saveRes.json();
 
         const queueRoute = '/api/spotify/queue'
         for (let i = 0; i < playlistURIs.length; i++) {
@@ -41,26 +43,50 @@ export default function Display() {
                 })
             });
         }
+
+        const playlistRoute = '/api/spotify/getPlaylist?'
+        const playlistRes = await fetch(playlistRoute + new URLSearchParams({
+            playlistID: playlistID,
+        }));
+        const playlistItems = await playlistRes.json();
+        let playlistSongs = playlistItems.items[0].track.name;
+        for (let j = 1; j < playlistItems.items.length; j++) {
+            playlistSongs = playlistSongs.concat(', ');
+            const songName = playlistItems.items[j].track.name;
+            playlistSongs = playlistSongs.concat(songName);
+        }
+        setAllItems(playlistSongs);
     };
 
     const getRecommendations = async () => {
-        const intervalMode = '/api/generation/interval?';
-        const res = await fetch(intervalMode + new URLSearchParams({
-            status: 0,
-            timeRemaining: 300,
+        const moodMode = '/api/generation/mood?';
+        const res = await fetch(moodMode + new URLSearchParams({
+            chosenMood: 'happy',
+            playlistLength: 30,
             username: localStorage.getItem('username'),
         }));
         const playlistURIs = await res.json();
 
         const queueRoute = '/api/spotify/queue'
         for (let i = 0; i < playlistURIs.length; i++) {
-            fetch(queueRoute, {
+            await fetch(queueRoute, {
                 method: 'POST',
                 body: JSON.stringify({
                     songURI: playlistURIs[i]
                 })
             });
         }
+
+        const getQueueRoute = '/api/spotify/getQueue'
+        const queueRes = await fetch(getQueueRoute);
+        const queueItems = await queueRes.json();
+        let queueSongs = queueItems.queue[0].name;
+        for (let j = 1; j < queueItems.queue.length; j++) {
+            queueSongs = queueSongs.concat(', ');
+            const songName = queueItems.queue[j].name;
+            queueSongs = queueSongs.concat(songName);
+        }
+        setAllItems(queueSongs);
     }
 
     const getMyCurrentSong = async () => {
@@ -121,7 +147,7 @@ export default function Display() {
                         >
                             Get And Save Recommendations To Profile!
                         </Button>
-                        <h3>Your recs: Click to generate!</h3>
+                        <h3>Your recs: {generatedItems}</h3>
                         Signed in as {session?.token?.email} <br />
                         <Button
                             variant="contained"
