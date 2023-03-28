@@ -65,7 +65,8 @@ export default function Register() {
 
     const router = useRouter();
 
-    async function submitData() {
+    async function submitData(e) {
+        e.preventDefault();
         setFaveArtists(
             faveArtists.push(favoriteArtist)
         );

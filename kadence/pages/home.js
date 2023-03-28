@@ -47,7 +47,10 @@ export default function Home() {
                     >
                         Interval
                     </Button>
-                    <Button className={`${styles.modeBtn} ${styles.moodBtn}`}>
+                    <Button 
+                        className={`${styles.modeBtn} ${styles.moodBtn}`}
+                        onClick={() => router.push('/mood')}
+                    >
                         Mood
                     </Button>
                     <Button
