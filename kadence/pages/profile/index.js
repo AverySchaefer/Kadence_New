@@ -12,6 +12,8 @@ import { useTheme, createTheme, ThemeProvider } from '@mui/material/styles';
 
 import { useState, useEffect, useRef } from 'react';
 
+const allowedImageExtensions = ['.png', '.jpg', '.jpeg', '.gif'];
+
 function a11yProps(index) {
     return {
         id: `simple-tab-${index}`,
@@ -271,9 +273,8 @@ export default function Profile() {
             const file = selectedFiles[0];
             const filename = file.name;
             const dotIndex = filename.lastIndexOf('.');
-            const extension = filename.substr(dotIndex + 1);
-            const allowedExtensions = ['png', 'jpg', 'jpeg', 'gif'];
-            if (allowedExtensions.includes(extension)) {
+            const extension = filename.substr(dotIndex);
+            if (allowedImageExtensions.includes(extension)) {
                 const fileReader = new FileReader();
                 fileReader.onload = () => {
                     const srcData = fileReader.result;
@@ -311,7 +312,7 @@ export default function Profile() {
                             <input
                                 ref={uploadInput}
                                 type="file"
-                                accept="image/*"
+                                accept={allowedImageExtensions.join(', ')}
                                 style={{ display: 'none' }}
                                 onChange={handleProfilePictureChange}
                             />
