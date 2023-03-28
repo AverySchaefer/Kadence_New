@@ -1,6 +1,7 @@
 import { getSession } from 'next-auth/react';
 import nextConnect from 'next-connect';
 
+import refreshToken from '@/lib/fitbit/refreshToken';
 import middleware from '../../../middleware/database';
 
 const GET_VALUE_BASE_URL = 'https://api.fitbit.com/1/user/-/activities/heart/date/today/today/1sec/time/';
@@ -11,9 +12,18 @@ handler.use(middleware);
 
 async function createURL() {
     let time_obj = new Date();
+
     let curr_hour = time_obj.getHours();
+    let past_hour = curr_hour;
+
     let curr_minute = time_obj.getMinutes();
-    return (GET_VALUE_BASE_URL + curr_hour + '/' + curr_minute + '.json');
+    let past_minute = curr_minute - 1;
+    if (curr_minute == 0) {
+        past_minute = 59;
+        past_hour = past_hour - 1;
+    }
+
+    return (GET_VALUE_BASE_URL + past_hour + ':' + past_minute + '/' + curr_hour + ':' + curr_minute + '.json');
 } 
 
 async function getValue(token) {
@@ -28,6 +38,10 @@ async function getValue(token) {
 }
 
 handler.get(async (req, res) => {
+    // Add token verification from currentSong.js
+    const {
+        token: { accessToken },
+    } = await getSession({ req });
     const response = await getValue();
 
     // Check response
