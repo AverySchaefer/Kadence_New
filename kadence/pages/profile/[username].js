@@ -198,7 +198,11 @@ export default function OtherProfile() {
                 <main className={styles.main}>
                     <section>
                         <div className={styles.picture}>
-                            <Avatar alt="NS" sx={{ width: 150, height: 150 }}>
+                            <Avatar
+                                src={userData.profilePic ?? ''}
+                                alt="NS"
+                                sx={{ width: 150, height: 150 }}
+                            >
                                 {username[0].toUpperCase()}
                             </Avatar>
                         </div>

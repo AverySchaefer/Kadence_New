@@ -10,6 +10,8 @@ import PageLayout from '@/components/PageLayout';
 import { signOut } from 'next-auth/react';
 import { useTheme, createTheme, ThemeProvider } from '@mui/material/styles';
 
+import { useState, useEffect, useRef } from 'react';
+
 function a11yProps(index) {
     return {
         id: `simple-tab-${index}`,
@@ -18,7 +20,7 @@ function a11yProps(index) {
 }
 
 function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
-    const [value, setValue] = React.useState(0);
+    const [value, setValue] = useState(0);
     const router = useRouter();
     const theme = createTheme({
         palette: {
@@ -211,16 +213,17 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
 }
 
 export default function Profile() {
-    const [faveArtist, setFaveArtist] = React.useState('Snarky Puppy');
-    const [faveAlbum, setFaveAlbum] = React.useState('Lingus');
-    const [faveSong, setFaveSong] = React.useState('What About Me?');
-    const [bio, setBio] = React.useState('Something about me...');
-    const [musicPlatform, setMusicPlatform] = React.useState('Spotify');
+    const [faveArtist, setFaveArtist] = useState('Snarky Puppy');
+    const [faveAlbum, setFaveAlbum] = useState('Lingus');
+    const [faveSong, setFaveSong] = useState('What About Me?');
+    const [bio, setBio] = useState('Something about me...');
+    const [musicPlatform, setMusicPlatform] = useState('Spotify');
+    const [profilePic, setProfilePic] = useState('');
 
-    const [loaded, setLoaded] = React.useState(false);
+    const [loaded, setLoaded] = useState(false);
 
     // Fetch values from database
-    React.useEffect(() => {
+    useEffect(() => {
         async function fetchData() {
             try {
                 // Get User Data first
@@ -235,6 +238,7 @@ export default function Profile() {
                 setFaveSong(userData.favoriteSong);
                 setBio(userData.bio);
                 setMusicPlatform(userData.musicPlatform);
+                setProfilePic(userData.profilePic ?? '');
             } catch (err) {
                 Dialog.alert({
                     title: 'Error',
@@ -247,17 +251,70 @@ export default function Profile() {
         fetchData();
     }, []);
 
+    // References an HTML element (used for file input that is invisible)
+    const uploadInput = useRef(null);
+
+    // Function that opens a file chooser dialog to select picture
+    // Called when pressing picture icon on profile page
+    function promptUserForProfilePicture() {
+        const input = uploadInput?.current;
+        if (input) {
+            input.click();
+        }
+    }
+
+    // Actually handles the picture change
+    // Called when file input is virtually clicked on above
+    function handleProfilePictureChange(e) {
+        const selectedFiles = e.target.files;
+        if (selectedFiles.length > 0) {
+            const file = selectedFiles[0];
+            const filename = file.name;
+            const dotIndex = filename.lastIndexOf('.');
+            const extension = filename.substr(dotIndex + 1);
+            const allowedExtensions = ['png', 'jpg', 'jpeg', 'gif'];
+            if (allowedExtensions.includes(extension)) {
+                const fileReader = new FileReader();
+                fileReader.onload = () => {
+                    const srcData = fileReader.result;
+                    setProfilePic(srcData);
+                    NetworkAPI.patch('/api/users/update', {
+                        username: localStorage.getItem('username'),
+                        profilePic: srcData,
+                    });
+                };
+                fileReader.readAsDataURL(file);
+            }
+        }
+    }
+
     return (
         <PageLayout activeTab="profile" title="Profile" includeUpperRightIcon>
             {loaded && (
                 <main className={styles.main}>
                     <section>
-                        <div className={styles.picture}>
-                            <Avatar alt="NS" sx={{ width: 150, height: 150 }}>
+                        <div
+                            className={styles.picture}
+                            style={{ position: 'relative' }}
+                            onClick={promptUserForProfilePicture}
+                        >
+                            <Avatar
+                                src={profilePic}
+                                alt="NS"
+                                sx={{ width: 150, height: 150 }}
+                                style={{ objectFit: 'cover' }}
+                            >
                                 {localStorage
                                     .getItem('username')[0]
                                     .toUpperCase()}
                             </Avatar>
+                            <input
+                                ref={uploadInput}
+                                type="file"
+                                accept="image/*"
+                                style={{ display: 'none' }}
+                                onChange={handleProfilePictureChange}
+                            />
                         </div>
                     </section>
                     <div className={styles.card}>
