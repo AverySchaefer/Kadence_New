@@ -76,6 +76,7 @@ export default function Search() {
                             <div className={styles.searchResult}>
                                 <div className={styles.profilePic}>
                                     <Avatar
+                                        src={match.profilePic ?? ''}
                                         alt="NS"
                                         sx={{
                                             backgroundColor: '#4f378b',
@@ -83,7 +84,6 @@ export default function Search() {
                                     >
                                         {match.username[0].toUpperCase()}
                                     </Avatar>
-                                    {/* {match.profilePic} */}
                                 </div>
                                 <div className={styles.userInfo}>
                                     <p className={styles.username}>
