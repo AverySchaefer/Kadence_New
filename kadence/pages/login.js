@@ -33,12 +33,28 @@ export default function Login() {
                 const jwt = data.token;
                 localStorage.setItem('jwt', jwt);
                 localStorage.setItem('username', formUsername.value);
-                router.push('/profile');
+                router.push('/home');
             }
         } catch (err) {
             Dialog.alert({
                 title: 'Error Occurred',
                 message: `${err.status} ${err}`,
+            });
+        }
+
+        try {
+            // Get User Data first
+            const { data: userData } = await NetworkAPI.get(
+                '/api/users/getUsers',
+                {
+                    username: localStorage.getItem('username'),
+                }
+            );
+            localStorage.setItem('mood', userData.mood);
+        } catch (err) {
+            Dialog.alert({
+                title: 'Error',
+                message: `An error occurred while fetching your data: ${err.message}. Some defaults have been set in their place.`,
             });
         }
     }
