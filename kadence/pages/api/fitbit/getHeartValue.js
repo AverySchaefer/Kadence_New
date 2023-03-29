@@ -1,7 +1,5 @@
-import { getSession } from 'next-auth/react';
 import nextConnect from 'next-connect';
 
-import refreshToken from '@/lib/fitbit/refreshToken';
 import middleware from '../../../middleware/database';
 
 const GET_VALUE_BASE_URL = 'https://api.fitbit.com/1/user/-/activities/heart/date/today/today/1sec/time/';
@@ -27,26 +25,24 @@ async function createURL() {
 } 
 
 async function getValue(token) {
-    const { access_token: accessToken } = await refreshToken(token)
     let GET_VALUE_URL = createURL()
     return fetch(GET_VALUE_URL, {
         headers: {
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${token}`,
             'content-type': 'application/json',
         },
     });
 }
 
 handler.get(async (req, res) => {
-    // Add token verification from currentSong.js
-    const {
-        token: { accessToken },
-    } = await getSession({ req });
-    const response = await getValue();
+    const access_token = req.body.access_token;
+    const response = await getValue(access_token);
 
     // Check response
     if (response.status === 401) {
+        
         res.status(401).message("User authentication required");
+
     }
     if (response.status === 400) {
         res.status(400).message("Error in request syntax");
