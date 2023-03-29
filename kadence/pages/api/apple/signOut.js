@@ -1,4 +1,3 @@
-import { getSession } from 'next-auth/react';
 import nextConnect from 'next-connect';
 
 import middleware from '../../../middleware/database';
