@@ -169,6 +169,7 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
                                                         'button.primary',
                                                 }}
                                                 href={accountLink}
+                                                target="_blank"
                                             >
                                                 Open {musicPlatform}
                                             </Button>

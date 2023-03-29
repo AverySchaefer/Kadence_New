@@ -6,11 +6,13 @@ import { useState, useEffect } from 'react';
 import { Inter } from '@next/font/google';
 import useMusicKit from '@/lib/useMusicKit';
 import NetworkAPI from '@/lib/networkAPI';
+import { useRouter } from 'next/router';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export default function Display() {
     const [loggedIn, setLoggedIn] = useState(false);
+    const router = useRouter();
     const MusicKit = useMusicKit();
 
     function signInToApple() {
@@ -35,6 +37,11 @@ export default function Display() {
     }
 
     function signOutFromApple() {
+        const newPlatformData = {
+            username: localStorage.getItem('username'),
+            musicPlatform: '',
+        };
+
         const music = MusicKit.getInstance();
         music.unauthorize();
         localStorage.removeItem('appleMusicUserToken');
@@ -42,6 +49,14 @@ export default function Display() {
         NetworkAPI.post('/api/apple/signOut', {
             username: localStorage.getItem('username'),
         }).catch((err) => console.log(err));
+
+        try {
+            NetworkAPI.patch('/api/users/update', newPlatformData);
+        } catch (err) {
+            console.log(err);
+        } finally {
+            router.push('/profile');
+        }
     }
 
     // Check if signed in from cookies

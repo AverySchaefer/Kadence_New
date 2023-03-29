@@ -50,7 +50,7 @@ export default function Platform() {
     }
 
     return (
-        <PageLayout title="Select Platform">
+        <PageLayout title="Select Platform" includeNav={false}>
             <main className={styles.main}>
                 <div>
                     <Image
