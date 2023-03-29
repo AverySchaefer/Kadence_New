@@ -5,7 +5,6 @@ import refreshToken from '@/lib/spotify/refreshToken';
 import middleware from '../../../middleware/database';
 
 const handler = nextConnect();
-
 handler.use(middleware);
 
 async function createPlaylist(token, playlistName) {
