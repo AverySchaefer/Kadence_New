@@ -40,8 +40,8 @@ handler.get(async (req, res) => {
 
     // Check response
     if (response.status === 401) {
-        
-        res.status(401).message("User authentication required");
+
+        res.status(401).message("Authorization Token Expired");
 
     }
     if (response.status === 400) {
