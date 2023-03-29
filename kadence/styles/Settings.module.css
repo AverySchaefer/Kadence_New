@@ -78,7 +78,13 @@
 
 .select {
     width: 100%;
+    margin-top: 1rem;
+}
+
+.selectInput {
     color: #ffffff;
+    background-color: #615f64;
+    border-radius: 3px;
 }
 
 .zipCode {

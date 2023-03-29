@@ -26,7 +26,7 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
     const router = useRouter();
     const theme = createTheme({
         palette: {
-            backgroud: {
+            background: {
                 main: '#1e1e1e',
             },
             button: {
@@ -54,9 +54,11 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
     };
 
     const handleDeviceConnection = () => {
-        console.log("connecting a device");
-        window.location.assign('https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=23QTD8&scope=activity+cardio_fitness+electrocardiogram+heartrate+location+nutrition+oxygen_saturation+profile+respiratory_rate+settings+sleep+social+temperature+weight&code_challenge=vaC5salqWAhM5k50MMvXGPxkTQGyQeLa0NpP_K3689Y&code_challenge_method=S256&state=3j3k386j3x606u7000324b4x4n0b0o06&redirect_uri=https%3A%2F%2Flocalhost%3A3000%2Ffitbit');
-    }
+        console.log('connecting a device');
+        window.location.assign(
+            'https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=23QTD8&scope=activity+cardio_fitness+electrocardiogram+heartrate+location+nutrition+oxygen_saturation+profile+respiratory_rate+settings+sleep+social+temperature+weight&code_challenge=vaC5salqWAhM5k50MMvXGPxkTQGyQeLa0NpP_K3689Y&code_challenge_method=S256&state=3j3k386j3x606u7000324b4x4n0b0o06&redirect_uri=https%3A%2F%2Flocalhost%3A3000%2Ffitbit'
+        );
+    };
 
     let platform = '';
     let alt = '';

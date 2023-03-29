@@ -6,6 +6,7 @@ import {
     Divider,
     Grid,
     IconButton,
+    InputBase,
     MenuItem,
     Select,
     Slider,
@@ -352,6 +353,11 @@ export default function Settings() {
                                             setLyricalLanguage(e.target.value)
                                         }
                                         value={lyricalLanguage}
+                                        input={
+                                            <InputBase
+                                                className={styles.selectInput}
+                                            />
+                                        }
                                     >
                                         {languages.map((language) => (
                                             <MenuItem
@@ -439,6 +445,11 @@ export default function Settings() {
                                             setFaveGenres([e.target.value])
                                         }
                                         value={faveGenres[0] ?? 'No Preference'}
+                                        input={
+                                            <InputBase
+                                                className={styles.selectInput}
+                                            />
+                                        }
                                     >
                                         {genres.map((genre) => (
                                             <MenuItem value={genre} key={genre}>
@@ -691,6 +702,11 @@ export default function Settings() {
                                             setMood(e.target.value)
                                         }
                                         value={mood}
+                                        input={
+                                            <InputBase
+                                                className={styles.selectInput}
+                                            />
+                                        }
                                     >
                                         {moods.map((m) => (
                                             <MenuItem value={m} key={m}>
@@ -712,14 +728,13 @@ export default function Settings() {
                                         value={zipCode}
                                         onChange={(e) =>
                                             setZipCode(
-                                                Math.min(
-                                                    parseInt(
-                                                        e.target.value,
-                                                        10
-                                                    ),
-                                                    99999
-                                                )
+                                                parseInt(e.target.value, 10)
                                             )
+                                        }
+                                        input={
+                                            <InputBase
+                                                className={styles.selectInput}
+                                            />
                                         }
                                     />
                                 </div>
