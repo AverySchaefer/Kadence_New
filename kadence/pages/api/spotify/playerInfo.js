@@ -64,7 +64,7 @@ handler.get(async (req, res) => {
         songURI: json.item.uri,
         artistName: json.item.artists[0].name,
         albumImageSrc:
-            json.item.album.images.at(-1)?.url ??
+            json.item.album.images.at(0)?.url ??
             'https://demofree.sirv.com/nope-not-here.jpg',
     });
 });

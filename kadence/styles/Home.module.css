@@ -1,11 +1,11 @@
 .main {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    padding: 1rem;
+    height: 100%;
 }
 
 .moodContainer {
+    margin-top: 0.5rem;
     background-color: #222222;
     display: grid;
     grid-template-areas:
@@ -19,6 +19,7 @@
 .modeBtn {
     color: #ffffff;
     text-transform: none;
+    display: block;
 }
 
 .heartRateBtn {
@@ -40,14 +41,9 @@
     grid-area: local-artist;
     background-color: #008fa4;
 }
-/* .generateBtn {
-    grid-area: generate;
-    color: #242b2e;
-    background-color: #69e267;
-    width: 100%;
-} */
 
 .logoutBtn {
+    margin-top: auto;
     color: #ffffff;
     background-color: #b11414;
     width: 100%;

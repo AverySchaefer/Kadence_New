@@ -4,6 +4,7 @@ import { Button, Card } from '@mui/material';
 import { useState, useEffect } from 'react';
 import NetworkAPI from '@/lib/networkAPI';
 import styles from '@/styles/Home.module.css';
+import Link from 'next/link';
 
 export default function Home() {
     const router = useRouter();
@@ -75,12 +76,6 @@ export default function Home() {
                             Local Artist
                         </Button>
                     </Card>
-                    <Button
-                        className={`${styles.logoutBtn}`}
-                        onClick={handleClick}
-                    >
-                        Log Out
-                    </Button>
                 </main>
             </PageLayout>
         )

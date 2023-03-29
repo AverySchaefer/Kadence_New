@@ -8,6 +8,11 @@ import NetworkAPI from '@/lib/networkAPI';
 import Default from '@/lib/default';
 import PageLayout from '@/components/PageLayout';
 import { signOut } from 'next-auth/react';
+import { useTheme, createTheme, ThemeProvider } from '@mui/material/styles';
+
+import { useState, useEffect, useRef } from 'react';
+
+const allowedImageExtensions = ['.png', '.jpg', '.jpeg', '.gif'];
 
 function a11yProps(index) {
     return {
@@ -17,8 +22,18 @@ function a11yProps(index) {
 }
 
 function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
-    const [value, setValue] = React.useState(0);
+    const [value, setValue] = useState(0);
     const router = useRouter();
+    const theme = createTheme({
+        palette: {
+            backgroud: {
+                main: '#1e1e1e',
+            },
+            button: {
+                primary: '#69E267',
+            },
+        },
+    });
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -37,6 +52,11 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
             signOut({ callbackUrl: '/platform' });
         }
     };
+
+    const handleDeviceConnection = () => {
+        console.log("connecting a device");
+        window.location.assign('https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=23QTD8&scope=activity+cardio_fitness+electrocardiogram+heartrate+location+nutrition+oxygen_saturation+profile+respiratory_rate+settings+sleep+social+temperature+weight&code_challenge=vaC5salqWAhM5k50MMvXGPxkTQGyQeLa0NpP_K3689Y&code_challenge_method=S256&state=3j3k386j3x606u7000324b4x4n0b0o06&redirect_uri=https%3A%2F%2Flocalhost%3A3000%2Ffitbit');
+    }
 
     let platform = '';
     let alt = '';
@@ -60,97 +80,158 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
     }
 
     return (
-        <Box sx={{ width: '100%' }}>
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                <Tabs
-                    value={value}
-                    onChange={handleChange}
-                    aria-label="basic tabs example"
-                    variant="fullWidth"
-                >
-                    <Tab label="About Me" {...a11yProps(0)} />
-                    <Tab label="Platform" {...a11yProps(1)} />
-                    <Tab label="Devices" {...a11yProps(2)} />
-                </Tabs>
-            </Box>
-            <Box sx={{ padding: 2 }}>
-                {value === 0 && (
-                    <Box>
-                        <Stack spacing={2} alignItems="center">
-                            <h4 className={styles.tabTitle}>Favorite Artist</h4>
-                            <p>{favArtist}</p>
-                            <br />
-                            <h4 className={styles.tabTitle}>Favorite Song</h4>
-                            <p>{favSong}</p>
-                            <br />
-                            <h4 className={styles.tabTitle}>Favorite Album</h4>
-                            <p>{favAlbum}</p>
-                            <br />
-                            <Button
-                                variant="contained"
-                                onClick={() => router.push('/changeProfile')}
-                            >
-                                Edit
-                            </Button>
-                        </Stack>
+        <ThemeProvider theme={theme}>
+            <div className={styles.profileTabs}>
+                <Box sx={{ width: '98%', bgcolor: '#222222', borderRadius: 4 }}>
+                    <Box
+                        sx={{
+                            borderTop: 1,
+                            borderColor: 'divider',
+                            bgcolor: '#1e1e1e',
+                            borderRadius: 4,
+                        }}
+                    >
+                        <Tabs
+                            value={value}
+                            onChange={handleChange}
+                            variant="fullWidth"
+                            textColor="inherit"
+                            TabIndicatorProps={{
+                                style: { backgroundColor: '#69E267' },
+                            }}
+                        >
+                            <Tab label="About Me" {...a11yProps(0)} />
+                            <Tab label="Platform" {...a11yProps(1)} />
+                            <Tab label="Devices" {...a11yProps(2)} />
+                        </Tabs>
                     </Box>
-                )}
-                {value === 1 && (
-                    <Box>
-                        <Stack spacing={2} alignItems="center">
-                            {platform && (
-                                <>
-                                    <Image
-                                        src={platform}
-                                        alt={alt}
-                                        width="300"
-                                        height="150"
-                                        className={styles.platformImage}
-                                        priority
-                                    />
+                    <Box sx={{ padding: 2 }}>
+                        {value === 0 && (
+                            <Box>
+                                <Stack spacing={2} alignItems="center">
+                                    <h4 className={styles.tabTitle}>
+                                        Favorite Artist
+                                    </h4>
+                                    <p>{favArtist}</p>
+                                    <br />
+                                    <h4 className={styles.tabTitle}>
+                                        Favorite Song
+                                    </h4>
+                                    <p>{favSong}</p>
+                                    <br />
+                                    <h4 className={styles.tabTitle}>
+                                        Favorite Album
+                                    </h4>
+                                    <p>{favAlbum}</p>
+                                    <br />
+                                    <br />
                                     <Button
                                         variant="contained"
-                                        onClick={() => router.push(useLink)}
+                                        sx={{
+                                            width: '25ch',
+                                            backgroundColor: 'button.primary',
+                                        }}
+                                        onClick={() =>
+                                            router.push('/changeProfile')
+                                        }
                                     >
-                                        Configure Account
+                                        Edit
                                     </Button>
+                                </Stack>
+                            </Box>
+                        )}
+                        {value === 1 && (
+                            <Box>
+                                <Stack spacing={2} alignItems="center">
+                                    {platform && (
+                                        <>
+                                            <Image
+                                                src={platform}
+                                                alt={alt}
+                                                width="300"
+                                                height="150"
+                                                className={styles.platformImage}
+                                                priority
+                                            />
+                                            <Button
+                                                variant="contained"
+                                                sx={{
+                                                    width: '25ch',
+                                                    backgroundColor:
+                                                        'button.primary',
+                                                }}
+                                                onClick={() =>
+                                                    router.push(useLink)
+                                                }
+                                            >
+                                                Kadence Player
+                                            </Button>
+                                            <Button
+                                                variant="contained"
+                                                sx={{
+                                                    width: '25ch',
+                                                    backgroundColor:
+                                                        'button.primary',
+                                                }}
+                                                href={accountLink}
+                                            >
+                                                Open {musicPlatform}
+                                            </Button>
+                                        </>
+                                    )}
                                     <Button
                                         variant="contained"
-                                        href={accountLink}
+                                        sx={{
+                                            width: '25ch',
+                                            backgroundColor: 'button.primary',
+                                        }}
+                                        onClick={handleClick}
                                     >
-                                        View Account In App
+                                        {platform ? 'Change' : 'Choose'}{' '}
+                                        Platform
                                     </Button>
-                                </>
-                            )}
-                            <Button variant="contained" onClick={handleClick}>
-                                {platform ? 'Change' : 'Choose'} Platform
-                            </Button>
-                        </Stack>
+                                </Stack>
+                            </Box>
+                        )}
+                        {value === 2 && (
+                            <Box>
+                                <Stack spacing={2} alignItems="center">
+                                    <Button
+                                        variant="contained"
+                                        sx={{
+                                            width: '25ch',
+                                            backgroundColor: 'button.primary',
+                                            '&:active': {
+                                                backgroundColor:
+                                                    'button.primary',
+                                            },
+                                        }}
+                                        onClick={handleDeviceConnection}
+                                    >
+                                        Connect
+                                    </Button>
+                                </Stack>
+                            </Box>
+                        )}
                     </Box>
-                )}
-                {value === 2 && (
-                    <Box>
-                        <Stack spacing={2} alignItems="center">
-                            <Button variant="contained">Connect</Button>
-                        </Stack>
-                    </Box>
-                )}
-            </Box>
-        </Box>
+                </Box>
+            </div>
+        </ThemeProvider>
     );
 }
 
 export default function Profile() {
-    const [faveArtist, setFaveArtist] = React.useState('Snarky Puppy');
-    const [faveAlbum, setFaveAlbum] = React.useState('Lingus');
-    const [faveSong, setFaveSong] = React.useState('What About Me?');
-    const [bio, setBio] = React.useState('Something about me...');
-    const [musicPlatform, setMusicPlatform] = React.useState('Spotify');
+    const [faveArtist, setFaveArtist] = useState('Snarky Puppy');
+    const [faveAlbum, setFaveAlbum] = useState('Lingus');
+    const [faveSong, setFaveSong] = useState('What About Me?');
+    const [bio, setBio] = useState('Something about me...');
+    const [musicPlatform, setMusicPlatform] = useState('Spotify');
+    const [profilePic, setProfilePic] = useState('');
 
-    const [loaded, setLoaded] = React.useState(false);
+    const [loaded, setLoaded] = useState(false);
 
     // Fetch values from database
-    React.useEffect(() => {
+    useEffect(() => {
         async function fetchData() {
             try {
                 // Get User Data first
@@ -165,6 +246,7 @@ export default function Profile() {
                 setFaveSong(userData.favoriteSong);
                 setBio(userData.bio);
                 setMusicPlatform(userData.musicPlatform);
+                setProfilePic(userData.profilePic ?? '');
             } catch (err) {
                 Dialog.alert({
                     title: 'Error',
@@ -177,17 +259,69 @@ export default function Profile() {
         fetchData();
     }, []);
 
+    // References an HTML element (used for file input that is invisible)
+    const uploadInput = useRef(null);
+
+    // Function that opens a file chooser dialog to select picture
+    // Called when pressing picture icon on profile page
+    function promptUserForProfilePicture() {
+        const input = uploadInput?.current;
+        if (input) {
+            input.click();
+        }
+    }
+
+    // Actually handles the picture change
+    // Called when file input is virtually clicked on above
+    function handleProfilePictureChange(e) {
+        const selectedFiles = e.target.files;
+        if (selectedFiles.length > 0) {
+            const file = selectedFiles[0];
+            const filename = file.name;
+            const dotIndex = filename.lastIndexOf('.');
+            const extension = filename.substr(dotIndex);
+            if (allowedImageExtensions.includes(extension)) {
+                const fileReader = new FileReader();
+                fileReader.onload = () => {
+                    const srcData = fileReader.result;
+                    setProfilePic(srcData);
+                    NetworkAPI.patch('/api/users/update', {
+                        username: localStorage.getItem('username'),
+                        profilePic: srcData,
+                    });
+                };
+                fileReader.readAsDataURL(file);
+            }
+        }
+    }
+
     return (
-        <PageLayout activeTab="profile" title="Profile" includeSettings>
+        <PageLayout activeTab="profile" title="Profile" includeUpperRightIcon>
             {loaded && (
                 <main className={styles.main}>
                     <section>
-                        <div className={styles.picture}>
-                            <Avatar alt="NS" sx={{ width: 150, height: 150 }}>
+                        <div
+                            className={styles.picture}
+                            style={{ position: 'relative' }}
+                            onClick={promptUserForProfilePicture}
+                        >
+                            <Avatar
+                                src={profilePic}
+                                alt="NS"
+                                sx={{ width: 150, height: 150 }}
+                                style={{ objectFit: 'cover' }}
+                            >
                                 {localStorage
                                     .getItem('username')[0]
                                     .toUpperCase()}
                             </Avatar>
+                            <input
+                                ref={uploadInput}
+                                type="file"
+                                accept={allowedImageExtensions.join(', ')}
+                                style={{ display: 'none' }}
+                                onChange={handleProfilePictureChange}
+                            />
                         </div>
                     </section>
                     <div className={styles.card}>

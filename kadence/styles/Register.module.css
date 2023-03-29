@@ -38,7 +38,8 @@
 
 .title {
     text-align: center;
-    color: black;
+    color: #69e267;
+
 }
 
 .text {
@@ -82,6 +83,13 @@
     width: 12ch;
 }
 
+.muiSliderLabel {
+    font-size: 0.75em;
+    display: inline-block;
+    text-align: center;
+    width: 16ch;
+}
+
 .flexWrapper {
     display: flex;
     flex-wrap: wrap;
@@ -92,6 +100,8 @@
 .subsetting {
     font-size: 0.9em;
     padding: 0.5rem;
+    display: flex;
+    justify-content: center;
 }
 
 .center {

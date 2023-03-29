@@ -27,6 +27,15 @@
     color: white;
 }
 
+.profileTabs {
+    height: 100%;
+    padding: 0.5rem;
+    display: flex;
+    border-radius: 10px;
+    height: 500px;
+    justify-content: center;
+}
+
 .editLinks {
     box-sizing: content-box;
     position: absolute;
@@ -64,7 +73,7 @@
     margin-top: 0.5em;
     padding: 0.5em 1em;
     text-align: center;
-    color: rgb(0, 0, 0);
+    color: #ffffff;
     display: flex;
     justify-content: center;
 }

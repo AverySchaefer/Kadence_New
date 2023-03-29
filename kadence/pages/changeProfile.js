@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Head from 'next/head';
 import Textbox from '@/components/Textbox';
+import TextArea from '@/components/TextArea';
 import styles from '@/styles/Platform.module.css';
 import { Box, Stack, Button } from '@mui/material/';
 import { Dialog } from '@capacitor/dialog';
@@ -10,9 +11,7 @@ import NetworkAPI from '@/lib/networkAPI';
 
 const inter = Inter({ subsets: ['latin'] });
 
-
 export default function ChangeProfile() {
-
     const [favoriteArtist, setFaveArtist] = React.useState('');
     const [favoriteAlbum, setFaveAlbum] = React.useState('');
     const [favoriteSong, setFaveSong] = React.useState('');
@@ -27,9 +26,12 @@ export default function ChangeProfile() {
         async function fetchData() {
             try {
                 // Get User Data first
-                const { data: userData } = await NetworkAPI.get('/api/users/getUsers', {
-                    username: localStorage.getItem('username'),
-                });
+                const { data: userData } = await NetworkAPI.get(
+                    '/api/users/getUsers',
+                    {
+                        username: localStorage.getItem('username'),
+                    }
+                );
                 setFaveArtist(userData.favoriteArtist);
                 setFaveAlbum(userData.favoriteAlbum);
                 setFaveSong(userData.favoriteSong);
@@ -86,13 +88,12 @@ export default function ChangeProfile() {
                 <Box>
                     <Stack spacing={2} alignItems="center">
                         <h2>Write a short bio!</h2>
-                        <textarea
+                        <TextArea
                             name="bio"
-                            rows="3"
-                            cols="40"
                             placeholder="Bio"
                             onChange={(e) => setBio(e.target.value)}
                             value={bio}
+                            style={{ color: 'white', padding: '0.5rem' }}
                         />
                         <h2>Favorite Artist</h2>
                         <Textbox
@@ -101,6 +102,7 @@ export default function ChangeProfile() {
                             placeholder="Artist"
                             onChange={(e) => setFaveArtist(e.target.value)}
                             value={favoriteArtist}
+                            style={{ color: 'white' }}
                             required
                         />
                         <h2>Favorite Song</h2>
@@ -110,6 +112,7 @@ export default function ChangeProfile() {
                             placeholder="Song"
                             onChange={(e) => setFaveSong(e.target.value)}
                             value={favoriteSong}
+                            style={{ color: 'white' }}
                             required
                         />
                         <h2>Favorite Album</h2>
@@ -119,9 +122,21 @@ export default function ChangeProfile() {
                             placeholder="Album"
                             onChange={(e) => setFaveAlbum(e.target.value)}
                             value={favoriteAlbum}
+                            style={{ color: 'white' }}
                             required
                         />
-                        <Button variant="contained" onClick={submitData}>Save</Button>
+                        <br />
+                        <Button
+                            variant="contained"
+                            sx={{
+                                width: '25ch',
+                                backgroundColor: '#69e267',
+                                '&:active': { backgroundColor: '#69e267' },
+                            }}
+                            onClick={submitData}
+                        >
+                            Save
+                        </Button>
                     </Stack>
                 </Box>
             </main>

@@ -8,15 +8,8 @@
 
     --background-color: #242b2e;
     --menu-option-color: rgb(217, 217, 217);
-    --nav-height: 50px;
+    --nav-height: 80px;
     --music-player-height: 65px;
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --background-color: #242b2e;
-        --menu-option-color: rgb(217, 217, 217);
-    }
 }
 
 *,
@@ -39,15 +32,10 @@ body {
 
 body {
     background-color: var(--background-color);
+    color: white;
 }
 
 a {
     color: inherit;
     text-decoration: none;
-}
-
-@media (prefers-color-scheme: dark) {
-    html {
-        color-scheme: dark;
-    }
 }

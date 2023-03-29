@@ -6,6 +6,7 @@ import { Avatar, Box, Button, Stack, Tab, Tabs } from '@mui/material/';
 import { useState, useEffect } from 'react';
 import NetworkAPI from '@/lib/networkAPI';
 import PageLayout from '@/components/PageLayout';
+import { useTheme, createTheme, ThemeProvider } from '@mui/material/styles';
 
 function a11yProps(index) {
     return {
@@ -16,6 +17,16 @@ function a11yProps(index) {
 
 function BasicTabs({ userData }) {
     const [value, setValue] = useState(0);
+    const theme = createTheme({
+        palette: {
+            backgroud: {
+                main: '#1e1e1e',
+            },
+            button: {
+                primary: '#69E267',
+            },
+        },
+    });
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -39,91 +50,116 @@ function BasicTabs({ userData }) {
     }
 
     return (
-        <Box sx={{ width: '100%' }}>
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                <Tabs
-                    value={value}
-                    onChange={handleChange}
-                    aria-label="basic tabs example"
-                    variant="fullWidth"
-                >
-                    <Tab label="About Me" {...a11yProps(0)} />
-                    <Tab label="Platform" {...a11yProps(1)} />
-                    <Tab label="Devices" {...a11yProps(2)} />
-                </Tabs>
-            </Box>
-            <Box sx={{ padding: 2 }}>
-                {value === 0 && (
-                    <Box>
-                        <Stack spacing={2} alignItems="center">
-                            <h4 className={styles.tabTitle}>Favorite Artist</h4>
-                            <p>{userData.favoriteArtist}</p>
-                            <br />
-                            <h4 className={styles.tabTitle}>Favorite Song</h4>
-                            <p>{userData.favoriteSong}</p>
-                            <br />
-                            <h4 className={styles.tabTitle}>Favorite Album</h4>
-                            <p>{userData.favoriteAlbum}</p>
-                            <br />
-                        </Stack>
+        <ThemeProvider theme={theme}>
+            <div className={styles.profileTabs}>
+                <Box sx={{ width: '98%', bgcolor: '#222222', borderRadius: 4 }}>
+                    <Box
+                        sx={{
+                            borderTop: 1,
+                            borderColor: 'divider',
+                            bgcolor: '#1e1e1e',
+                            borderRadius: 4,
+                        }}
+                    >
+                        <Tabs
+                            value={value}
+                            onChange={handleChange}
+                            variant="fullWidth"
+                            textColor="inherit"
+                            TabIndicatorProps={{
+                                style: { backgroundColor: '#69E267' },
+                            }}
+                        >
+                            <Tab label="About Me" {...a11yProps(0)} />
+                            <Tab label="Platform" {...a11yProps(1)} />
+                            <Tab label="Devices" {...a11yProps(2)} />
+                        </Tabs>
                     </Box>
-                )}
-                {value === 1 && (
-                    <Box>
-                        <Stack spacing={2} alignItems="center">
-                            {userData.private ? (
-                                <p>
-                                    This user is private, so you can't see their
-                                    music platform information.
-                                </p>
-                            ) : (
-                                <>
-                                    {userData.musicPlatform ? (
-                                        <>
-                                            <Image
-                                                src={platform}
-                                                alt={alt}
-                                                width="300"
-                                                height="150"
-                                                className={styles.platformImage}
-                                                priority
-                                            />
-                                            <Button
-                                                variant="contained"
-                                                href={accountLink}
-                                            >
-                                                View Account
-                                            </Button>
-                                        </>
-                                    ) : (
+                    <Box sx={{ padding: 2 }}>
+                        {value === 0 && (
+                            <Box>
+                                <Stack spacing={2} alignItems="center">
+                                    <h4 className={styles.tabTitle}>
+                                        Favorite Artist
+                                    </h4>
+                                    <p>{userData.favoriteArtist}</p>
+                                    <h4 className={styles.tabTitle}>
+                                        Favorite Song
+                                    </h4>
+                                    <p>{userData.favoriteSong}</p>
+                                    <h4 className={styles.tabTitle}>
+                                        Favorite Album
+                                    </h4>
+                                    <p>{userData.favoriteAlbum}</p>
+                                </Stack>
+                            </Box>
+                        )}
+                        {value === 1 && (
+                            <Box>
+                                <Stack spacing={2} alignItems="center">
+                                    {userData.private ? (
                                         <p>
-                                            This user has not selected a music
-                                            platform!
+                                            This user is private, so you can't
+                                            see their music platform
+                                            information.
                                         </p>
+                                    ) : (
+                                        <>
+                                            {userData.musicPlatform ? (
+                                                <>
+                                                    <Image
+                                                        src={platform}
+                                                        alt={alt}
+                                                        width="300"
+                                                        height="150"
+                                                        className={
+                                                            styles.platformImage
+                                                        }
+                                                        priority
+                                                    />
+                                                    <Button
+                                                        variant="contained"
+                                                        sx={{
+                                                            width: '25ch',
+                                                            backgroundColor:
+                                                                'button.primary',
+                                                        }}
+                                                        href={accountLink}
+                                                    >
+                                                        View Account
+                                                    </Button>
+                                                </>
+                                            ) : (
+                                                <p>
+                                                    This user has not selected a
+                                                    music platform!
+                                                </p>
+                                            )}
+                                        </>
                                     )}
-                                </>
-                            )}
-                        </Stack>
+                                </Stack>
+                            </Box>
+                        )}
+                        {value === 2 && (
+                            <Box>
+                                <Stack spacing={2} alignItems="center">
+                                    {userData.private ? (
+                                        <p>
+                                            This user is private, so you can't
+                                            see their device information.
+                                        </p>
+                                    ) : (
+                                        <>
+                                            <p>Insert Device Information?</p>
+                                        </>
+                                    )}
+                                </Stack>
+                            </Box>
+                        )}
                     </Box>
-                )}
-                {value === 2 && (
-                    <Box>
-                        <Stack spacing={2} alignItems="center">
-                            {userData.private ? (
-                                <p>
-                                    This user is private, so you can't see their
-                                    device information.
-                                </p>
-                            ) : (
-                                <>
-                                    <p>Insert Device Information?</p>
-                                </>
-                            )}
-                        </Stack>
-                    </Box>
-                )}
-            </Box>
-        </Box>
+                </Box>
+            </div>
+        </ThemeProvider>
     );
 }
 
@@ -162,7 +198,11 @@ export default function OtherProfile() {
                 <main className={styles.main}>
                     <section>
                         <div className={styles.picture}>
-                            <Avatar alt="NS" sx={{ width: 150, height: 150 }}>
+                            <Avatar
+                                src={userData.profilePic ?? ''}
+                                alt="NS"
+                                sx={{ width: 150, height: 150 }}
+                            >
                                 {username[0].toUpperCase()}
                             </Avatar>
                         </div>

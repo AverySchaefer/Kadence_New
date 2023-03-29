@@ -1,0 +1,47 @@
+.moodsContainer {
+    margin-top: 0.5rem;
+    background-color: #242b2e;
+    display: grid;
+    grid-Template-areas:
+        'Happy'
+        'Sad'
+        'Angry'
+        'Chill'
+        'Energetic'
+        'Romantic'
+        'Melancholy';
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 12px;
+}
+
+.moodButton {
+    background-color: #222222;
+    font-size: 30px;
+    color: #ffffff;
+    text-transform: lowercase ! important;
+    display: flex;
+    justify-content: left;
+}
+
+.generateButton {
+    background-color: #69e267;
+    color: #242b2e;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.sliderContainer {
+    padding-block: 0.02rem;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.muiSliderLabel {
+    font-size: 0.75em;
+    display: inline-block;
+    text-align: center;
+    width: 18ch;
+}

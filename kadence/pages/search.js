@@ -2,6 +2,8 @@ import { Dialog } from '@capacitor/dialog';
 
 import Link from 'next/link';
 import { Avatar } from '@mui/material/';
+import { BiSearchAlt } from 'react-icons/bi';
+import ClearIcon from '@mui/icons-material/Clear';
 
 import { useState, useEffect, useCallback } from 'react';
 
@@ -14,10 +16,8 @@ import PageLayout from '@/components/PageLayout';
 export default function Search() {
     const [query, setQuery] = useState('');
     const [matches, setMatches] = useState([]);
-    const [loading, setLoading] = useState(false);
 
     function fetchMatches(searchedUsername) {
-        setLoading(true);
         NetworkAPI.get('/api/users/search', { username: searchedUsername })
             .then(({ data }) => {
                 setMatches(data.results);
@@ -27,8 +27,7 @@ export default function Search() {
                     title: 'Error',
                     message: `An error occurred while querying the database: ${err.message}.`,
                 });
-            })
-            .finally(() => setLoading(false));
+            });
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -36,7 +35,6 @@ export default function Search() {
     useEffect(() => {
         if (query === '') {
             setMatches([]);
-            setLoading(false);
         } else {
             debouncedFetchMatches(query);
         }
@@ -52,48 +50,52 @@ export default function Search() {
 
     return (
         <PageLayout activeTab="search" title="Search">
-            <main className={styles.main}>
+            <div className={styles.searchContainer}>
                 <div className={styles.searchBarContainer}>
-                    <input
-                        type="text"
-                        placeholder="Search for users"
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value.trim())}
-                    />
-                </div>
-                <h2 className={styles.resultsHeader}>Results</h2>
-
-                {matches.length === 0 || loading || query === '' ? (
-                    <div>
-                        {loading ? 'Loading results...' : 'No results found!'}
+                    <div className={styles.icon}>
+                        <BiSearchAlt />
                     </div>
-                ) : (
-                    <div className={styles.searchResults}>
-                        {matches.map((match) => (
-                            <Link
-                                key={match.username}
-                                className={styles.searchResult}
-                                href={`/profile/${match.username}`}
-                            >
+                    <div className={styles.searchBar}>
+                        <input
+                            type="text"
+                            placeholder="Search for users"
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value.trim())}
+                        />
+                    </div>
+                    <div className={styles.icon}>
+                        <ClearIcon onClick={() => setQuery('')} />
+                    </div>
+                </div>
+                <div className={styles.searchResults}>
+                    {matches.map((match) => (
+                        <Link
+                            key={match.username}
+                            href={`/profile/${match.username}`}
+                        >
+                            <div className={styles.searchResult}>
                                 <div className={styles.profilePic}>
                                     <Avatar
+                                        src={match.profilePic ?? ''}
                                         alt="NS"
                                         sx={{
-                                            width: '100%',
-                                            height: '100%',
-                                            backgroundColor: '#888',
+                                            backgroundColor: '#4f378b',
                                         }}
                                     >
                                         {match.username[0].toUpperCase()}
                                     </Avatar>
-                                    {/* {match.profilePic} */}
                                 </div>
-                                <div>{match.username}</div>
-                            </Link>
-                        ))}
-                    </div>
-                )}
-            </main>
+                                <div className={styles.userInfo}>
+                                    <p className={styles.username}>
+                                        {match.username}
+                                    </p>
+                                    <p className={styles.bio}>{match.bio}</p>
+                                </div>
+                            </div>
+                        </Link>
+                    ))}
+                </div>
+            </div>
         </PageLayout>
     );
 }
