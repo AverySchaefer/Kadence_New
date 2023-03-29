@@ -36,6 +36,7 @@ handler.patch(async (req, res) => {
         favoriteArtist: req.body.favoriteArtist,
         favoriteSong: req.body.favoriteSong,
         favoriteAlbum: req.body.favoriteAlbum,
+        deviceName: req.body.deviceName,
     };
 
     Object.keys(doc).forEach((field) => {
