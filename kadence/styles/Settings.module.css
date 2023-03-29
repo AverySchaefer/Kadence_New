@@ -1,12 +1,33 @@
 .main {
-    background-color: #333;
     height: 100%;
+}
+
+.divider {
+    width: 100%;
+    border-color: #69e267;
+    margin-top: 1rem;
+}
+
+.saveButton {
+    color: #ffffff;
+}
+
+.saveButton:hover {
+    color: #69e267;
+    background-color: transparent;
+}
+
+.tooltip {
+    margin-left: 0.25rem;
+    height: 1rem;
+    width: 1rem;
 }
 
 .sticky {
     height: 100%;
     position: sticky;
     top: 0;
+    z-index: 1;
     background-color: #222222;
     padding: 0.5rem;
     color: #69e267;
@@ -14,14 +35,7 @@
 
 .settingsSection > * {
     padding: 0.5rem;
-}
-
-.settingsSection > *:nth-child(2n + 1) {
-    background-color: #777;
-}
-
-.settingsSection > *:nth-child(2n) {
-    background-color: #aaa;
+    background-color: #222222;
 }
 
 .sliderContainer {
@@ -48,6 +62,7 @@
 .flexWrapper {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
 }
 
 .flexWrapper > *:nth-child(2) {
@@ -58,12 +73,23 @@
 .flexWrapper input[type='number'],
 .flexWrapper button {
     margin-left: auto;
-    width: 15ch;
     text-align: center;
+}
+
+.select {
+    width: 100%;
+    color: #ffffff;
+}
+
+.zipCode {
+    width: 100%;
 }
 
 .flexWrapper .logoutButton {
     margin-right: auto;
+    font-size: 1rem;
+    background: #69e267;
+    color: #ffffff;
 }
 
 .flexWrapperVert {
@@ -86,12 +112,20 @@
 }
 
 .sublistULContainer {
+    width: 100%;
+    margin-top: 0.5rem;
     margin-inline: auto;
     list-style-type: none;
     display: flex;
-    width: 100%;
+    align-items: center;
     flex-wrap: wrap;
     column-gap: 0.5rem;
+    row-gap: 0.5rem;
+}
+
+.sublistChip {
+    background-color: #69e267;
+    color: #ffffff;
 }
 
 .sublistDelete {
@@ -103,7 +137,14 @@
 }
 
 .sublistAdd {
+    color: #ffffff;
     font-size: inherit;
     background-color: transparent;
     border: none;
+}
+
+.sublistShowButton {
+    background-color: #69e267;
+    color: #ffffff;
+    font-size: 0.6rem;
 }
