@@ -37,54 +37,61 @@ export default function Platform() {
 
         try {
             NetworkAPI.patch('/api/users/update', newPlatformData);
-            router.push('/profile');
         } catch (err) {
             Dialog.alert({
                 title: 'Error',
                 message: `An error occurred while submitting your data: ${err.message}.`,
             });
+        } finally {
+            // Can't sign them in here due to needing MusicKit, take them here
+            // instead and they can sign in there themselves
+            router.push('/apple/display');
         }
     }
 
     return (
-        <PageLayout title="Select Platform" footer="">
+        <PageLayout title="Select Platform">
             <main className={styles.main}>
-                <Box>
-                    <Stack spacing={2} alignItems="center">
-                        <Image
-                            src="/Spotify.jpg"
-                            alt="Spotify Logo"
-                            width="300"
-                            height="150"
-                            className={styles.platformImage}
-                            priority
-                        />
-                        <Button 
-                            variant="contained" 
-                            sx={{ backgroundColor: "#69e267", "&:active": {backgroundColor: "#69e267"} }}
-                            onClick={handleSpotify}
-                        >
-                            Connect to Spotify!
-                        </Button>
-                        <br />
-                        <Image
-                            src="/apple-music.jpg"
-                            alt="Apple Music Logo"
-                            width="300"
-                            height="150"
-                            className={styles.platformImage}
-                            priority
-                        />
-                        <br />
-                        <Button 
-                            variant="contained" 
-                            sx={{ backgroundColor: "#69e267", "&:active": {backgroundColor: "#69e267"} }}
-                            onClick={handleApple}
-                        >
-                            Connect to Apple Music!
-                        </Button>
-                    </Stack>
-                </Box>
+                <div>
+                    <Image
+                        src="/Spotify.jpg"
+                        alt="Spotify Logo"
+                        width="300"
+                        height="150"
+                        className={styles.platformImage}
+                        priority
+                    />
+                    <Button
+                        variant="contained"
+                        sx={{
+                            backgroundColor: '#69e267',
+                            '&:active': { backgroundColor: '#69e267' },
+                        }}
+                        onClick={handleSpotify}
+                    >
+                        Connect to Spotify!
+                    </Button>
+                </div>
+                <div>
+                    <Image
+                        src="/apple-music.jpg"
+                        alt="Apple Music Logo"
+                        width="300"
+                        height="150"
+                        className={styles.platformImage}
+                        priority
+                    />
+                    <Button
+                        variant="contained"
+                        sx={{
+                            backgroundColor: '#69e267',
+                            '&:active': { backgroundColor: '#69e267' },
+                        }}
+                        onClick={handleApple}
+                    >
+                        Connect to Apple Music!
+                    </Button>
+                </div>
             </main>
         </PageLayout>
     );

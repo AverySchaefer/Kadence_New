@@ -21,10 +21,8 @@ export default function App({
     const [musicKit, setMusicKit] = useState(null);
 
     function configureAppleMusic() {
-        console.log('Script loaded');
         document.addEventListener('musickitloaded', function () {
             // MusicKit global is now defined
-            console.log('configured');
             MusicKit.configure(AppleMusicConfiguration);
             setMusicKit(MusicKit);
         });

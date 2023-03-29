@@ -64,7 +64,7 @@ function SmallPlayer({
             </button>
             <div className={smallStyles.topInfoContainer}>
                 <a
-                    href={playerData.songURI}
+                    href={playerData.songURI || null}
                     target="_blank"
                     rel="noopener noreferrer"
                 >
@@ -192,7 +192,7 @@ function LargePlayer({
 }
 
 export default function MusicPlayer({ type = 'spotify', size = 'small' }) {
-    const [playerData, setPlayerData] = useState(Default.spotifyPlayerData);
+    const [playerData, setPlayerData] = useState(Default.playerData);
     const [timer, setTimer] = useState(0);
     const [pausedTimer, setPausedTimer] = useState(0);
 

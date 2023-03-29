@@ -60,13 +60,13 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
     if (musicPlatform === 'Spotify') {
         platform = '/Spotify.jpg';
         alt = 'Spotify Logo';
-        accountLink = Default.spotifyPlayerData.songURI;
+        accountLink = 'https://open.spotify.com/';
         useLink = '/spotify/display';
     } else if (musicPlatform === 'Apple Music') {
         platform = '/apple-music.jpg';
         alt = 'Apple Music Logo';
         accountLink = 'https://music.apple.com/login';
-        useLink = '/spotify/display';
+        useLink = '/apple/display';
     } else {
         platform = '';
         alt = 'No platform chosen!';
