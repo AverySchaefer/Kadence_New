@@ -118,6 +118,7 @@ export default function Register() {
                 favoriteAlbum,
                 favoriteSong,
             };
+            localStorage.setItem('mood', mood);
             await NetworkAPI.patch('/api/users/update', userData);
             Dialog.alert({
                 title: 'Success',

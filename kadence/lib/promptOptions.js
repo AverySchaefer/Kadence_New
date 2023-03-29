@@ -17,4 +17,4 @@ export const genres = [
 ];
 
 // Options for current mood (for mood mode)
-export const moods = ['Happy', 'Sad', 'Angry', 'Wistful', 'Excited', 'Anxious'];
+export const moods = ['Happy', 'Sad', 'Angry', 'Relaxed', 'Energetic', 'Romantic', 'Melancholy'];
