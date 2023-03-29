@@ -25,7 +25,7 @@ export default function Platform() {
                 message: `An error occurred while submitting your data: ${err.message}.`,
             });
         } finally {
-            signIn('spotify', { callbackUrl: '/spotify/display' });
+            signIn('spotify', { callbackUrl: '/profile' });
         }
     }
 
