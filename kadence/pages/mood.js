@@ -32,6 +32,83 @@ export default function moodModePage() {
     const [romanticIconColor, setRomanticIconColor] = useState(unselectedColor);
     const [melancholyIconColor, setMelancholyIconColor] = useState(unselectedColor);
     const [numSongs, setNumSongs] = useState(20);
+    const [generatedItems, setAllItems] = useState('');
+
+    const getAndSaveRecommendations = async () => {
+        const moodMode = '/api/generation/mood?';
+        const res = await fetch(moodMode + new URLSearchParams({
+            chosenMood: activeMood,
+            playlistLength: numSongs,
+            username: localStorage.getItem('username'),
+        }));
+        const playlistURIs = await res.json();
+
+        /* NEED TO ADD A SAVE PREFERENCE */
+        const saveRoute = '/api/generation/save'
+        const saveRes = await fetch(saveRoute, {
+            method: 'POST',
+            body: JSON.stringify({
+                playlistName: "Kadence Mood Mode",
+                playlistArray: playlistURIs,
+            })
+        });
+        const playlistID = await saveRes.json();
+
+        const queueRoute = '/api/spotify/queue'
+        for (let i = 0; i < playlistURIs.length; i++) {
+            fetch(queueRoute, {
+                method: 'POST',
+                body: JSON.stringify({
+                    songURI: playlistURIs[i]
+                })
+            });
+        }
+
+        const playlistRoute = '/api/spotify/getPlaylist?'
+        const playlistRes = await fetch(playlistRoute + new URLSearchParams({
+            playlistID: playlistID,
+        }));
+        const playlistItems = await playlistRes.json();
+        let playlistSongs = playlistItems.items[0].track.name;
+        for (let j = 1; j < playlistItems.items.length; j++) {
+            playlistSongs = playlistSongs.concat(', ');
+            const songName = playlistItems.items[j].track.name;
+            playlistSongs = playlistSongs.concat(songName);
+        }
+        setAllItems(playlistSongs);
+    };
+
+    const getRecommendations = async (numSongs, activeMood) => {
+        const moodMode = '/api/generation/mood?';
+        console.log(numSongs, activeMood);
+        const res = await fetch(moodMode + new URLSearchParams({
+            chosenMood: activeMood,
+            playlistLength: numSongs,
+            username: localStorage.getItem('username'),
+        }));
+        const playlistURIs = await res.json();
+
+        const queueRoute = '/api/spotify/queue'
+        for (let i = 0; i < playlistURIs.length; i++) {
+            await fetch(queueRoute, {
+                method: 'POST',
+                body: JSON.stringify({
+                    songURI: playlistURIs[i]
+                })
+            });
+        }
+
+        const getQueueRoute = '/api/spotify/getQueue'
+        const queueRes = await fetch(getQueueRoute);
+        const queueItems = await queueRes.json();
+        let queueSongs = queueItems.queue[0].name;
+        for (let j = 1; j < queueItems.queue.length; j++) {
+            queueSongs = queueSongs.concat(', ');
+            const songName = queueItems.queue[j].name;
+            queueSongs = queueSongs.concat(songName);
+        }
+        setAllItems(queueSongs);
+    }
 
     const initializeMood = (activeMood) => {
         switch(activeMood) {
@@ -196,9 +273,11 @@ export default function moodModePage() {
                         variant="contained"
                         sx={{ borderRadius: 3, width: '100%' }}
                         className={`${styles.generateButton}`}
+                        onClick={() => getRecommendations(numSongs, activeMood)}
                     >
                         Generate Playlist
                     </Button>
+                    <h3>GENERATION PREVIEW: {generatedItems}</h3>
                 </Stack>
             </ThemeProvider>
         </PageLayout>
