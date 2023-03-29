@@ -8,7 +8,7 @@ import SkipNextIcon from '@mui/icons-material/SkipNext';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { Inter } from '@next/font/google';
 import Image from 'next/image';
@@ -208,20 +208,25 @@ export default function MusicPlayer({ type = 'spotify', size = 'small' }) {
             .catch(handleError);
     }
 
-    function fetchPlayerDataApple() {
+    const fetchPlayerDataApple = useCallback(() => {
         // TODO: TEST
         const music = MusicKit.getInstance();
         setPlayerData({
-            isPlaying: music.player.isPlaying === 'playing',
-            progressSeconds: music.player.currentPlaybackProgress,
-            songDurationSeconds: music.player.currentPlaybackDuration,
-            songName: 'Player is not currently active!',
-            songURI: '',
-            artistName: 'N/A',
-            albumImageSrc: 'https://demofree.sirv.com/nope-not-here.jpg',
+            isPlaying: music.player.isPlaying,
+            progressSeconds: music.player.currentPlaybackProgress || 0,
+            songDurationSeconds: music.player.currentPlaybackDuration || 1,
+            songName:
+                music.player.nowPlayingItem?.title ||
+                'Player is not currently active!',
+            songURI: music.player.nowPlayingItem?.url || '',
+            // TODO: figure out artist name
+            artistName: music.player.nowPlayingItem?.description || 'N/A',
+            albumImageSrc:
+                music.player.nowPlayingItem?.artworkImageURL ||
+                'https://demofree.sirv.com/nope-not-here.jpg',
         });
         setTimer(0);
-    }
+    }, [MusicKit]);
 
     function togglePlayStateSpotify() {
         const url = `/api/spotify/${playerData.isPlaying ? 'pause' : 'play'}`;
