@@ -1,14 +1,39 @@
-import { useRouter } from 'next/router';
-import { PageLayout } from '@/components/';
-import { Button, Stack, Slider, Typography } from '@mui/material';
 import { useState, useEffect } from 'react';
-import NetworkAPI from '@/lib/networkAPI';
-import styles from '@/styles/IntervalPage.module.css';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Box } from '@mui/system';
 
-export default function IntervalModeSetup() {
-    const router = useRouter();
+import InfoIcon from '@mui/icons-material/Info';
+import { Button, Stack, Slider, Typography } from '@mui/material';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+import styles from '@/styles/PreInterval.module.css';
+
+import NetworkAPI from '@/lib/networkAPI';
+import PageLayout from '@/components/PageLayout';
+
+export default function PreIntervalScreen() {
+    const [intervalLow, setIntervalLow] = useState(10);
+    const [intervalHigh, setIntervalHigh] = useState(20);
+
+    const [showExplanation, setShowExplanation] = useState(false);
+
+    // Fetch preferences from database
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                // Get User Data first
+                const { data: userData } = await NetworkAPI.get(
+                    '/api/users/getUsers',
+                    {
+                        username: localStorage.getItem('username'),
+                    }
+                );
+                setIntervalLow(userData.intervalShort ?? 10);
+                setIntervalHigh(userData.intervalLong ?? 20);
+            } catch (err) {
+                console.log(err);
+            }
+        }
+        fetchData();
+    }, []);
 
     const theme = createTheme({
         palette: {
@@ -17,67 +42,85 @@ export default function IntervalModeSetup() {
             },
         },
     });
-    const [lowEnergyDuration, setLowEnergyDuration] = useState(40);
-    const [highEnergyDuration, setHighEnergyDuration] = useState(20);
-
     return (
-        <PageLayout title="Interval Mode" prevLink="/home">
+        <PageLayout title="Interval Mode" prevLink="/home" includeNav={false}>
             <ThemeProvider theme={theme}>
-                <Box sx={{ p: 2 }}>
-                    <h4>Select your interval lengths.</h4>
-                    <Box>
-                        <Typography id="high-energy-label">
-                            High Energy:
-                        </Typography>
-                        <Stack spacing={2} direction="row" sx={{ mb: 1 }}>
-                            <Slider
-                                min={5}
-                                step={1}
-                                max={60}
-                                value={highEnergyDuration}
-                                onChange={(e) => {
-                                    setHighEnergyDuration(
-                                        parseInt(e.target.value, 10)
-                                    );
-                                }}
-                                aria-labelledby="high-energy-label"
+                <div className={styles.pageWrapper}>
+                    <div className={styles.contentContainer}>
+                        <div className={styles.description}>
+                            <p>Select your interval lengths.</p>
+                            <InfoIcon
+                                onClick={() =>
+                                    setShowExplanation((prev) => !prev)
+                                }
                             />
-                            <p className={styles.muiSliderLabel}>
-                                {highEnergyDuration} minutes
-                            </p>
-                        </Stack>
-                    </Box>
-                    <Box>
-                        <Typography id="low-energy-label">
-                            Low Energy:
-                        </Typography>
-                        <Stack spacing={2} direction="row" sx={{ mb: 1 }}>
-                            <Slider
-                                min={5}
-                                step={1}
-                                max={60}
-                                value={lowEnergyDuration}
-                                onChange={(e) => {
-                                    setLowEnergyDuration(
-                                        parseInt(e.target.value, 10)
-                                    );
-                                }}
-                                aria-labelledby="low-energy-label"
-                            />
-                            <p className={styles.muiSliderLabel}>
-                                {lowEnergyDuration} minutes
-                            </p>
-                        </Stack>
-                    </Box>
+                        </div>
+
+                        {showExplanation && (
+                            <div className={styles.explanation}>
+                                <p className={styles.explanationTitle}>
+                                    What is Interval Mode?
+                                </p>
+                                <p>
+                                    Interval Mode allows you to create a
+                                    playlist which alternates between periods of
+                                    high energy and low energy songs.
+                                </p>
+                            </div>
+                        )}
+                        <div className={styles.settings}>
+                            <div className={styles.setting}>
+                                <p>
+                                    High Energy: {intervalHigh} minute
+                                    {intervalHigh === 1 ? '' : 's'}
+                                </p>
+                                <div className={styles.slider}>
+                                    <Slider
+                                        min={0}
+                                        max={40}
+                                        step={1}
+                                        value={intervalHigh}
+                                        onChange={(e) =>
+                                            setIntervalHigh(
+                                                parseInt(e.target.value, 10)
+                                            )
+                                        }
+                                    />
+                                </div>
+                            </div>
+                            <div className={styles.setting}>
+                                <p>
+                                    Low Energy: {intervalLow} minute
+                                    {intervalLow === 1 ? '' : 's'}
+                                </p>
+                                <div className={styles.slider}>
+                                    <Slider
+                                        min={0}
+                                        max={20}
+                                        step={1}
+                                        value={intervalLow}
+                                        onChange={(e) =>
+                                            setIntervalLow(
+                                                parseInt(e.target.value, 10)
+                                            )
+                                        }
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <Button
                         variant="contained"
-                        sx={{ borderRadius: 3, width: '100%' }}
-                        className={`${styles.generateButton}`}
-                        onClick={() => {}}
+                        className={styles.generateButton}
+                        onClick={() => {
+                            // TODO: Generate playlist using specified
+                            // intervalLow and intervalHigh values
+                            console.log('Generated Playlist');
+                        }}
                     >
                         Generate Playlist
                     </Button>
-                </Box>
+                </div>
             </ThemeProvider>
         </PageLayout>
     );
