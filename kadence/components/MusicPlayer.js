@@ -210,22 +210,26 @@ export default function MusicPlayer({ type = 'spotify', size = 'small' }) {
 
     const fetchPlayerDataApple = useCallback(() => {
         // TODO: TEST
-        const music = MusicKit.getInstance();
-        setPlayerData({
-            isPlaying: music.player.isPlaying,
-            progressSeconds: music.player.currentPlaybackProgress || 0,
-            songDurationSeconds: music.player.currentPlaybackDuration || 1,
-            songName:
-                music.player.nowPlayingItem?.title ||
-                'Player is not currently active!',
-            songURI: music.player.nowPlayingItem?.url || '',
-            // TODO: figure out artist name
-            artistName: music.player.nowPlayingItem?.description || 'N/A',
-            albumImageSrc:
-                music.player.nowPlayingItem?.artworkImageURL ||
-                'https://demofree.sirv.com/nope-not-here.jpg',
-        });
-        setTimer(0);
+        if (MusicKit !== null) {
+            const music = MusicKit.getInstance();
+
+            setPlayerData({
+                isPlaying: music.player.isPlaying,
+                progressSeconds: music.player.currentPlaybackProgress || 0,
+                songDurationSeconds:
+                    music.player.nowPlayingItem?.playbackDuration || 1,
+                songName:
+                    music.player.nowPlayingItem?.title ||
+                    'Player is not currently active!',
+                songURI: music.player.nowPlayingItem?.id || '',
+                // TODO: figure out artist name
+                artistName: music.player.nowPlayingItem?.artistName || 'N/A',
+                albumImageSrc:
+                    music.player.nowPlayingItem?.artworkURL ||
+                    'https://demofree.sirv.com/nope-not-here.jpg',
+            });
+            setTimer(0);
+        }
     }, [MusicKit]);
 
     function togglePlayStateSpotify() {

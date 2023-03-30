@@ -1,4 +1,5 @@
-import { PageLayout } from '@/components';
+import { PageLayout, MusicPlayer } from '@/components';
+import { getFirstMatchingSong } from '@/lib/apple/AppleAPI';
 import useMusicKit from '@/lib/useMusicKit';
 import { useEffect } from 'react';
 
@@ -13,27 +14,59 @@ export default function TestAppleMusic() {
             const music = MusicKit.getInstance();
             console.log(music);
             music
-                .authorize()
-                .then((token) => {
-                    fetch('https://api.music.apple.com/v1/me/library/songs', {
-                        headers: {
-                            Authorization: `Bearer ${developerToken}`,
-                            'Music-User-Token': `${token}`,
-                        },
-                    })
-                        .then((res) => res.json())
-                        .then(console.log);
-
-                    console.log(token);
-                    console.log(music);
+                .setQueue({
+                    song: '1097861834', // Let Down by Radiohead
                 })
-                .catch((err) => console.log('Error ' + err));
+                .then((res) => {
+                    const item = res.items[0];
+                    console.log(item);
+                    music.player.prepareToPlay('1097861834').then(() => {
+                        music.player
+                            .changeToMediaItem(item)
+                            .then(() => music.play());
+                    });
+                })
+                .catch(() => console.log("I'm sad"));
+
+            // music
+            //     .authorize()
+            //     .then((token) => {
+            //         fetch('https://api.music.apple.com/v1/me/library/songs', {
+            //             headers: {
+            //                 Authorization: `Bearer ${developerToken}`,
+            //                 'Music-User-Token': `${token}`,
+            //             },
+            //         })
+            //             .then((res) => res.json())
+            //             .then((data) => {
+            //                 music.api.search('sad').then(console.log);
+            //                 music.api.library
+            //                     .song(data.data[0].id)
+            //                     .then((res) => {
+            //                         console.log(res);
+            //                     })
+            //                     .catch(console.log('library failed'));
+            //                 console.log(data);
+            //                 music.player
+            //                     .prepareToPlay('1359293318')
+            //                     .then(() => {
+            //                         music.play();
+            //                         console.log('playing?');
+            //                         console.log(music);
+            //                     })
+            //                     .catch(() => console.log('idk'));
+            //             });
+
+            //         console.log(music);
+            //     })
+            //     .catch((err) => console.log('Error ' + err));
         }
     }, [MusicKit]);
 
     return (
         <PageLayout>
             <h1>Testing Apple Music</h1>
+            <MusicPlayer size="large" type="apple" />
         </PageLayout>
     );
 }
