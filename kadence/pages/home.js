@@ -1,39 +1,30 @@
 import { useRouter } from 'next/router';
-import { Button, BottomNav } from '@/components/';
+import { PageLayout } from '@/components/';
+import { Button, Card, IconButton } from '@mui/material';
+import { Logout } from '@mui/icons-material';
+import { useState, useEffect } from 'react';
 import NetworkAPI from '@/lib/networkAPI';
+import styles from '@/styles/Home.module.css';
+import Link from 'next/link';
 
-function Home() {
-    /*
-  const [isLogged, setIsLogged] = useState();
-  useEffect(() => {
-      setIsLogged(!!localStorage.getItem('jwt'));
-  }, []);
-
-  function handleClick() {
-    console.log("Clicking the logout button!")
-  }
-
-  if (isLogged) {
-    return (
-      <div>
-        <h1>Home. The user is logged in.</h1>
-        <Button onClick={handleClick}>Logout</Button>
-        <BottomNav name="home" />
-      </div>
-    );
-  } else {
-    console.log("Not logged in.")
-    return (
-      <div>
-        <h1>Home. The user is not logged in.</h1>
-        <BottomNav name="home" />
-      </div>
-    );
-  }
-  */
+export default function Home() {
     const router = useRouter();
 
-    async function handleClick() {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [username, setUsername] = useState('Unknown User');
+
+    useEffect(() => {
+        setIsLoggedIn(!!localStorage.getItem('jwt'));
+        setUsername(localStorage.getItem('username'));
+    }, []);
+
+    useEffect(() => {
+        if (localStorage.getItem('username') == null) {
+            router.push('/login');
+        }
+    });
+
+    async function handleLogout() {
         console.log('Clicking the logout button!');
         localStorage.removeItem('jwt');
         localStorage.removeItem('username');
@@ -48,13 +39,58 @@ function Home() {
         }
     }
 
+    const fitnessModeRoute = '/mode/fitness';
+    const intervalModeRoute = '/mode/interval';
+    const moodModeRoute = '/mode/mood';
+    const localModeRoute = '/mode/local';
     return (
-        <div>
-            <h1>Home. The user is logged in.</h1>
-            <Button onClick={handleClick}>Logout</Button>
-            <BottomNav name="home" />
-        </div>
+        isLoggedIn && (
+            <PageLayout
+                title="Home"
+                activeTab="home"
+                includeUpperRightIcon
+                upperRightIcon={
+                    <IconButton
+                        className={styles.logoutBtn}
+                        onClick={handleLogout}
+                    >
+                        <Logout />
+                    </IconButton>
+                }
+            >
+                <main className={styles.main}>
+                    <h4>
+                        Welcome, <b>{username}</b>
+                    </h4>
+                    <h4>Select a mode to begin.</h4>
+                    <Card className={styles.moodContainer}>
+                        <Button
+                            className={`${styles.modeBtn} ${styles.heartRateBtn}`}
+                            onClick={() => router.push(fitnessModeRoute)}
+                        >
+                            Heart Rate
+                        </Button>
+                        <Button
+                            className={`${styles.modeBtn} ${styles.intervalBtn}`}
+                            onClick={() => router.push(intervalModeRoute)}
+                        >
+                            Interval
+                        </Button>
+                        <Button
+                            className={`${styles.modeBtn} ${styles.moodBtn}`}
+                            onClick={() => router.push(moodModeRoute)}
+                        >
+                            Mood
+                        </Button>
+                        <Button
+                            className={`${styles.modeBtn} ${styles.localArtistBtn}`}
+                            onClick={() => router.push(localModeRoute)}
+                        >
+                            Local Artist
+                        </Button>
+                    </Card>
+                </main>
+            </PageLayout>
+        )
     );
 }
-
-export default Home;

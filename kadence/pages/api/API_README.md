@@ -39,6 +39,34 @@
     -   200: Request Successful
     -   400: Account cannot be found (incorrect or missing username)
 
+### GET `/api/users/search`
+
+-   Request Query Elements
+    -   username: STRING
+-   Return Body Elements
+    -   results: (array of objects with fields (username, profilePic, bio) that match query)
+-   Response Status Codes
+    -   200: Request Successful (can return empty array)
+    -   400: No username query given
+
+### GET `/api/users/profileInfo`
+
+-   Request Query Elements
+    -   username: STRING
+-   Return Body Elements
+    -   username: STRING
+    -   bio: STRING
+    -   profilePic: STRING
+    -   private: BOOLEAN
+    -   favoriteAlbum: STRING
+    -   favoriteArtist: STRING
+    -   favoriteSong: STRING
+    -   (Above are always sent, below are sent only for public users)
+    -   musicPlatform: STRING
+-   Response Status Codes
+    -   200: Request Successful (can return empty array)
+    -   400: No username query given
+
 ### DELETE `/api/users/delete`
 
 -   Request Body Elements
@@ -59,7 +87,7 @@
     -   profilePic: STRING
     -   private: BOOLEAN
     -   devices: DEVICES_ID
-    -   musicPlatforms: MUSICS_ID
+    -   musicPlatform: STRING
     -   musicPrefs: PREFERENCES_ID
     -   waitToSave: BOOLEAN
     -   intervalShort: INT
@@ -107,7 +135,7 @@
     -   profilePic: STRING
     -   private: BOOLEAN
     -   devices: DEVICES_ID
-    -   musicPlatforms: MUSICS_ID
+    -   musicPlatform: STRING
     -   musicPrefs: PREFERENCES_ID
     -   waitToSave: BOOLEAN
     -   intervalShort: INT
@@ -299,3 +327,57 @@
     -   Song Item (in JSON format)
 -   Response Status Codes
     -   200: Request Successful, song item sent
+
+### GET `/api/spotify/playerInfo`
+
+-   Request token elements
+    -   accessToken
+-   Return Body
+    -   isPlaying: BOOLEAN
+    -   progressSeconds: INT
+    -   songDurationSeconds: INT
+    -   songName: STRING
+    -   songURI: STRING
+    -   artistName: STRING
+    -   albumImageSrc: STRING
+-   Response Status Codes
+    -   200: Request Successful, player information sent
+    -   400: No device is currently active
+    -   401: Bad token, user needs to sign in again
+    -   Others: random Spotify errors, message returned with status code
+
+### PUT `/api/spotify/pause`
+
+-   Request token elements
+    -   accessToken
+-   Return Body
+    -   NONE
+-   Response Status Codes
+    -   200: Request Successful
+    -   400: No device is currently active
+    -   401: Bad token, user needs to sign in again
+    -   Others: random Spotify errors, message returned with status code
+
+### PUT `/api/spotify/play`
+
+-   Request token elements
+    -   accessToken
+-   Return Body
+    -   NONE
+-   Response Status Codes
+    -   200: Request Successful
+    -   400: No device is currently active
+    -   401: Bad token, user needs to sign in again
+    -   Others: random Spotify errors, message returned with status code
+
+### POST `/api/spotify/skip`
+
+-   Request token elements
+    -   accessToken
+-   Return Body
+    -   NONE
+-   Response Status Codes
+    -   200: Request Successful
+    -   400: No device is currently active
+    -   401: Bad token, user needs to sign in again
+    -   Others: random Spotify errors, message returned with status code

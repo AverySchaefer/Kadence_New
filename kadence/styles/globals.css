@@ -6,16 +6,10 @@
         'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
     --font-sans-serif: arial, sans-serif;
 
-    --background-color: rgb(45, 201, 149);
+    --background-color: #242b2e;
     --menu-option-color: rgb(217, 217, 217);
-    --nav-height: 50px;
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --background-color: rgb(45, 201, 149);
-        --menu-option-color: rgb(217, 217, 217);
-    }
+    --nav-height: 80px;
+    --music-player-height: 65px;
 }
 
 *,
@@ -38,6 +32,7 @@ body {
 
 body {
     background-color: var(--background-color);
+    color: white;
 }
 
 a {
@@ -45,8 +40,6 @@ a {
     text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
-    html {
-        color-scheme: dark;
-    }
+button {
+    text-transform: none !important;
 }

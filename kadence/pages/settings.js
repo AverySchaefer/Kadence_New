@@ -1,70 +1,70 @@
-import Head from 'next/head';
-import Link from 'next/link';
 import { Dialog } from '@capacitor/dialog';
-import styles from '@/styles/Settings.module.css';
+import {
+    Box,
+    Button,
+    Chip,
+    Divider,
+    Grid,
+    IconButton,
+    InputBase,
+    MenuItem,
+    Select,
+    Slider,
+    Stack,
+    Switch,
+    TextField,
+    Tooltip,
+    Typography,
+} from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
+import { CheckCircle } from '@mui/icons-material';
+
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Inter } from '@next/font/google';
+
+import styles from '@/styles/Settings.module.css';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
 import { languages, genres, moods } from '@/lib/promptOptions';
 import { removeFromArray, appendToArray } from '@/lib/arrayUtil';
 import NetworkAPI from '@/lib/networkAPI';
-
-const inter = Inter({ subsets: ['latin'] });
-
-function Header({ title, prevLink = null }) {
-    return (
-        <div className={styles.header}>
-            {prevLink && (
-                <Link href="/profile">
-                    <div className={styles.backButton}></div>
-                </Link>
-            )}
-            <h1>{title}</h1>
-        </div>
-    );
-}
-
-function NavBar({ children }) {
-    return <div className={styles.navWrapper}>{children}</div>;
-}
+import PageLayout from '@/components/PageLayout';
 
 function SubList({ addNew, remove, items }) {
     return (
-        <>
-            <div>
-                <div className={styles.sublistContainer}>
-                    <ul className={styles.sublistULContainer}>
-                        {items.map((item, idx) => (
-                            <li key={`${idx} ${item}`}>
+        items && (
+            <>
+                <div>
+                    <div className={styles.sublistContainer}>
+                        <ul className={styles.sublistULContainer}>
+                            {items.map((item, idx) => (
+                                <li key={`${idx} ${item}`}>
+                                    <Chip
+                                        className={styles.sublistChip}
+                                        label={item}
+                                        onDelete={() => remove(idx)}
+                                    />
+                                </li>
+                            ))}
+                            <li>
                                 <button
-                                    className={styles.sublistDelete}
-                                    onClick={() => remove(idx)}
+                                    className={styles.sublistAdd}
+                                    onClick={addNew}
                                 >
-                                    X&nbsp;
+                                    + Add New
                                 </button>
-                                {item}
                             </li>
-                        ))}
-                        <li>
-                            <button
-                                className={styles.sublistAdd}
-                                onClick={addNew}
-                            >
-                                + Add New
-                            </button>
-                        </li>
-                    </ul>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-        </>
+            </>
+        )
     );
 }
 
 export default function Settings() {
     const [profilePrivate, setProfilePrivate] = useState(true);
     const [waitToSave, setWaitToSave] = useState(true);
-    const [defaultDevice, setDefaultDevice] = useState('None');
-    const [musicPlatforms, setMusicPlatforms] = useState('None');
 
     const [allowExplicit, setAllowExplicit] = useState(false);
     const [lyricalInstrumental, setLyricalInstrumental] = useState(80);
@@ -111,7 +111,6 @@ export default function Settings() {
                 setMood(userData.mood ?? 'Happy');
                 setZipCode(userData.zipCode ?? 47907);
                 setMusicPrefId(userData.musicPrefs);
-                setMusicPlatforms(userData.musicPlatforms ?? 'None');
 
                 // Get preference data second (using musicPrefs id)
                 const { data: prefData } = await NetworkAPI.get(
@@ -142,10 +141,6 @@ export default function Settings() {
         }
         fetchData();
     }, []);
-
-    // TODO: actually get devices from database
-    const devices = ['Device 1', 'Device 2'];
-    const musicPlatformsOptions = ['Spotify', 'Apple Music'];
 
     const router = useRouter();
 
@@ -212,7 +207,6 @@ export default function Settings() {
             rampDownTime,
             mood,
             zipCode,
-            musicPlatforms,
         };
 
         try {
@@ -230,575 +224,554 @@ export default function Settings() {
         }
     }
 
-    if (!loaded) return '';
+    const theme = createTheme({
+        palette: {
+            primary: {
+                main: '#69e267',
+            },
+        },
+    });
+
+    if (!loaded)
+        return (
+            <PageLayout title="Settings" prevLink="/profile">
+                <main className={styles.main}></main>
+            </PageLayout>
+        );
 
     return (
-        <div className={inter.className}>
-            <Head>
-                <title>Settings</title>
-                <meta
-                    name="description"
-                    content="Generated by create next app"
-                />
-                <meta
-                    name="viewport"
-                    content="width=device-width, initial-scale=1"
-                />
-                <link rel="icon" href="/favicon.ico" />
-            </Head>
-            <main className={styles.main}>
-                <section>
-                    <div className={styles.sticky}>
-                        <h2>General Preferences</h2>
-                    </div>
-                    <div className={styles.settingsSection}>
-                        <div>
-                            <div className={styles.flexWrapper}>
-                                <b>Make Profile Private: </b>
-                                <select
-                                    className={styles.select}
-                                    onChange={(e) =>
-                                        setProfilePrivate(
-                                            e.target.value === 'true'
-                                        )
-                                    }
-                                    value={profilePrivate}
-                                >
-                                    <option value={true}>Yes</option>
-                                    <option value={false}>No</option>
-                                </select>
+        <PageLayout
+            title="Settings"
+            prevLink="/profile"
+            includeUpperRightIcon
+            upperRightIcon={
+                <IconButton className={styles.saveButton} onClick={submitData}>
+                    <CheckCircle />
+                </IconButton>
+            }
+        >
+            <ThemeProvider theme={theme}>
+                <main className={styles.main}>
+                    <section>
+                        <div className={styles.sticky}>
+                            <Typography fontWeight="bold">
+                                General Preferences
+                            </Typography>
+                        </div>
+                        <div className={styles.settingsSection}>
+                            <div>
+                                <Box className={styles.flexWrapper}>
+                                    Make Profile Private
+                                    <Tooltip title="This prevents other users from finding your profile.">
+                                        <InfoIcon
+                                            className={styles.tooltip}
+                                        ></InfoIcon>
+                                    </Tooltip>
+                                    <Switch
+                                        checked={profilePrivate}
+                                        onChange={(e) => {
+                                            setProfilePrivate(e.target.checked);
+                                        }}
+                                        inputProps={{
+                                            'aria-label': 'controlled',
+                                        }}
+                                    ></Switch>
+                                </Box>
+                            </div>
+                            <div>
+                                <Box className={styles.flexWrapper}>
+                                    Wait to Save Playlist
+                                    <Tooltip title="Whether to save the playlist at the end of playback.">
+                                        <InfoIcon
+                                            className={styles.tooltip}
+                                        ></InfoIcon>
+                                    </Tooltip>
+                                    <Switch
+                                        checked={waitToSave}
+                                        onChange={(e) =>
+                                            setWaitToSave(e.target.checked)
+                                        }
+                                        inputProps={{
+                                            'aria-label': 'controlled',
+                                        }}
+                                    ></Switch>
+                                </Box>
                             </div>
                         </div>
-                        <div>
-                            <div className={styles.flexWrapper}>
-                                <b>Wait to Save Playlist: </b>
-                                <select
-                                    className={styles.select}
-                                    onChange={(e) =>
-                                        setWaitToSave(e.target.value === 'true')
-                                    }
-                                    value={waitToSave}
-                                >
-                                    <option value={true}>Yes</option>
-                                    <option value={false}>No</option>
-                                </select>
-                            </div>
+                    </section>
+                    <section>
+                        <Divider className={styles.divider} />
+                        <div className={styles.sticky}>
+                            <Typography fontWeight="bold">
+                                Song Selection Preferences
+                            </Typography>
                         </div>
-                        <div>
-                            <div className={styles.flexWrapper}>
-                                <b>Selected Device: </b>
-                                <select
-                                    className={styles.select}
-                                    onChange={(e) =>
-                                        setDefaultDevice(e.target.value)
-                                    }
-                                    value={defaultDevice}
-                                >
-                                    <option value={'None'}>None</option>
-                                    {devices.map((device) => (
-                                        <option value={device} key={device}>
-                                            {device}
-                                        </option>
-                                    ))}
-                                </select>
+                        <div className={styles.settingsSection}>
+                            <div>
+                                <Box className={styles.flexWrapper}>
+                                    Include Explicit Songs
+                                    <Tooltip title="Songs tagged 'Explicit' on the music platform.">
+                                        <InfoIcon
+                                            className={styles.tooltip}
+                                        ></InfoIcon>
+                                    </Tooltip>
+                                    <Switch
+                                        checked={allowExplicit}
+                                        onChange={(e) =>
+                                            setAllowExplicit(e.target.checked)
+                                        }
+                                        inputProps={{
+                                            'aria-label': 'controlled',
+                                        }}
+                                    ></Switch>
+                                </Box>
                             </div>
-                        </div>
-                        <div>
-                            <div className={styles.flexWrapper}>
-                                <b>Selected Music Platform: </b>
-                                <select
-                                    className={styles.select}
-                                    onChange={(e) =>
-                                        setMusicPlatforms(e.target.value)
-                                    }
-                                    value={musicPlatforms}
-                                >
-                                    <option value={'None'}>None</option>
-                                    {musicPlatformsOptions.map((mp) => (
-                                        <option value={mp} key={mp}>
-                                            {mp}
-                                        </option>
-                                    ))}
-                                </select>
+                            <div>
+                                Lyrical vs. Instrumental
+                                <div className={styles.sliderContainer}>
+                                    <span className={styles.sliderLabel}>
+                                        Lyrical
+                                    </span>
+                                    <Slider
+                                        min={0}
+                                        max={100}
+                                        step={1}
+                                        value={lyricalInstrumental}
+                                        onChange={(e) =>
+                                            setLyricalInstrumental(
+                                                parseInt(e.target.value, 10)
+                                            )
+                                        }
+                                    />
+                                    <span className={styles.sliderLabel}>
+                                        Instrumental
+                                    </span>
+                                </div>
                             </div>
-                        </div>
-                        <div>
-                            <div
-                                className={styles.flexWrapper}
-                                style={{ justifyContent: 'space-around' }}
-                            >
-                                <button
-                                    className={styles.logoutButton}
-                                    onClick={logout}
-                                >
-                                    Log Out
-                                </button>
-                                <button
-                                    className={styles.logoutButton}
-                                    onClick={deleteAccount}
-                                >
-                                    Delete Account
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-                <section>
-                    <div className={styles.sticky}>
-                        <h2>Song Selection Preferences</h2>
-                    </div>
-                    <div className={styles.settingsSection}>
-                        <div>
-                            <div className={styles.flexWrapper}>
-                                <b>Include Explicit Songs: </b>
-                                <select
-                                    className={styles.select}
-                                    onChange={(e) =>
-                                        setAllowExplicit(
-                                            e.target.value === 'true'
-                                        )
-                                    }
-                                    value={allowExplicit}
-                                >
-                                    <option value={true}>Yes</option>
-                                    <option value={false}>No</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div>
-                            <b>Lyrical vs. Instrumental: </b>
-                            <div className={styles.sliderContainer}>
-                                <span className={styles.sliderLabel}>
-                                    Lyrical
-                                </span>
-                                <input
-                                    type="range"
-                                    min="0"
-                                    max="100"
-                                    step="1"
-                                    value={lyricalInstrumental}
-                                    onChange={(e) =>
-                                        setLyricalInstrumental(
-                                            parseInt(e.target.value, 10)
-                                        )
-                                    }
-                                />
-                                <span className={styles.sliderLabel}>
-                                    Instrumental
-                                </span>
-                            </div>
-                        </div>
-                        <div>
-                            <div className={styles.flexWrapper}>
-                                <b>Preferred Language: </b>
-                                <select
-                                    className={styles.select}
-                                    onChange={(e) =>
-                                        setLyricalLanguage(e.target.value)
-                                    }
-                                    value={lyricalLanguage}
-                                >
-                                    {languages.map((language) => (
-                                        <option value={language} key={language}>
-                                            {language}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
-                        <div>
-                            <b>Song Length Preferences: </b>
-                            <div className={styles.subsetting}>
+                            <div>
                                 <div className={styles.flexWrapper}>
-                                    <i>Minimum: </i>
-                                    <div>
-                                        <input
-                                            type="number"
-                                            placeholder="0"
+                                    Preferred Language
+                                    <Select
+                                        className={styles.select}
+                                        onChange={(e) =>
+                                            setLyricalLanguage(e.target.value)
+                                        }
+                                        value={lyricalLanguage}
+                                        input={
+                                            <InputBase
+                                                className={styles.selectInput}
+                                            />
+                                        }
+                                    >
+                                        {languages.map((language) => (
+                                            <MenuItem
+                                                value={language}
+                                                key={language}
+                                            >
+                                                {language}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </div>
+                            </div>
+                            <div>
+                                Song Length Preferences
+                                <div className={styles.subsetting}>
+                                    <div className={styles.flexWrapper}>
+                                        Minimum: {minSongLength} seconds
+                                        <Slider
+                                            min={0}
+                                            max={7200}
+                                            step={1}
                                             value={minSongLength}
                                             onChange={(e) =>
                                                 setMinSongLength(
-                                                    parseInt(
-                                                        e.target.value,
-                                                        10
-                                                    ) % 10000
+                                                    parseInt(e.target.value, 10)
                                                 )
                                             }
-                                        />{' '}
-                                        seconds
+                                        />
                                     </div>
-                                </div>
-                                <div className={styles.flexWrapper}>
-                                    <i>Maximum: </i>
-                                    <div>
-                                        <input
-                                            type="number"
-                                            placeholder="300"
+                                    <div className={styles.flexWrapper}>
+                                        Maximum: {maxSongLength} seconds
+                                        <Slider
+                                            min={0}
+                                            max={7200}
+                                            step={1}
                                             value={maxSongLength}
                                             onChange={(e) =>
                                                 setMaxSongLength(
-                                                    parseInt(
-                                                        e.target.value,
-                                                        10
-                                                    ) % 10000
+                                                    parseInt(e.target.value, 10)
                                                 )
                                             }
-                                        />{' '}
-                                        seconds
+                                        />
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div>
-                            <b>Playlist Length Preferences: </b>
-                            <div className={styles.subsetting}>
-                                <div className={styles.flexWrapper}>
-                                    <i>Minimum: </i>
-                                    <div>
-                                        <input
-                                            type="number"
-                                            placeholder="0"
+                            <div>
+                                Playlist Length Preferences
+                                <div className={styles.subsetting}>
+                                    <div className={styles.flexWrapper}>
+                                        Minimum: {minPlaylistLength} minutes
+                                        <Slider
+                                            min={0}
+                                            max={300}
+                                            step={1}
                                             value={minPlaylistLength}
                                             onChange={(e) =>
                                                 setMinPlaylistLength(
-                                                    parseInt(
-                                                        e.target.value,
-                                                        10
-                                                    ) % 10000
+                                                    parseInt(e.target.value, 10)
                                                 )
                                             }
-                                        />{' '}
-                                        minutes
+                                        />
                                     </div>
-                                </div>
-                                <div className={styles.flexWrapper}>
-                                    <i>Maximum: </i>
-                                    <div>
-                                        <input
-                                            type="number"
-                                            placeholder="60"
+                                    <div className={styles.flexWrapper}>
+                                        Maximum: {maxPlaylistLength} minutes
+                                        <Slider
+                                            min={0}
+                                            max={300}
+                                            step={1}
                                             value={maxPlaylistLength}
                                             onChange={(e) =>
                                                 setMaxPlaylistLength(
-                                                    parseInt(
-                                                        e.target.value,
-                                                        10
-                                                    ) % 10000
+                                                    parseInt(e.target.value, 10)
                                                 )
                                             }
-                                        />{' '}
-                                        minutes
+                                        />
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div>
-                            <div className={styles.flexWrapper}>
-                                <b>Preferred Genre: </b>
-                                <select
-                                    className={styles.select}
-                                    onChange={(e) =>
-                                        setFaveGenres([e.target.value])
-                                    }
-                                    value={faveGenres[0] ?? 'No Preference'}
-                                >
-                                    {genres.map((genre) => (
-                                        <option value={genre} key={genre}>
-                                            {genre}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
-                        <div>
-                            <div className={styles.flexWrapper}>
-                                <b>Favorite Artists: </b>
-                                <button
-                                    className={styles.sublistShowButton}
-                                    onClick={() =>
-                                        setHideFavArtists((current) => !current)
-                                    }
-                                >
-                                    {hideFavArtists
-                                        ? 'Click to show!'
-                                        : 'Click to hide!'}
-                                </button>
-                            </div>
-                            {!hideFavArtists && (
-                                <SubList
-                                    addNew={async () => {
-                                        const { value, cancelled } =
-                                            await Dialog.prompt({
-                                                title: 'Add New Artist',
-                                                message:
-                                                    'What is the name of the artist you want to add?',
-                                            });
-                                        if (!cancelled && value.trim() !== '') {
-                                            setFaveArtists(
-                                                appendToArray(
-                                                    faveArtists,
-                                                    value.trim()
-                                                )
-                                            );
+                            <div>
+                                <div className={styles.flexWrapper}>
+                                    Preferred Genre
+                                    <Select
+                                        className={styles.select}
+                                        onChange={(e) =>
+                                            setFaveGenres([e.target.value])
                                         }
-                                    }}
-                                    remove={(idx) =>
-                                        setFaveArtists(
-                                            removeFromArray(faveArtists, idx)
-                                        )
-                                    }
-                                    items={faveArtists}
-                                />
-                            )}
-                        </div>
-                        <div>
-                            <div className={styles.flexWrapper}>
-                                <b>Blacklisted Artists: </b>
-                                <button
-                                    className={styles.sublistShowButton}
-                                    onClick={() =>
-                                        setHideBlacklistedArtists(
-                                            (current) => !current
-                                        )
-                                    }
-                                >
-                                    {hideBlacklistedArtists
-                                        ? 'Click to show!'
-                                        : 'Click to hide!'}
-                                </button>
-                            </div>
-                            {!hideBlacklistedArtists && (
-                                <SubList
-                                    addNew={async () => {
-                                        const { value, cancelled } =
-                                            await Dialog.prompt({
-                                                title: 'Blacklist New Artist',
-                                                message:
-                                                    'What is the name of the artist you want to blacklist?',
-                                            });
-                                        if (!cancelled && value.trim() !== '') {
-                                            setBlacklistedArtists(
-                                                appendToArray(
-                                                    blacklistedArtists,
-                                                    value.trim()
-                                                )
-                                            );
+                                        value={faveGenres[0] ?? 'No Preference'}
+                                        input={
+                                            <InputBase
+                                                className={styles.selectInput}
+                                            />
                                         }
-                                    }}
-                                    remove={(idx) =>
-                                        setBlacklistedArtists(
-                                            removeFromArray(
-                                                blacklistedArtists,
-                                                idx
+                                    >
+                                        {genres.map((genre) => (
+                                            <MenuItem value={genre} key={genre}>
+                                                {genre}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </div>
+                            </div>
+                            <div>
+                                <div className={styles.flexWrapper}>
+                                    Favorite Artists
+                                    <Button
+                                        className={styles.sublistShowButton}
+                                        onClick={() =>
+                                            setHideFavArtists(
+                                                (current) => !current
                                             )
-                                        )
-                                    }
-                                    items={blacklistedArtists}
-                                />
-                            )}
-                        </div>
-                        <div>
-                            <div className={styles.flexWrapper}>
-                                <b>Blacklisted Songs: </b>
-                                <button
-                                    className={styles.sublistShowButton}
-                                    onClick={() =>
-                                        setHideBlacklistedSongs(
-                                            (current) => !current
-                                        )
-                                    }
-                                >
-                                    {hideBlacklistedSongs
-                                        ? 'Click to show!'
-                                        : 'Click to hide!'}
-                                </button>
-                            </div>
-                            {!hideBlacklistedSongs && (
-                                <SubList
-                                    addNew={async () => {
-                                        let { value, cancelled } =
-                                            await Dialog.prompt({
-                                                title: 'Blacklist New Song',
-                                                message:
-                                                    'What is the name of the song you want to blacklist?',
-                                            });
-                                        if (!cancelled && value.trim() !== '') {
-                                            const songName = value;
-                                            ({ value, cancelled } =
+                                        }
+                                    >
+                                        {hideFavArtists ? 'Show' : 'Hide'}
+                                    </Button>
+                                </div>
+                                {!hideFavArtists && (
+                                    <SubList
+                                        addNew={async () => {
+                                            const { value, cancelled } =
                                                 await Dialog.prompt({
-                                                    title: 'Blacklist New Song',
-                                                    message: `What is the name of the artist who wrote "${songName}"?`,
-                                                }));
+                                                    title: 'Add New Artist',
+                                                    message:
+                                                        'What is the name of the artist you want to add?',
+                                                });
                                             if (
                                                 !cancelled &&
                                                 value.trim() !== ''
                                             ) {
-                                                setBlacklistedSongs(
+                                                setFaveArtists(
                                                     appendToArray(
-                                                        blacklistedSongs,
-                                                        {
-                                                            name: songName.trim(),
-                                                            artist: value.trim(),
-                                                        }
+                                                        faveArtists,
+                                                        value.trim()
                                                     )
                                                 );
                                             }
-                                        }
-                                    }}
-                                    remove={(idx) =>
-                                        setBlacklistedSongs(
-                                            removeFromArray(
-                                                blacklistedSongs,
-                                                idx
+                                        }}
+                                        remove={(idx) =>
+                                            setFaveArtists(
+                                                removeFromArray(
+                                                    faveArtists,
+                                                    idx
+                                                )
                                             )
-                                        )
-                                    }
-                                    items={blacklistedSongs.map(
-                                        ({ name, artist }) =>
-                                            `"${name}" by ${artist}`
-                                    )}
-                                />
-                            )}
-                        </div>
-                    </div>
-                </section>
-                <section>
-                    <div className={styles.sticky}>
-                        <h2>Mode-Specific Preferences</h2>
-                    </div>
-                    <div className={styles.settingsSection}>
-                        <div>
-                            <b>Interval Mode Times: </b>
-                            <div className={styles.subsetting}>
+                                        }
+                                        items={faveArtists}
+                                    />
+                                )}
+                            </div>
+                            <div>
                                 <div className={styles.flexWrapper}>
-                                    <i>Short: </i>
-                                    <div>
-                                        <input
-                                            type="number"
-                                            placeholder="5"
+                                    Blacklisted Artists
+                                    <Button
+                                        className={styles.sublistShowButton}
+                                        onClick={() =>
+                                            setHideBlacklistedArtists(
+                                                (current) => !current
+                                            )
+                                        }
+                                    >
+                                        {hideBlacklistedArtists
+                                            ? 'Show'
+                                            : 'Hide'}
+                                    </Button>
+                                </div>
+                                {!hideBlacklistedArtists && (
+                                    <SubList
+                                        addNew={async () => {
+                                            const { value, cancelled } =
+                                                await Dialog.prompt({
+                                                    title: 'Blacklist New Artist',
+                                                    message:
+                                                        'What is the name of the artist you want to blacklist?',
+                                                });
+                                            if (
+                                                !cancelled &&
+                                                value.trim() !== ''
+                                            ) {
+                                                setBlacklistedArtists(
+                                                    appendToArray(
+                                                        blacklistedArtists,
+                                                        value.trim()
+                                                    )
+                                                );
+                                            }
+                                        }}
+                                        remove={(idx) =>
+                                            setBlacklistedArtists(
+                                                removeFromArray(
+                                                    blacklistedArtists,
+                                                    idx
+                                                )
+                                            )
+                                        }
+                                        items={blacklistedArtists}
+                                    />
+                                )}
+                            </div>
+                            <div>
+                                <div className={styles.flexWrapper}>
+                                    Blacklisted Songs
+                                    <Button
+                                        className={styles.sublistShowButton}
+                                        onClick={() =>
+                                            setHideBlacklistedSongs(
+                                                (current) => !current
+                                            )
+                                        }
+                                    >
+                                        {hideBlacklistedSongs ? 'Show' : 'Hide'}
+                                    </Button>
+                                </div>
+                                {!hideBlacklistedSongs && (
+                                    <SubList
+                                        addNew={async () => {
+                                            let { value, cancelled } =
+                                                await Dialog.prompt({
+                                                    title: 'Blacklist New Song',
+                                                    message:
+                                                        'What is the name of the song you want to blacklist?',
+                                                });
+                                            if (
+                                                !cancelled &&
+                                                value.trim() !== ''
+                                            ) {
+                                                const songName = value;
+                                                ({ value, cancelled } =
+                                                    await Dialog.prompt({
+                                                        title: 'Blacklist New Song',
+                                                        message: `What is the name of the artist who wrote "${songName}"?`,
+                                                    }));
+                                                if (
+                                                    !cancelled &&
+                                                    value.trim() !== ''
+                                                ) {
+                                                    setBlacklistedSongs(
+                                                        appendToArray(
+                                                            blacklistedSongs,
+                                                            {
+                                                                name: songName.trim(),
+                                                                artist: value.trim(),
+                                                            }
+                                                        )
+                                                    );
+                                                }
+                                            }
+                                        }}
+                                        remove={(idx) =>
+                                            setBlacklistedSongs(
+                                                removeFromArray(
+                                                    blacklistedSongs,
+                                                    idx
+                                                )
+                                            )
+                                        }
+                                        items={blacklistedSongs.map(
+                                            ({ name, artist }) =>
+                                                `"${name}" by ${artist}`
+                                        )}
+                                    />
+                                )}
+                            </div>
+                        </div>
+                    </section>
+                    <section>
+                        <Divider className={styles.divider} />
+                        <div className={styles.sticky}>
+                            <Typography fontWeight="bold">
+                                Mode-Specific Preferences
+                            </Typography>
+                        </div>
+                        <div className={styles.settingsSection}>
+                            <div>
+                                Interval Mode Times
+                                <div className={styles.subsetting}>
+                                    <div className={styles.flexWrapper}>
+                                        Short: {intervalShort} minutes
+                                        <Slider
+                                            min={0}
+                                            max={300}
+                                            step={1}
                                             value={intervalShort}
                                             onChange={(e) =>
                                                 setIntervalShort(
-                                                    parseInt(
-                                                        e.target.value,
-                                                        10
-                                                    ) % 10000
+                                                    parseInt(e.target.value, 10)
                                                 )
                                             }
-                                        />{' '}
-                                        minutes
+                                        />
                                     </div>
-                                </div>
-                                <div className={styles.flexWrapper}>
-                                    <i>Long: </i>
-                                    <div>
-                                        <input
-                                            type="number"
-                                            placeholder="10"
+                                    <div className={styles.flexWrapper}>
+                                        Long: {intervalLong} minutes
+                                        <Slider
+                                            min={0}
+                                            max={300}
+                                            step={1}
                                             value={intervalLong}
                                             onChange={(e) =>
                                                 setIntervalLong(
-                                                    parseInt(
-                                                        e.target.value,
-                                                        10
-                                                    ) % 10000
+                                                    parseInt(e.target.value, 10)
                                                 )
                                             }
-                                        />{' '}
-                                        minutes
+                                        />
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div>
-                            <b>Fitness Mode Ramp Up/Down: </b>
-                            <div className={styles.subsetting}>
-                                <div className={styles.flexWrapper}>
-                                    <i>Ramp Up: </i>
-                                    <div>
-                                        <input
-                                            type="number"
-                                            placeholder="0"
+                            <div>
+                                Fitness Mode Ramp Up/Down
+                                <div className={styles.subsetting}>
+                                    <div className={styles.flexWrapper}>
+                                        Ramp Up: {rampUpTime} minutes
+                                        <Slider
+                                            min={0}
+                                            max={300}
+                                            step={1}
                                             value={rampUpTime}
                                             onChange={(e) =>
                                                 setRampUpTime(
-                                                    parseInt(
-                                                        e.target.value,
-                                                        10
-                                                    ) % 10000
+                                                    parseInt(e.target.value, 10)
                                                 )
                                             }
-                                        />{' '}
-                                        minutes
+                                        />
                                     </div>
-                                </div>
-                                <div className={styles.flexWrapper}>
-                                    <i>Ramp Down: </i>
-                                    <div>
-                                        <input
-                                            type="number"
-                                            placeholder="0"
+                                    <div className={styles.flexWrapper}>
+                                        Ramp Down: {rampDownTime} minutes
+                                        <Slider
+                                            min={0}
+                                            max={300}
+                                            step={1}
                                             value={rampDownTime}
                                             onChange={(e) =>
                                                 setRampDownTime(
-                                                    parseInt(
-                                                        e.target.value,
-                                                        10
-                                                    ) % 10000
+                                                    parseInt(e.target.value, 10)
                                                 )
                                             }
-                                        />{' '}
-                                        minutes
+                                        />
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div>
-                            <div className={styles.flexWrapper}>
-                                <b>Mood Mode Selection: </b>
-                                <select
-                                    className={styles.select}
-                                    onChange={(e) => setMood(e.target.value)}
-                                    value={mood}
+                            <div>
+                                <div className={styles.flexWrapper}>
+                                    Mood Mode Selection
+                                    <Select
+                                        className={styles.select}
+                                        onChange={(e) =>
+                                            setMood(e.target.value)
+                                        }
+                                        value={mood}
+                                        input={
+                                            <InputBase
+                                                className={styles.selectInput}
+                                            />
+                                        }
+                                    >
+                                        {moods.map((m) => (
+                                            <MenuItem value={m} key={m}>
+                                                {m}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </div>
+                            </div>
+                            <div>
+                                <div className={styles.flexWrapper}>
+                                    Local Mode Zip Code
+                                    <TextField
+                                        variant="filled"
+                                        className={styles.zipCode}
+                                        inputProps={{
+                                            className: `${styles.zipCodeInput}`,
+                                            min: 0,
+                                            max: 99999,
+                                        }}
+                                        type="number"
+                                        value={zipCode}
+                                        onChange={(e) => {
+                                            setZipCode(
+                                                Math.min(
+                                                    parseInt(
+                                                        e.target.value,
+                                                        10
+                                                    ),
+                                                    99999
+                                                )
+                                            );
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <div
+                                    className={styles.flexWrapper}
+                                    style={{ justifyContent: 'space-around' }}
                                 >
-                                    {moods.map((m) => (
-                                        <option value={m} key={m}>
-                                            {m}
-                                        </option>
-                                    ))}
-                                </select>
+                                    <Button
+                                        className={styles.logoutButton}
+                                        onClick={logout}
+                                    >
+                                        Log Out
+                                    </Button>
+                                    <Button
+                                        className={styles.logoutButton}
+                                        onClick={deleteAccount}
+                                    >
+                                        Delete Account
+                                    </Button>
+                                </div>
                             </div>
                         </div>
-                        <div>
-                            <div className={styles.flexWrapper}>
-                                <b>Local Mode Zip Code: </b>
-                                <input
-                                    className={styles.zipCode}
-                                    type="number"
-                                    min="0"
-                                    max="99999"
-                                    step="1"
-                                    value={zipCode}
-                                    onChange={(e) =>
-                                        setZipCode(
-                                            parseInt(e.target.value, 10) % 99999
-                                        )
-                                    }
-                                />
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </main>
-            <Header title="Settings" prevLink="/profile" />
-            <NavBar>
-                <button
-                    style={{ paddingInline: '0.5rem' }}
-                    onClick={submitData}
-                >
-                    Save Changes
-                </button>
-            </NavBar>
-        </div>
+                    </section>
+                </main>
+            </ThemeProvider>
+        </PageLayout>
     );
 }
