@@ -132,6 +132,7 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
                                         sx={{
                                             width: '25ch',
                                             backgroundColor: 'button.primary',
+                                            color: '#242b2e',
                                         }}
                                         onClick={() =>
                                             router.push('/changeProfile')
@@ -161,6 +162,7 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
                                                     width: '25ch',
                                                     backgroundColor:
                                                         'button.primary',
+                                                    color: '#242b2e',
                                                 }}
                                                 onClick={() =>
                                                     router.push(useLink)
@@ -174,6 +176,9 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
                                                     width: '25ch',
                                                     backgroundColor:
                                                         'button.primary',
+                                                    color: '#242b2e',
+                                                    textTransform:
+                                                        'none !important',
                                                 }}
                                                 href={accountLink}
                                             >
@@ -186,6 +191,7 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
                                         sx={{
                                             width: '25ch',
                                             backgroundColor: 'button.primary',
+                                            color: '#242b2e',
                                         }}
                                         onClick={handleClick}
                                     >
@@ -203,6 +209,7 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
                                         sx={{
                                             width: '25ch',
                                             backgroundColor: 'button.primary',
+                                            color: '#242b2e',
                                             '&:active': {
                                                 backgroundColor:
                                                     'button.primary',
