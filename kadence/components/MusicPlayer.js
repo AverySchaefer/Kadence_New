@@ -19,7 +19,9 @@ import useMusicKit from '@/lib/useMusicKit';
 
 const inter = Inter({ subsets: ['latin'] });
 
-const playerRefreshRateSeconds = 10;
+const appleRefreshRateSeconds = 1;
+const spotifyRefreshRateSeconds = 10;
+
 const fetchAfterSkipDelayMs = 250;
 
 function convertSecondsToTimeString(s) {
@@ -199,6 +201,11 @@ export default function MusicPlayer({ type = 'spotify', size = 'small' }) {
 
     const MusicKit = useMusicKit();
 
+    const playerRefreshRateSeconds =
+        type === 'spotify'
+            ? spotifyRefreshRateSeconds
+            : appleRefreshRateSeconds;
+
     function fetchPlayerDataSpotify() {
         NetworkAPI.get('/api/spotify/playerInfo')
             .then(({ data }) => {
@@ -213,22 +220,27 @@ export default function MusicPlayer({ type = 'spotify', size = 'small' }) {
         if (MusicKit !== null) {
             const music = MusicKit.getInstance();
 
-            setPlayerData({
-                isPlaying: music.player.isPlaying,
-                progressSeconds: music.player.currentPlaybackProgress || 0,
-                songDurationSeconds:
-                    music.player.nowPlayingItem?.playbackDuration || 1,
-                songName:
-                    music.player.nowPlayingItem?.title ||
-                    'Player is not currently active!',
-                songURI: music.player.nowPlayingItem?.id || '',
-                // TODO: figure out artist name
-                artistName: music.player.nowPlayingItem?.artistName || 'N/A',
-                albumImageSrc:
-                    music.player.nowPlayingItem?.artworkURL ||
-                    'https://demofree.sirv.com/nope-not-here.jpg',
-            });
-            setTimer(0);
+            if (music.player.nowPlayingItem) {
+                setPlayerData({
+                    isPlaying: music.player.isPlaying,
+                    progressSeconds: music.player.currentPlaybackTime || 0,
+                    songDurationSeconds:
+                        Math.round(
+                            music.player.nowPlayingItem.playbackDuration / 1000
+                        ) || 1,
+                    songName:
+                        music.player.nowPlayingItem?.title ||
+                        'Player is not currently active!',
+                    songURI: music.player.nowPlayingItem?.id || '',
+                    // TODO: figure out artist name
+                    artistName:
+                        music.player.nowPlayingItem?.artistName || 'N/A',
+                    albumImageSrc:
+                        music.player.nowPlayingItem?.artworkURL ||
+                        'https://demofree.sirv.com/nope-not-here.jpg',
+                });
+                setTimer(0);
+            }
         }
     }, [MusicKit]);
 
@@ -247,7 +259,6 @@ export default function MusicPlayer({ type = 'spotify', size = 'small' }) {
     }
 
     function togglePlayStateApple() {
-        // TODO: TEST
         const music = MusicKit.getInstance();
         if (playerData.isPlaying) {
             music
@@ -327,7 +338,13 @@ export default function MusicPlayer({ type = 'spotify', size = 'small' }) {
             }
         }, 1000);
         return () => clearInterval(counterID);
-    }, [fetchPlayerData, timer, playerData, pausedTimer]);
+    }, [
+        fetchPlayerData,
+        timer,
+        playerData,
+        pausedTimer,
+        playerRefreshRateSeconds,
+    ]);
 
     if (size === 'small') {
         return (
