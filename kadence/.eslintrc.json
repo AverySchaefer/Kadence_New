@@ -15,9 +15,6 @@
         "react/no-unescaped-entities": "warn"
     },
     "extends": [
-        // DO NOT PUT "next/babel" IN HERE! This is not a legitimate ESLint extension,
-        // and it breaks the linter.
-        // Restart your VSCode instead to fix whatever issue you're trying to fix
         "eslint:recommended",
         "airbnb-base",
         "next/core-web-vitals",

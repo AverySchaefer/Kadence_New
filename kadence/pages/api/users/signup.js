@@ -89,7 +89,7 @@ handler.post(async (req, res) => {
             profilePic: null,
             private: true,
             devices: null,
-            musicPlatform: null,
+            musicPlatforms: null,
             musicPrefs: null,
             waitToSave: true,
             intervalShort: 0,

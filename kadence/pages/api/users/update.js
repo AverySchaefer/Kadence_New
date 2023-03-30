@@ -21,7 +21,7 @@ handler.patch(async (req, res) => {
         profilePic: req.body.profilePic,
         private: req.body.private,
         devices: req.body.devices,
-        musicPlatform: req.body.musicPlatform,
+        musicPlatforms: req.body.musicPlatforms,
         musicPrefs: req.body.musicPrefs,
         waitToSave: req.body.waitToSave,
         intervalShort: req.body.intervalShort,

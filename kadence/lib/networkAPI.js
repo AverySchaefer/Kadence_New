@@ -45,8 +45,6 @@ const NetworkAPI = {
                 return this.post(url, data);
             case 'PATCH':
                 return this.patch(url, data);
-            case 'PUT':
-                return this.put(url, data);
             case 'DELETE':
                 return this.delete(url, data);
             default:
@@ -77,10 +75,6 @@ const NetworkAPI = {
 
     patch(url, data) {
         return fetchWrapper(url, 'PATCH', data);
-    },
-
-    put(url, data) {
-        return fetchWrapper(url, 'PUT', data);
     },
 
     delete(url, data) {

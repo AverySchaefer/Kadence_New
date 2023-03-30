@@ -10,40 +10,39 @@
 }
 
 .form {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 1rem;
-    align-items: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
 }
 
 .formInfo {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 1rem;
-    align-items: left;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: left;
 }
 
 .switch {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 1rem;
-    align-items: left;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: left;
 }
 
 .title {
-    text-align: center;
-    color: #69e267;
-
+  text-align:center;
+  color:black;
 }
 
 .text {
-    text-align: center;
+  text-align: center;
 }
 
 .img {
@@ -53,65 +52,55 @@
 }
 
 .note {
-    margin: 0 0 6rem 0;
-    font-size: 16px;
-}
-
-.divider {
-    width: 100%;
-    border-color: #ffffff;
+    font-style: italic;
+    font-weight: bold;
+    margin-bottom: 3rem;
 }
 
 .sliderContainer {
-    padding-block: 0.05rem;
-    width: 100%;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
+  padding-block: 0.05rem;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
 }
 
 .sliderContainer input {
-    box-sizing: content-box;
-    width: 65%;
-    margin-inline: 5px;
+  box-sizing: content-box;
+  width: 65%;
+  margin-inline: 5px;
 }
 
 .sliderLabel {
-    font-size: 0.75em;
-    display: inline-block;
-    text-align: center;
-    width: 12ch;
-}
-
-.muiSliderLabel {
-    font-size: 0.75em;
-    display: inline-block;
-    text-align: center;
-    width: 16ch;
+  font-size: 0.75em;
+  display: inline-block;
+  text-align: center;
+  width: 12ch;
 }
 
 .flexWrapper {
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%;
-    justify-content: space-evenly;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .subsetting {
-    font-size: 0.9em;
-    padding: 0.5rem;
-    display: flex;
-    justify-content: center;
+  font-size: 0.9em;
+  padding: 0.5rem;
 }
 
 .center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .left {
-    display: flex;
-    justify-content: left;
-    align-items: left;
+  display: flex;
+  justify-content: left;
+  align-items: left;
 }
+
+.input {
+  width: 50px;
+}
+

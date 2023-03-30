@@ -1,6 +1,5 @@
 import '@/styles/globals.css';
 import { SessionProvider } from 'next-auth/react';
-import { StyledEngineProvider } from '@mui/material/styles';
 
 export default function App({
     Component,
@@ -8,9 +7,7 @@ export default function App({
 }) {
     return (
         <SessionProvider session={session}>
-            <StyledEngineProvider injectFirst>
-                <Component {...pageProps} />
-            </StyledEngineProvider>
+            <Component {...pageProps} />
         </SessionProvider>
     );
 }

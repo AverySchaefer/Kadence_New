@@ -2,7 +2,7 @@
 
 NEW Repository for the mobile application Kadence
 
-Developers: Raymond Xie, Colston Streit, Avery Schaefer, Jackson Rosenberg, Nathan Simon
+Developers: Raymond Xie, Colston Streit
 
 ### ESLint and Prettier
 

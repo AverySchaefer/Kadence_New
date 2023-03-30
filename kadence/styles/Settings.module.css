@@ -1,41 +1,76 @@
-.main {
-    height: 100%;
-}
-
-.divider {
+.header {
+    position: fixed;
+    display: flex;
     width: 100%;
-    border-color: #69e267;
-    margin-top: 1rem;
+    top: 0;
+    height: var(--nav-height);
+    background-color: black;
+    color: white;
+    justify-content: center;
+    align-items: center;
+    vertical-align: middle;
 }
 
-.saveButton {
-    color: #ffffff;
-}
-
-.saveButton:hover {
-    color: #69e267;
+.backButton {
+    --arrow-size: calc(var(--nav-height) / 4);
+    box-sizing: content-box;
+    width: 0;
+    height: 0;
+    position: absolute;
+    left: 10px;
+    top: calc(var(--nav-height) / 4);
     background-color: transparent;
+    border-top: var(--arrow-size) solid transparent;
+    border-bottom: var(--arrow-size) solid transparent;
+    border-right: calc(var(--arrow-size) * 1.5) solid white;
 }
 
-.tooltip {
-    margin-left: 0.25rem;
-    height: 1rem;
-    width: 1rem;
+.navWrapper {
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    height: var(--nav-height);
+    background-color: black;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.navWrapper div {
+    height: 75%;
+    aspect-ratio: 1 / 1;
+    background-color: white;
+}
+
+.main {
+    position: fixed;
+    top: var(--nav-height);
+    bottom: var(--nav-height);
+    width: 100%;
+    overflow: scroll;
+    height: calc(100% - 2 * var(--nav-height));
+    background-color: #333;
 }
 
 .sticky {
     height: 100%;
     position: sticky;
-    top: 0;
-    z-index: 1;
-    background-color: #222222;
+    top: calc(0 * var(--nav-height));
+    background-color: #333;
     padding: 0.5rem;
-    color: #69e267;
+    color: white;
 }
 
 .settingsSection > * {
     padding: 0.5rem;
-    background-color: #222222;
+}
+
+.settingsSection > *:nth-child(2n + 1) {
+    background-color: #777;
+}
+
+.settingsSection > *:nth-child(2n) {
+    background-color: #aaa;
 }
 
 .sliderContainer {
@@ -62,7 +97,6 @@
 .flexWrapper {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
 }
 
 .flexWrapper > *:nth-child(2) {
@@ -73,38 +107,12 @@
 .flexWrapper input[type='number'],
 .flexWrapper button {
     margin-left: auto;
+    width: 15ch;
     text-align: center;
-}
-
-.select {
-    width: 100%;
-    margin-top: 1rem;
-}
-
-.selectInput {
-    color: #ffffff;
-    background-color: #615f64;
-    border-radius: 3px;
-    padding-left: 0.5rem;
-}
-
-.zipCode {
-    margin-left: auto;
-    width: 7rem;
-}
-
-.zipCodeInput {
-    color: white;
-    background-color: #615f64;
-    padding-top: 0.5rem;
 }
 
 .flexWrapper .logoutButton {
     margin-right: auto;
-    font-size: 1rem;
-    background: #69e267;
-    color: #242b2e;
-    font-weight: bold;
 }
 
 .flexWrapperVert {
@@ -127,20 +135,12 @@
 }
 
 .sublistULContainer {
-    width: 100%;
-    margin-top: 0.5rem;
     margin-inline: auto;
     list-style-type: none;
     display: flex;
-    align-items: center;
+    width: 100%;
     flex-wrap: wrap;
     column-gap: 0.5rem;
-    row-gap: 0.5rem;
-}
-
-.sublistChip {
-    background-color: #69e267;
-    color: #242b2e;
 }
 
 .sublistDelete {
@@ -152,16 +152,7 @@
 }
 
 .sublistAdd {
-    color: #ffffff;
     font-size: inherit;
     background-color: transparent;
     border: none;
-    font-weight: bold;
-}
-
-.sublistShowButton {
-    background-color: #69e267;
-    color: #242b2e;
-    font-size: 0.6rem;
-    font-weight: bold;
 }

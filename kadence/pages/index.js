@@ -36,7 +36,7 @@ export default function Index() {
             <main className={[inter.className, styles.main].join(' ')}>
                 <Image
                     className={styles.img}
-                    src="/KadenceLogo_green.svg"
+                    src="/logo.png"
                     alt="Kadence Logo"
                     width={380}
                     height={200}

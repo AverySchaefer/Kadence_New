@@ -6,7 +6,6 @@ import { Button, Textbox } from '@/components/';
 import { Inter } from '@next/font/google';
 import { useRouter } from 'next/router';
 import { Dialog } from '@capacitor/dialog';
-import { Divider } from '@mui/material';
 
 import NetworkAPI from '@/lib/networkAPI';
 
@@ -33,7 +32,7 @@ export default function Login() {
                 const jwt = data.token;
                 localStorage.setItem('jwt', jwt);
                 localStorage.setItem('username', formUsername.value);
-                router.push('/home');
+                router.push('/profile');
             }
         } catch (err) {
             Dialog.alert({
@@ -41,28 +40,7 @@ export default function Login() {
                 message: `${err.status} ${err}`,
             });
         }
-
-        try {
-            // Get User Data first
-            const { data: userData } = await NetworkAPI.get(
-                '/api/users/getUsers',
-                {
-                    username: localStorage.getItem('username'),
-                }
-            );
-            localStorage.setItem('mood', userData.mood);
-        } catch (err) {
-            Dialog.alert({
-                title: 'Error',
-                message: `An error occurred while fetching your data: ${err.message}. Some defaults have been set in their place.`,
-            });
-        }
     }
-
-    const buttonStyle = {
-        color: '#242B2E',
-        backgroundColor: '#69E267',
-    };
 
     return (
         <>
@@ -81,7 +59,7 @@ export default function Login() {
             <main className={[inter.className, styles.main].join(' ')}>
                 <Image
                     className={styles.img}
-                    src="/KadenceLogo_green.svg"
+                    src="/logo.png"
                     alt="Kadence Logo"
                     width={380}
                     height={200}
@@ -100,18 +78,13 @@ export default function Login() {
                         type="password"
                         required
                     />
-                    <Button type="submit" style={buttonStyle}>
-                        Login
-                    </Button>
-                    <Divider className={styles.divider} />
-                    <div className={styles.flexWrapper}>
-                        <Link className={styles.note} href="/register">
-                            {'Register account'}
-                        </Link>
-                        <Link className={styles.note} href="/forgotPass">
-                            {'Recover password'}
-                        </Link>
-                    </div>
+                    <Link className={styles.note} href="/register">
+                        {"Don't have an account? Register here!"}
+                    </Link>
+                    <Link className={styles.note} href="/forgotPass">
+                        {"Forgot password? Recover it here!"}
+                    </Link>
+                    <Button type="submit">Login</Button>
                 </form>
             </main>
         </>
