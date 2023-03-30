@@ -39,10 +39,10 @@ export default function Home() {
         }
     }
 
-    const fitnessModeRoute = '/mode/fitness';
-    const intervalModeRoute = '/mode/interval';
-    const moodModeRoute = '/mode/mood';
-    const localModeRoute = '/mode/local';
+    const fitnessModeRoute = '/mode/preFitness';
+    const intervalModeRoute = '/mode/preInterval';
+    const moodModeRoute = '/mode/preMood';
+    const localModeRoute = '/mode/preLocal';
     return (
         isLoggedIn && (
             <PageLayout

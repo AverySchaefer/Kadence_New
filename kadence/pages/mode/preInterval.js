@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 
 import InfoIcon from '@mui/icons-material/Info';
-import { Button, Stack, Slider, Typography } from '@mui/material';
+import { Button, Slider } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import styles from '@/styles/PreInterval.module.css';
 
 import NetworkAPI from '@/lib/networkAPI';
 import PageLayout from '@/components/PageLayout';
+import { useRouter } from 'next/router';
 
 export default function PreIntervalScreen() {
     const [intervalLow, setIntervalLow] = useState(10);
@@ -15,6 +16,7 @@ export default function PreIntervalScreen() {
 
     const [showExplanation, setShowExplanation] = useState(false);
 
+    const router = useRouter();
     // Fetch preferences from database
     useEffect(() => {
         async function fetchData() {
@@ -115,7 +117,13 @@ export default function PreIntervalScreen() {
                         onClick={() => {
                             // TODO: Generate playlist using specified
                             // intervalLow and intervalHigh values
-                            console.log('Generated Playlist');
+                            router.push({
+                                pathname: '/interval',
+                                query: {
+                                    intervalLow,
+                                    intervalHigh,
+                                },
+                            });
                         }}
                     >
                         Generate Playlist
