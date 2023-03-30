@@ -29,8 +29,33 @@ export function queueSongs(music, idArray) {
     });
 }
 
-// Maybe do it like this? Can't figure out how to do it with MusicKit
-// https://developer.apple.com/documentation/applemusicapi/create_a_new_library_playlist
-export function saveToPlaylist(music, idArray) {
-    console.log(music, idArray);
+// Saves an array of song objects (like those obtained from getMatchingSong)
+// to a playlist of the specified name in Apple Music
+export async function saveToPlaylist(music, name, songArray) {
+    const res = await fetch(
+        `https://api.music.apple.com/v1/me/library/playlists`,
+        {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${music.developerToken}`,
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'Music-User-Token': `${music.musicUserToken}`,
+            },
+            body: JSON.stringify({
+                attributes: {
+                    name,
+                },
+                relationships: {
+                    tracks: {
+                        data: songArray,
+                    },
+                },
+            }),
+        }
+    );
+
+    if (res.status !== 201)
+        console.log('Something went wrong creating a playlist');
+    else console.log('Playlsit successfully created!');
 }
