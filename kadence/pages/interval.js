@@ -24,26 +24,17 @@ export default function IntervalPage() {
     const songsToSave = [];
     const router = useRouter();
 
-    const checkCurrentSong = async () => {
-        const currentSongData = await NetworkAPI.get('/api/spotify/currentSong');
-        if (currentSongData) {
-            if (currentSong !== currentSongData.data.item.name) {
-                currentSong = currentSongData.data.item.name;
-                queueNewSong(currentSongData);
-            }
-        }
-    }
-
     const queueNewSong = async () => {
         const intervalMode = '/api/generation/interval?';
         const queueRoute = '/api/spotify/queue';
         let trackURI = '';
-        let status = '1';
+        let setStatus = '1';
         if (currentMode === "Low") {
-            status = '0';        
+            setStatus = '0';        
         }
+        console.log(setStatus, currentMode);
         const highRes = await fetch(intervalMode + new URLSearchParams({
-            status: status,
+            status: setStatus,
             username: localStorage.getItem('username'),
         }));
         trackURI = await highRes.json();
@@ -57,6 +48,16 @@ export default function IntervalPage() {
         });
     }
 
+    const checkCurrentSong = async () => {
+        const currentSongData = await NetworkAPI.get('/api/spotify/currentSong');
+        if (currentSongData) {
+            if (currentSong !== currentSongData.data.item.name) {
+                currentSong = currentSongData.data.item.name;
+                queueNewSong(currentSongData);
+            }
+        }
+    }
+
     useEffect(() => {
         const counter = setInterval(() => {
             if (ready) {
@@ -65,10 +66,9 @@ export default function IntervalPage() {
                         if (currentMode === 'High') {
                             setCurrentMode('Low');
                             return intervalLow;
-                        } else {
-                            setCurrentMode('High');
-                            return intervalHigh;
                         }
+                        setCurrentMode('High');
+                        return intervalHigh;
                     }
                     checkCurrentSong();
                     return prev - 1;
