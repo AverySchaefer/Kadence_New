@@ -254,7 +254,9 @@ export default function Settings() {
                 <main className={styles.main}>
                     <section>
                         <div className={styles.sticky}>
-                            <Typography>General Preferences</Typography>
+                            <Typography fontWeight="bold">
+                                General Preferences
+                            </Typography>
                         </div>
                         <div className={styles.settingsSection}>
                             <div>
@@ -300,7 +302,9 @@ export default function Settings() {
                     <section>
                         <Divider className={styles.divider} />
                         <div className={styles.sticky}>
-                            <Typography>Song Selection Preferences</Typography>
+                            <Typography fontWeight="bold">
+                                Song Selection Preferences
+                            </Typography>
                         </div>
                         <div className={styles.settingsSection}>
                             <div>
@@ -624,7 +628,9 @@ export default function Settings() {
                     <section>
                         <Divider className={styles.divider} />
                         <div className={styles.sticky}>
-                            <Typography>Mode-Specific Preferences</Typography>
+                            <Typography fontWeight="bold">
+                                Mode-Specific Preferences
+                            </Typography>
                         </div>
                         <div className={styles.settingsSection}>
                             <div>
@@ -720,22 +726,26 @@ export default function Settings() {
                                 <div className={styles.flexWrapper}>
                                     Local Mode Zip Code
                                     <TextField
+                                        variant="filled"
                                         className={styles.zipCode}
+                                        inputProps={{
+                                            className: `${styles.zipCodeInput}`,
+                                            min: 0,
+                                            max: 99999,
+                                        }}
                                         type="number"
-                                        min={0}
-                                        max={99999}
-                                        step={1}
                                         value={zipCode}
-                                        onChange={(e) =>
+                                        onChange={(e) => {
                                             setZipCode(
-                                                parseInt(e.target.value, 10)
-                                            )
-                                        }
-                                        input={
-                                            <InputBase
-                                                className={styles.selectInput}
-                                            />
-                                        }
+                                                Math.min(
+                                                    parseInt(
+                                                        e.target.value,
+                                                        10
+                                                    ),
+                                                    99999
+                                                )
+                                            );
+                                        }}
                                     />
                                 </div>
                             </div>

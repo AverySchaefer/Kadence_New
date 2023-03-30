@@ -85,17 +85,26 @@
     color: #ffffff;
     background-color: #615f64;
     border-radius: 3px;
+    padding-left: 0.5rem;
 }
 
 .zipCode {
-    width: 100%;
+    margin-left: auto;
+    width: 7rem;
+}
+
+.zipCodeInput {
+    color: white;
+    background-color: #615f64;
+    padding-top: 0.5rem;
 }
 
 .flexWrapper .logoutButton {
     margin-right: auto;
     font-size: 1rem;
     background: #69e267;
-    color: #ffffff;
+    color: #242b2e;
+    font-weight: bold;
 }
 
 .flexWrapperVert {
@@ -131,7 +140,7 @@
 
 .sublistChip {
     background-color: #69e267;
-    color: #ffffff;
+    color: #242b2e;
 }
 
 .sublistDelete {
@@ -147,10 +156,12 @@
     font-size: inherit;
     background-color: transparent;
     border: none;
+    font-weight: bold;
 }
 
 .sublistShowButton {
     background-color: #69e267;
-    color: #ffffff;
+    color: #242b2e;
     font-size: 0.6rem;
+    font-weight: bold;
 }
