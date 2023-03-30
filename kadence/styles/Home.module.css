@@ -44,8 +44,8 @@
 
 .logoutBtn {
     margin-top: auto;
-    color: #ffffff;
-    background-color: #b11414;
+    color: #b11414;
     width: 100%;
     text-transform: none;
+    border-radius: 3px;
 }

@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import { PageLayout } from '@/components/';
-import { Button, Card } from '@mui/material';
+import { Button, Card, IconButton } from '@mui/material';
+import { Logout } from '@mui/icons-material';
 import { useState, useEffect } from 'react';
 import NetworkAPI from '@/lib/networkAPI';
 import styles from '@/styles/Home.module.css';
@@ -23,7 +24,7 @@ export default function Home() {
         }
     });
 
-    async function handleClick() {
+    async function handleLogout() {
         console.log('Clicking the logout button!');
         localStorage.removeItem('jwt');
         localStorage.removeItem('username');
@@ -44,7 +45,19 @@ export default function Home() {
     const localModeRoute = '/mode/local';
     return (
         isLoggedIn && (
-            <PageLayout title="Home" activeTab="home">
+            <PageLayout
+                title="Home"
+                activeTab="home"
+                includeUpperRightIcon
+                upperRightIcon={
+                    <IconButton
+                        className={styles.logoutBtn}
+                        onClick={handleLogout}
+                    >
+                        <Logout />
+                    </IconButton>
+                }
+            >
                 <main className={styles.main}>
                     <h4>
                         Welcome, <b>{username}</b>
