@@ -18,20 +18,15 @@ async function getCurrentSong(token) {
     });
 }
 
-async function generateSearchParams(songSeedID, prefData, intervalStatus, timeRemaining) {
+async function generateSearchParams(songSeedID, prefData, intervalStatus) {
     /* Generate the general search parameters */
     const minSongLength = prefData.minSongLength * 1000; // convert to ms
     const maxSongLength = prefData.maxSongLength * 1000; // convert to ms
     const lyricalInstrumental = prefData.lyricalInstrumental / 100; // convert to 0-1 scale
 
-    let queueLimit = 2;
-    if (timeRemaining < 500) {
-        queueLimit = 1;
-    }
-
     if (intervalStatus === '1') {
         return new URLSearchParams({
-            limit: queueLimit,
+            limit: 1,
             seed_tracks: songSeedID,
             target_instrumentalness: lyricalInstrumental,
             min_duration_ms: minSongLength,
@@ -43,7 +38,7 @@ async function generateSearchParams(songSeedID, prefData, intervalStatus, timeRe
         });
     }
     return new URLSearchParams({
-        limit: queueLimit,
+        limit: 1,
         seed_tracks: songSeedID,
         target_instrumentalness: lyricalInstrumental,
         min_duration_ms: minSongLength,
@@ -56,12 +51,12 @@ async function generateSearchParams(songSeedID, prefData, intervalStatus, timeRe
     });
 }
 
-async function getIntervalRecommendations(token, prefData, intervalStatus, timeRemaining) {
+async function getIntervalRecommendations(token, prefData, intervalStatus) {
     const { access_token: accessToken } = await refreshToken(token);
     const response = await getCurrentSong(token);
     const songItem = await response.json();
     const songSeedID = songItem.item.id;
-    const searchParameters = await generateSearchParams(songSeedID, prefData, intervalStatus, timeRemaining);
+    const searchParameters = await generateSearchParams(songSeedID, prefData, intervalStatus);
 
     const RECOMMENDATIONS_ENDPOINT = `https://api.spotify.com/v1/recommendations?`;
     return fetch(RECOMMENDATIONS_ENDPOINT + searchParameters, {
@@ -123,7 +118,6 @@ handler.get(async (req, res) => {
 
     const queryURL = new URLSearchParams('?'.concat(req.url.split('?')[1]));
     const intervalStatus = queryURL.get('status');
-    const timeRemaining = queryURL.get('timeRemaining');
     const username = queryURL.get('username');
 
     /* CHECK THAT PREFERENCE DATA IS BEING FOUND CORRECTLY */
@@ -139,7 +133,7 @@ handler.get(async (req, res) => {
     console.log(prefData);
     /* END PREF DATA */
 
-    const response = await getIntervalRecommendations(accessToken, prefData, intervalStatus, timeRemaining);
+    const response = await getIntervalRecommendations(accessToken, prefData, intervalStatus);
 
     // Check if nothing is currently active (was throwing error before)
     if (response.status === 204 && response.statusText === 'No Content') {

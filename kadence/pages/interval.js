@@ -20,7 +20,42 @@ export default function IntervalPage() {
     const [intervalHigh, setIntervalHigh] = useState(0);
     const [currentMode, setCurrentMode] = useState('Low');
 
+    let currentSong = '';
+    const songsToSave = [];
     const router = useRouter();
+
+    const checkCurrentSong = async () => {
+        const currentSongData = await NetworkAPI.get('/api/spotify/currentSong');
+        if (currentSongData) {
+            if (currentSong !== currentSongData.data.item.name) {
+                currentSong = currentSongData.data.item.name;
+                queueNewSong(currentSongData);
+            }
+        }
+    }
+
+    const queueNewSong = async () => {
+        const intervalMode = '/api/generation/interval?';
+        const queueRoute = '/api/spotify/queue';
+        let trackURI = '';
+        let status = '1';
+        if (currentMode === "Low") {
+            status = '0';        
+        }
+        const highRes = await fetch(intervalMode + new URLSearchParams({
+            status: status,
+            username: localStorage.getItem('username'),
+        }));
+        trackURI = await highRes.json();
+        songsToSave.push(trackURI[0]);
+        console.log(songsToSave);
+        fetch(queueRoute, {
+            method: 'POST',
+            body: JSON.stringify({
+                songURI: trackURI
+            })
+        });
+    }
 
     useEffect(() => {
         const counter = setInterval(() => {
@@ -35,7 +70,7 @@ export default function IntervalPage() {
                             return intervalHigh;
                         }
                     }
-                    // Code add code here to send message to server if time low
+                    checkCurrentSong();
                     return prev - 1;
                 });
             }
