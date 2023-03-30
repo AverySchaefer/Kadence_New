@@ -21,7 +21,7 @@ handler.patch(async (req, res) => {
         profilePic: req.body.profilePic,
         private: req.body.private,
         devices: req.body.devices,
-        musicPlatforms: req.body.musicPlatforms,
+        musicPlatform: req.body.musicPlatform,
         musicPrefs: req.body.musicPrefs,
         waitToSave: req.body.waitToSave,
         intervalShort: req.body.intervalShort,
@@ -36,6 +36,7 @@ handler.patch(async (req, res) => {
         favoriteArtist: req.body.favoriteArtist,
         favoriteSong: req.body.favoriteSong,
         favoriteAlbum: req.body.favoriteAlbum,
+        deviceName: req.body.deviceName,
     };
 
     Object.keys(doc).forEach((field) => {
