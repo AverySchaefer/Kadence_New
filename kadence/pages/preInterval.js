@@ -6,12 +6,15 @@ import styles from '@/styles/PreInterval.module.css';
 
 import NetworkAPI from '@/lib/networkAPI';
 import PageLayout from '@/components/PageLayout';
+import { useRouter } from 'next/router';
 
 export default function PreIntervalScreen() {
     const [intervalLow, setIntervalLow] = useState(10);
     const [intervalHigh, setIntervalHigh] = useState(20);
 
     const [showExplanation, setShowExplanation] = useState(false);
+
+    const router = useRouter();
 
     // Fetch preferences from database
     useEffect(() => {
@@ -104,7 +107,13 @@ export default function PreIntervalScreen() {
                     onClick={() => {
                         // TODO: Generate playlist using specified
                         // intervalLow and intervalHigh values
-                        console.log('Generated Playlist');
+                        router.push({
+                            pathname: '/interval',
+                            query: {
+                                intervalLow,
+                                intervalHigh,
+                            },
+                        });
                     }}
                 >
                     Generate Playlist
