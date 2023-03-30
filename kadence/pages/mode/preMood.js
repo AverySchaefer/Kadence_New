@@ -1,26 +1,32 @@
-import styles from '@/styles/MoodPage.module.css';
+import styles from '@/styles/PreMood.module.css';
 import { Button, Card, Slider, Stack } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFaceSmile, faFaceFrown, faFaceAngry, faCouch, faBolt, faHeart, faCloudRain } from '@fortawesome/free-solid-svg-icons';
-import { useRouter } from 'next/router';
+import {
+    faFaceSmile,
+    faFaceFrown,
+    faFaceAngry,
+    faCouch,
+    faBolt,
+    faHeart,
+    faCloudRain,
+} from '@fortawesome/free-solid-svg-icons';
 import { PageLayout } from '@/components/';
 import { useState, useEffect } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const theme = createTheme({
     palette: {
-      primary: {
-        main: '#69e267',
-      },
+        primary: {
+            main: '#69e267',
+        },
     },
-  });
+});
 
-export default function moodModePage() {
+export default function MoodModePage() {
     const [activeMood, setActiveMood] = useState(null);
     useEffect(() => {
         setActiveMood(localStorage.getItem('mood').toLowerCase());
     }, []);
-    const router = useRouter();
     const selectedColor = '#69e267';
     const unselectedColor = '#ffffff';
 
@@ -28,46 +34,56 @@ export default function moodModePage() {
     const [sadIconColor, setSadIconColor] = useState(unselectedColor);
     const [angryIconColor, setAngryIconColor] = useState(unselectedColor);
     const [RelaxedIconColor, setRelaxedIconColor] = useState(unselectedColor);
-    const [energeticIconColor, setEnergeticIconColor] = useState(unselectedColor);
+    const [energeticIconColor, setEnergeticIconColor] =
+        useState(unselectedColor);
     const [romanticIconColor, setRomanticIconColor] = useState(unselectedColor);
-    const [melancholyIconColor, setMelancholyIconColor] = useState(unselectedColor);
+    const [melancholyIconColor, setMelancholyIconColor] =
+        useState(unselectedColor);
     const [numSongs, setNumSongs] = useState(20);
     const [generatedItems, setAllItems] = useState('');
 
+    // TODO: Remove this when it gets used
+    // eslint-disable-next-line no-unused-vars
     const getAndSaveRecommendations = async () => {
         const moodMode = '/api/generation/mood?';
-        const res = await fetch(moodMode + new URLSearchParams({
-            chosenMood: activeMood,
-            playlistLength: numSongs,
-            username: localStorage.getItem('username'),
-        }));
+        const res = await fetch(
+            moodMode +
+                new URLSearchParams({
+                    chosenMood: activeMood,
+                    playlistLength: numSongs,
+                    username: localStorage.getItem('username'),
+                })
+        );
         const playlistURIs = await res.json();
 
         /* NEED TO ADD A SAVE PREFERENCE */
-        const saveRoute = '/api/generation/save'
+        const saveRoute = '/api/generation/save';
         const saveRes = await fetch(saveRoute, {
             method: 'POST',
             body: JSON.stringify({
-                playlistName: "Kadence Mood Mode",
+                playlistName: 'Kadence Mood Mode',
                 playlistArray: playlistURIs,
-            })
+            }),
         });
         const playlistID = await saveRes.json();
 
-        const queueRoute = '/api/spotify/queue'
+        const queueRoute = '/api/spotify/queue';
         for (let i = 0; i < playlistURIs.length; i++) {
             fetch(queueRoute, {
                 method: 'POST',
                 body: JSON.stringify({
-                    songURI: playlistURIs[i]
-                })
+                    songURI: playlistURIs[i],
+                }),
             });
         }
 
-        const playlistRoute = '/api/spotify/getPlaylist?'
-        const playlistRes = await fetch(playlistRoute + new URLSearchParams({
-            playlistID: playlistID,
-        }));
+        const playlistRoute = '/api/spotify/getPlaylist?';
+        const playlistRes = await fetch(
+            playlistRoute +
+                new URLSearchParams({
+                    playlistID,
+                })
+        );
         const playlistItems = await playlistRes.json();
         let playlistSongs = playlistItems.items[0].track.name;
         for (let j = 1; j < playlistItems.items.length; j++) {
@@ -78,27 +94,32 @@ export default function moodModePage() {
         setAllItems(playlistSongs);
     };
 
-    const getRecommendations = async (numSongs, activeMood) => {
+    const getRecommendations = async (numberOfSongs, currentMood) => {
         const moodMode = '/api/generation/mood?';
-        console.log(numSongs, activeMood);
-        const res = await fetch(moodMode + new URLSearchParams({
-            chosenMood: activeMood,
-            playlistLength: numSongs,
-            username: localStorage.getItem('username'),
-        }));
+        console.log(numberOfSongs, currentMood);
+        const res = await fetch(
+            moodMode +
+                new URLSearchParams({
+                    chosenMood: currentMood,
+                    playlistLength: numberOfSongs,
+                    username: localStorage.getItem('username'),
+                })
+        );
         const playlistURIs = await res.json();
 
-        const queueRoute = '/api/spotify/queue'
+        const queueRoute = '/api/spotify/queue';
         for (let i = 0; i < playlistURIs.length; i++) {
+            // TODO: Fix this
+            // eslint-disable-next-line no-await-in-loop
             await fetch(queueRoute, {
                 method: 'POST',
                 body: JSON.stringify({
-                    songURI: playlistURIs[i]
-                })
+                    songURI: playlistURIs[i],
+                }),
             });
         }
 
-        const getQueueRoute = '/api/spotify/getQueue'
+        const getQueueRoute = '/api/spotify/getQueue';
         const queueRes = await fetch(getQueueRoute);
         const queueItems = await queueRes.json();
         let queueSongs = queueItems.queue[0].name;
@@ -108,10 +129,10 @@ export default function moodModePage() {
             queueSongs = queueSongs.concat(songName);
         }
         setAllItems(queueSongs);
-    }
+    };
 
-    const initializeMood = (activeMood) => {
-        switch(activeMood) {
+    const initializeMood = (currentMood) => {
+        switch (currentMood) {
             case 'happy':
                 setHappyIconColor(selectedColor);
                 break;
@@ -133,11 +154,13 @@ export default function moodModePage() {
             case 'melancholy':
                 setMelancholyIconColor(selectedColor);
                 break;
+            default:
+                break;
         }
     };
-    
+
     const changeMood = (mood) => {
-        switch(activeMood) {
+        switch (activeMood) {
             case 'happy':
                 setHappyIconColor(unselectedColor);
                 break;
@@ -159,8 +182,10 @@ export default function moodModePage() {
             case 'melancholy':
                 setMelancholyIconColor(unselectedColor);
                 break;
+            default:
+                break;
         }
-        switch(mood) {
+        switch (mood) {
             case 'happy':
                 setHappyIconColor(selectedColor);
                 break;
@@ -182,6 +207,8 @@ export default function moodModePage() {
             case 'melancholy':
                 setMelancholyIconColor(selectedColor);
                 break;
+            default:
+                break;
         }
         setActiveMood(mood);
     };
@@ -196,7 +223,13 @@ export default function moodModePage() {
             <Card className={styles.moodsContainer}>
                 <Button
                     sx={{ borderRadius: 3, height: 70 }}
-                    startIcon={<FontAwesomeIcon icon={faFaceSmile} color={happyIconColor} style={{width:'45px', height: '45px'}}/>}
+                    startIcon={
+                        <FontAwesomeIcon
+                            icon={faFaceSmile}
+                            color={happyIconColor}
+                            style={{ width: '45px', height: '45px' }}
+                        />
+                    }
                     className={`${styles.moodButton}`}
                     onClick={() => changeMood('happy')}
                 >
@@ -204,7 +237,13 @@ export default function moodModePage() {
                 </Button>
                 <Button
                     sx={{ borderRadius: 3 }}
-                    startIcon={<FontAwesomeIcon icon={faFaceFrown} color={sadIconColor} style={{width:'45px', height: '45px'}}/>}
+                    startIcon={
+                        <FontAwesomeIcon
+                            icon={faFaceFrown}
+                            color={sadIconColor}
+                            style={{ width: '45px', height: '45px' }}
+                        />
+                    }
                     className={`${styles.moodButton}`}
                     onClick={() => changeMood('sad')}
                 >
@@ -212,7 +251,13 @@ export default function moodModePage() {
                 </Button>
                 <Button
                     sx={{ borderRadius: 3 }}
-                    startIcon={<FontAwesomeIcon icon={faFaceAngry} color={angryIconColor} style={{width:'45px', height: '45px'}}/>}
+                    startIcon={
+                        <FontAwesomeIcon
+                            icon={faFaceAngry}
+                            color={angryIconColor}
+                            style={{ width: '45px', height: '45px' }}
+                        />
+                    }
                     className={`${styles.moodButton}`}
                     onClick={() => changeMood('angry')}
                 >
@@ -220,7 +265,13 @@ export default function moodModePage() {
                 </Button>
                 <Button
                     sx={{ borderRadius: 3 }}
-                    startIcon={<FontAwesomeIcon icon={faCouch} color={RelaxedIconColor} style={{width:'45px', height: '45px'}}/>}
+                    startIcon={
+                        <FontAwesomeIcon
+                            icon={faCouch}
+                            color={RelaxedIconColor}
+                            style={{ width: '45px', height: '45px' }}
+                        />
+                    }
                     className={`${styles.moodButton}`}
                     onClick={() => changeMood('relaxed')}
                 >
@@ -228,7 +279,13 @@ export default function moodModePage() {
                 </Button>
                 <Button
                     sx={{ borderRadius: 3 }}
-                    startIcon={<FontAwesomeIcon icon={faBolt} color={energeticIconColor} style={{width:'45px', height: '45px'}}/>}
+                    startIcon={
+                        <FontAwesomeIcon
+                            icon={faBolt}
+                            color={energeticIconColor}
+                            style={{ width: '45px', height: '45px' }}
+                        />
+                    }
                     className={`${styles.moodButton}`}
                     onClick={() => changeMood('energetic')}
                 >
@@ -236,7 +293,13 @@ export default function moodModePage() {
                 </Button>
                 <Button
                     sx={{ borderRadius: 3 }}
-                    startIcon={<FontAwesomeIcon icon={faHeart} color={romanticIconColor} style={{width:'45px', height: '45px'}}/>}
+                    startIcon={
+                        <FontAwesomeIcon
+                            icon={faHeart}
+                            color={romanticIconColor}
+                            style={{ width: '45px', height: '45px' }}
+                        />
+                    }
                     className={`${styles.moodButton}`}
                     onClick={() => changeMood('romantic')}
                 >
@@ -244,7 +307,13 @@ export default function moodModePage() {
                 </Button>
                 <Button
                     sx={{ borderRadius: 3 }}
-                    startIcon={<FontAwesomeIcon icon={faCloudRain} color={melancholyIconColor} style={{width:'45px', height: '45px'}}/>}
+                    startIcon={
+                        <FontAwesomeIcon
+                            icon={faCloudRain}
+                            color={melancholyIconColor}
+                            style={{ width: '45px', height: '45px' }}
+                        />
+                    }
                     className={`${styles.moodButton}`}
                     onClick={() => changeMood('melancholy')}
                 >
@@ -253,7 +322,12 @@ export default function moodModePage() {
             </Card>
             <ThemeProvider theme={theme}>
                 <div className={styles.sliderContainer}>
-                    <Stack spacing={2} direction="row" sx={{ mb: 1 }} alignItems="center" >
+                    <Stack
+                        spacing={2}
+                        direction="row"
+                        sx={{ mb: 1 }}
+                        alignItems="center"
+                    >
                         <p className={styles.muiSliderLabel}>Length</p>
                         <Slider
                             min={10}
@@ -261,12 +335,12 @@ export default function moodModePage() {
                             max={30}
                             value={numSongs}
                             onChange={(e) =>
-                                setNumSongs(
-                                    parseInt(e.target.value, 10)
-                                )
+                                setNumSongs(parseInt(e.target.value, 10))
                             }
                         />
-                        <p className={styles.muiSliderLabel}>{numSongs} songs</p>
+                        <p className={styles.muiSliderLabel}>
+                            {numSongs} songs
+                        </p>
                     </Stack>
                 </div>
                 <Stack alignItems="center" spacing={2}>
@@ -283,5 +357,4 @@ export default function moodModePage() {
             </ThemeProvider>
         </PageLayout>
     );
-        
 }

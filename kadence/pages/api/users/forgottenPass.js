@@ -34,7 +34,10 @@ handler.post(async (req, res) => {
         return;
     }
     const { username } = findExistingUser;
-    const resetLink = 'http://localhost:3000/resetPass';
+    const resetLink =
+        process.env.NODE_ENV === 'development'
+            ? 'http://localhost:3000/resetPass'
+            : 'http://kadenceapp.com/resetPass';
     console.log(username);
 
     const transporter = nodemailer.createTransport({
