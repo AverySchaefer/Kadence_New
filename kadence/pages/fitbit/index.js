@@ -1,4 +1,3 @@
-import { useSession, signIn, signOut } from 'next-auth/react';
 import Head from 'next/head';
 import Image from 'next/image';
 import styles from '@/styles/Fitbit.module.css';

@@ -24,38 +24,43 @@ export default function IntervalPage() {
     const songsToSave = [];
     const router = useRouter();
 
-    const checkCurrentSong = async () => {
-        const currentSongData = await NetworkAPI.get('/api/spotify/currentSong');
-        if (currentSongData) {
-            if (currentSong !== currentSongData.data.item.name) {
-                currentSong = currentSongData.data.item.name;
-                queueNewSong(currentSongData);
-            }
-        }
-    }
-
     const queueNewSong = async () => {
         const intervalMode = '/api/generation/interval?';
         const queueRoute = '/api/spotify/queue';
         let trackURI = '';
         let status = '1';
-        if (currentMode === "Low") {
-            status = '0';        
+        if (currentMode === 'Low') {
+            status = '0';
         }
-        const highRes = await fetch(intervalMode + new URLSearchParams({
-            status: status,
-            username: localStorage.getItem('username'),
-        }));
+        const highRes = await fetch(
+            intervalMode +
+                new URLSearchParams({
+                    status,
+                    username: localStorage.getItem('username'),
+                })
+        );
         trackURI = await highRes.json();
         songsToSave.push(trackURI[0]);
         console.log(songsToSave);
         fetch(queueRoute, {
             method: 'POST',
             body: JSON.stringify({
-                songURI: trackURI
-            })
+                songURI: trackURI,
+            }),
         });
-    }
+    };
+
+    const checkCurrentSong = async () => {
+        const currentSongData = await NetworkAPI.get(
+            '/api/spotify/currentSong'
+        );
+        if (currentSongData) {
+            if (currentSong !== currentSongData.data.item.name) {
+                currentSong = currentSongData.data.item.name;
+                queueNewSong(currentSongData);
+            }
+        }
+    };
 
     useEffect(() => {
         const counter = setInterval(() => {
@@ -65,10 +70,9 @@ export default function IntervalPage() {
                         if (currentMode === 'High') {
                             setCurrentMode('Low');
                             return intervalLow;
-                        } else {
-                            setCurrentMode('High');
-                            return intervalHigh;
                         }
+                        setCurrentMode('High');
+                        return intervalHigh;
                     }
                     checkCurrentSong();
                     return prev - 1;
@@ -80,8 +84,8 @@ export default function IntervalPage() {
 
     useEffect(() => {
         if (Object.keys(router.query).length > 0 && !ready) {
-            const low = parseInt(router.query.intervalLow) * 60;
-            const high = parseInt(router.query.intervalHigh) * 60;
+            const low = parseInt(router.query.intervalLow, 10) * 60;
+            const high = parseInt(router.query.intervalHigh, 10) * 60;
             setIntervalLow(low);
             setIntervalHigh(high);
             setTimer(low);

@@ -10,7 +10,6 @@ import {
     faHeart,
     faCloudRain,
 } from '@fortawesome/free-solid-svg-icons';
-import { useRouter } from 'next/router';
 import { PageLayout } from '@/components/';
 import { useState, useEffect } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -23,12 +22,11 @@ const theme = createTheme({
     },
 });
 
-export default function moodModePage() {
+export default function MoodModePage() {
     const [activeMood, setActiveMood] = useState(null);
     useEffect(() => {
         setActiveMood(localStorage.getItem('mood').toLowerCase());
     }, []);
-    const router = useRouter();
     const selectedColor = '#69e267';
     const unselectedColor = '#ffffff';
 
@@ -44,6 +42,8 @@ export default function moodModePage() {
     const [numSongs, setNumSongs] = useState(20);
     const [generatedItems, setAllItems] = useState('');
 
+    // TODO: Remove this when it gets used
+    // eslint-disable-next-line no-unused-vars
     const getAndSaveRecommendations = async () => {
         const moodMode = '/api/generation/mood?';
         const res = await fetch(
@@ -81,7 +81,7 @@ export default function moodModePage() {
         const playlistRes = await fetch(
             playlistRoute +
                 new URLSearchParams({
-                    playlistID: playlistID,
+                    playlistID,
                 })
         );
         const playlistItems = await playlistRes.json();
@@ -94,14 +94,14 @@ export default function moodModePage() {
         setAllItems(playlistSongs);
     };
 
-    const getRecommendations = async (numSongs, activeMood) => {
+    const getRecommendations = async (numberOfSongs, currentMood) => {
         const moodMode = '/api/generation/mood?';
-        console.log(numSongs, activeMood);
+        console.log(numberOfSongs, currentMood);
         const res = await fetch(
             moodMode +
                 new URLSearchParams({
-                    chosenMood: activeMood,
-                    playlistLength: numSongs,
+                    chosenMood: currentMood,
+                    playlistLength: numberOfSongs,
                     username: localStorage.getItem('username'),
                 })
         );
@@ -109,6 +109,8 @@ export default function moodModePage() {
 
         const queueRoute = '/api/spotify/queue';
         for (let i = 0; i < playlistURIs.length; i++) {
+            // TODO: Fix this
+            // eslint-disable-next-line no-await-in-loop
             await fetch(queueRoute, {
                 method: 'POST',
                 body: JSON.stringify({
@@ -129,8 +131,8 @@ export default function moodModePage() {
         setAllItems(queueSongs);
     };
 
-    const initializeMood = (activeMood) => {
-        switch (activeMood) {
+    const initializeMood = (currentMood) => {
+        switch (currentMood) {
             case 'happy':
                 setHappyIconColor(selectedColor);
                 break;
@@ -151,6 +153,8 @@ export default function moodModePage() {
                 break;
             case 'melancholy':
                 setMelancholyIconColor(selectedColor);
+                break;
+            default:
                 break;
         }
     };
@@ -178,6 +182,8 @@ export default function moodModePage() {
             case 'melancholy':
                 setMelancholyIconColor(unselectedColor);
                 break;
+            default:
+                break;
         }
         switch (mood) {
             case 'happy':
@@ -200,6 +206,8 @@ export default function moodModePage() {
                 break;
             case 'melancholy':
                 setMelancholyIconColor(selectedColor);
+                break;
+            default:
                 break;
         }
         setActiveMood(mood);

@@ -12,10 +12,10 @@ async function getPlaylist(token, playlistID) {
     const GET_PLAYLIST_TRACKS_ENDPOINT = `https://api.spotify.com/v1/playlists/${playlistID}/tracks`;
 
     return fetch(GET_PLAYLIST_TRACKS_ENDPOINT, {
-      headers: {
-          Authorization: `Bearer ${accessToken}`,
-      },
-  });
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
+    });
 }
 
 handler.get(async (req, res) => {
