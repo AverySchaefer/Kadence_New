@@ -39,6 +39,7 @@ jobs:
           registry-login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
           registry-username: ${{ secrets.REGISTRY_USERNAME }}
           registry-password: ${{ secrets.REGISTRY_PASSWORD }}
+          environment-variables: NEXTAUTH_URL=http://kadenceapp.com
           secure-environment-variables: SPOTIFY_CLIENT_ID=${{ secrets.SPOTIFY_CLIENT_ID }} SPOTIFY_CLIENT_SECRET=${{ secrets.SPOTIFY_CLIENT_SECRET }} NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
           name: kadence
           location: "east us"

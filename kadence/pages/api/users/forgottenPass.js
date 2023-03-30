@@ -37,7 +37,7 @@ handler.post(async (req, res) => {
     const resetLink =
         process.env.NODE_ENV === 'development'
             ? 'http://localhost:3000/resetPass'
-            : 'https://kadenceapp.com/resetPass';
+            : 'http://kadenceapp.com/resetPass';
     console.log(username);
 
     const transporter = nodemailer.createTransport({
