@@ -8,7 +8,7 @@ import SkipNextIcon from '@mui/icons-material/SkipNext';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { Inter } from '@next/font/google';
 import Image from 'next/image';
@@ -196,18 +196,18 @@ export default function MusicPlayer({ type = 'spotify', size = 'small' }) {
     const [timer, setTimer] = useState(0);
     const [pausedTimer, setPausedTimer] = useState(0);
 
-    function fetchPlayerDataSpotify() {
+    const fetchPlayerDataSpotify = useCallback(() => {
         NetworkAPI.get('/api/spotify/playerInfo')
             .then(({ data }) => {
                 setPlayerData(data);
                 setTimer(0);
             })
             .catch(handleError);
-    }
+    }, []);
 
-    function fetchPlayerDataApple() {
+    const fetchPlayerDataApple = useCallback(() => {
         // TODO
-    }
+    }, []);
 
     function togglePlayStateSpotify() {
         const url = `/api/spotify/${playerData.isPlaying ? 'pause' : 'play'}`;

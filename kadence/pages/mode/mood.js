@@ -26,7 +26,7 @@ const theme = createTheme({
 export default function moodModePage() {
     const [activeMood, setActiveMood] = useState(null);
     useEffect(() => {
-        setActiveMood(localStorage.getItem('mood'));
+        setActiveMood(localStorage.getItem('mood').toLowerCase());
     }, []);
     const router = useRouter();
     const selectedColor = '#69e267';
@@ -35,7 +35,7 @@ export default function moodModePage() {
     const [happyIconColor, setHappyIconColor] = useState(unselectedColor);
     const [sadIconColor, setSadIconColor] = useState(unselectedColor);
     const [angryIconColor, setAngryIconColor] = useState(unselectedColor);
-    const [chillIconColor, setChillIconColor] = useState(unselectedColor);
+    const [RelaxedIconColor, setRelaxedIconColor] = useState(unselectedColor);
     const [energeticIconColor, setEnergeticIconColor] =
         useState(unselectedColor);
     const [romanticIconColor, setRomanticIconColor] = useState(unselectedColor);
@@ -131,25 +131,25 @@ export default function moodModePage() {
 
     const initializeMood = (activeMood) => {
         switch (activeMood) {
-            case 'Happy':
+            case 'happy':
                 setHappyIconColor(selectedColor);
                 break;
-            case 'Sad':
+            case 'sad':
                 setSadIconColor(selectedColor);
                 break;
-            case 'Angry':
+            case 'angry':
                 setAngryIconColor(selectedColor);
                 break;
-            case 'Chill':
-                setChillIconColor(selectedColor);
+            case 'relaxed':
+                setRelaxedIconColor(selectedColor);
                 break;
-            case 'Energetic':
+            case 'energetic':
                 setEnergeticIconColor(selectedColor);
                 break;
-            case 'Romantic':
+            case 'romantic':
                 setRomanticIconColor(selectedColor);
                 break;
-            case 'Melancholy':
+            case 'melancholy':
                 setMelancholyIconColor(selectedColor);
                 break;
         }
@@ -157,48 +157,48 @@ export default function moodModePage() {
 
     const changeMood = (mood) => {
         switch (activeMood) {
-            case 'Happy':
+            case 'happy':
                 setHappyIconColor(unselectedColor);
                 break;
-            case 'Sad':
+            case 'sad':
                 setSadIconColor(unselectedColor);
                 break;
-            case 'Angry':
+            case 'angry':
                 setAngryIconColor(unselectedColor);
                 break;
-            case 'Chill':
-                setChillIconColor(unselectedColor);
+            case 'relaxed':
+                setRelaxedIconColor(unselectedColor);
                 break;
-            case 'Energetic':
+            case 'energetic':
                 setEnergeticIconColor(unselectedColor);
                 break;
-            case 'Romantic':
+            case 'romantic':
                 setRomanticIconColor(unselectedColor);
                 break;
-            case 'Melancholy':
+            case 'melancholy':
                 setMelancholyIconColor(unselectedColor);
                 break;
         }
         switch (mood) {
-            case 'Happy':
+            case 'happy':
                 setHappyIconColor(selectedColor);
                 break;
-            case 'Sad':
+            case 'sad':
                 setSadIconColor(selectedColor);
                 break;
-            case 'Angry':
+            case 'angry':
                 setAngryIconColor(selectedColor);
                 break;
-            case 'Chill':
-                setChillIconColor(selectedColor);
+            case 'relaxed':
+                setRelaxedIconColor(selectedColor);
                 break;
-            case 'Energetic':
+            case 'energetic':
                 setEnergeticIconColor(selectedColor);
                 break;
-            case 'Romantic':
+            case 'romantic':
                 setRomanticIconColor(selectedColor);
                 break;
-            case 'Melancholy':
+            case 'melancholy':
                 setMelancholyIconColor(selectedColor);
                 break;
         }
@@ -207,6 +207,7 @@ export default function moodModePage() {
 
     useEffect(() => {
         initializeMood(activeMood);
+        console.log(activeMood);
     }, [activeMood]);
     return (
         <PageLayout title="Mood Mode" prevLink="/home">
@@ -222,7 +223,7 @@ export default function moodModePage() {
                         />
                     }
                     className={`${styles.moodButton}`}
-                    onClick={() => changeMood('Happy')}
+                    onClick={() => changeMood('happy')}
                 >
                     Happy
                 </Button>
@@ -236,7 +237,7 @@ export default function moodModePage() {
                         />
                     }
                     className={`${styles.moodButton}`}
-                    onClick={() => changeMood('Sad')}
+                    onClick={() => changeMood('sad')}
                 >
                     Sad
                 </Button>
@@ -250,7 +251,7 @@ export default function moodModePage() {
                         />
                     }
                     className={`${styles.moodButton}`}
-                    onClick={() => changeMood('Angry')}
+                    onClick={() => changeMood('angry')}
                 >
                     Angry
                 </Button>
@@ -259,14 +260,14 @@ export default function moodModePage() {
                     startIcon={
                         <FontAwesomeIcon
                             icon={faCouch}
-                            color={chillIconColor}
+                            color={RelaxedIconColor}
                             style={{ width: '45px', height: '45px' }}
                         />
                     }
                     className={`${styles.moodButton}`}
-                    onClick={() => changeMood('Chill')}
+                    onClick={() => changeMood('relaxed')}
                 >
-                    Chill
+                    Relaxed
                 </Button>
                 <Button
                     sx={{ borderRadius: 3 }}
@@ -278,7 +279,7 @@ export default function moodModePage() {
                         />
                     }
                     className={`${styles.moodButton}`}
-                    onClick={() => changeMood('Energetic')}
+                    onClick={() => changeMood('energetic')}
                 >
                     Energetic
                 </Button>
@@ -292,7 +293,7 @@ export default function moodModePage() {
                         />
                     }
                     className={`${styles.moodButton}`}
-                    onClick={() => changeMood('Romantic')}
+                    onClick={() => changeMood('romantic')}
                 >
                     Romantic
                 </Button>
@@ -306,7 +307,7 @@ export default function moodModePage() {
                         />
                     }
                     className={`${styles.moodButton}`}
-                    onClick={() => changeMood('Melancholy')}
+                    onClick={() => changeMood('melancholy')}
                 >
                     Melancholy
                 </Button>
