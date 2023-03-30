@@ -37,7 +37,6 @@ handler.get(async (req, res) => {
     }
 
     const songItem = await response.json();
-    console.log(songItem);
     res.status(200).json(songItem);
 });
 
