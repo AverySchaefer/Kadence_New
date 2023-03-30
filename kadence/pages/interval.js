@@ -35,6 +35,7 @@ export default function IntervalPage() {
                             return intervalHigh;
                         }
                     }
+                    // Code add code here to send message to server if time low
                     return prev - 1;
                 });
             }
