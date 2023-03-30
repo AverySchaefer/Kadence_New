@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import { PageLayout } from '@/components/';
-import { Button, Card } from '@mui/material';
+import { Button, Card, IconButton } from '@mui/material';
+import { Logout } from '@mui/icons-material';
 import { useState, useEffect } from 'react';
 import NetworkAPI from '@/lib/networkAPI';
 import styles from '@/styles/Home.module.css';
@@ -9,10 +10,24 @@ import Link from 'next/link';
 export default function Home() {
     const router = useRouter();
 
-    async function handleClick() {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [username, setUsername] = useState('Unknown User');
+
+    useEffect(() => {
+        setIsLoggedIn(!!localStorage.getItem('jwt'));
+        setUsername(localStorage.getItem('username'));
+    }, []);
+
+    useEffect(() => {
+        if (localStorage.getItem('username') == null) {
+            router.push('/login');
+        }
+    });
+
+    async function handleLogout() {
         console.log('Clicking the logout button!');
         localStorage.removeItem('jwt');
-        // localStorage.removeItem('username');
+        localStorage.removeItem('username');
         // Send Request
         try {
             const data = await NetworkAPI.get('/api/users/logout', {});
@@ -24,48 +39,58 @@ export default function Home() {
         }
     }
 
-    const [username, setUsername] = useState('Unknown User');
-    useEffect(() => {
-        setUsername(localStorage.getItem('username'));
-    });
-
+    const fitnessModeRoute = '/mode/fitness';
+    const intervalModeRoute = '/mode/interval';
+    const moodModeRoute = '/mode/mood';
+    const localModeRoute = '/mode/local';
     return (
-        <PageLayout title="Home" activeTab="home">
-            <main className={styles.main}>
-                <h4>
-                    Welcome, <b>{username}</b>
-                </h4>
-                <Card className={styles.moodContainer}>
-                    <Button
-                        className={`${styles.modeBtn} ${styles.heartRateBtn}`}
+        isLoggedIn && (
+            <PageLayout
+                title="Home"
+                activeTab="home"
+                includeUpperRightIcon
+                upperRightIcon={
+                    <IconButton
+                        className={styles.logoutBtn}
+                        onClick={handleLogout}
                     >
-                        Heart Rate
-                    </Button>
-                    <Button
-                        className={`${styles.modeBtn} ${styles.intervalBtn}`}
-                        onClick={() => router.push('/preInterval')}
-                    >
-                        Interval
-                    </Button>
-                    <Button 
-                        className={`${styles.modeBtn} ${styles.moodBtn}`}
-                        onClick={() => router.push('/mood')}
-                    >
-                        Mood
-                    </Button>
-                    <Button
-                        className={`${styles.modeBtn} ${styles.localArtistBtn}`}
-                    >
-                        Local Artist
-                    </Button>
-                    <Button className={styles.generateBtn}>
-                        Generate Playlist
-                    </Button>
-                </Card>
-                <Button className={styles.logoutBtn} onClick={handleClick}>
-                    Log Out
-                </Button>
-            </main>
-        </PageLayout>
+                        <Logout />
+                    </IconButton>
+                }
+            >
+                <main className={styles.main}>
+                    <h4>
+                        Welcome, <b>{username}</b>
+                    </h4>
+                    <h4>Select a mode to begin.</h4>
+                    <Card className={styles.moodContainer}>
+                        <Button
+                            className={`${styles.modeBtn} ${styles.heartRateBtn}`}
+                            onClick={() => router.push(fitnessModeRoute)}
+                        >
+                            Heart Rate
+                        </Button>
+                        <Button
+                            className={`${styles.modeBtn} ${styles.intervalBtn}`}
+                            onClick={() => router.push(intervalModeRoute)}
+                        >
+                            Interval
+                        </Button>
+                        <Button
+                            className={`${styles.modeBtn} ${styles.moodBtn}`}
+                            onClick={() => router.push(moodModeRoute)}
+                        >
+                            Mood
+                        </Button>
+                        <Button
+                            className={`${styles.modeBtn} ${styles.localArtistBtn}`}
+                            onClick={() => router.push(localModeRoute)}
+                        >
+                            Local Artist
+                        </Button>
+                    </Card>
+                </main>
+            </PageLayout>
+        )
     );
 }

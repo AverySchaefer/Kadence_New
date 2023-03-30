@@ -123,6 +123,7 @@ function BasicTabs({ userData }) {
                                                             width: '25ch',
                                                             backgroundColor:
                                                                 'button.primary',
+                                                            color: '#242b2e',
                                                         }}
                                                         href={accountLink}
                                                     >
