@@ -1,9 +1,7 @@
-import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
-import { PageLayout } from '@/components/';
+import { PageLayout, Button, Textbox } from '@/components/';
 import styles from '@/styles/Register.module.css';
-import { Button, Textbox } from '@/components/';
 import { Inter } from '@next/font/google';
 import { useRouter } from 'next/router';
 import { Dialog } from '@capacitor/dialog';

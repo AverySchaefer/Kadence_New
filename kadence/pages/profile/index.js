@@ -5,7 +5,6 @@ import { Dialog } from '@capacitor/dialog';
 import { useRouter } from 'next/router';
 import { Avatar, Box, Button, Stack, Tab, Tabs } from '@mui/material/';
 import NetworkAPI from '@/lib/networkAPI';
-import Default from '@/lib/default';
 import PageLayout from '@/components/PageLayout';
 import { signOut } from 'next-auth/react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
