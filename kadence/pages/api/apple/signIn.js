@@ -21,7 +21,7 @@ handler.post(async (req, res) => {
         { username: req.body.username },
         {
             $set: {
-                appleMusicUserToken: userToken,
+                appleMusicUserToken: req.body.userToken,
             },
         }
     );
