@@ -27,7 +27,7 @@ export default function Platform() {
                 message: `An error occurred while submitting your data: ${err.message}.`,
             });
         } finally {
-            localStorage.setItem('platform', 'spotify');
+            localStorage.setItem('platform', 'Spotify');
             signIn('spotify', { callbackUrl: '/profile' });
         }
     }

@@ -138,7 +138,11 @@ handler.get(async (req, res) => {
     console.log(prefData);
     /* END PREF DATA */
 
-    let response = await getIntervalRecommendations(accessToken, prefData, intervalStatus);
+    let response = await getIntervalRecommendations(
+        accessToken,
+        prefData,
+        intervalStatus
+    );
     const currentSong = await getCurrentSong(accessToken);
 
     // Check if nothing is currently active (was throwing error before)
@@ -154,11 +158,19 @@ handler.get(async (req, res) => {
     let songItems = await response.json();
     const currentSongItems = await currentSong.json();
     while (currentSongItems.item.name === songItems.tracks[0].name) {
-        console.log("Queued same song");
-        response = await getIntervalRecommendations(accessToken, prefData, intervalStatus);
+        console.log('Queued same song');
+        // TODO: Fix this
+        // eslint-disable-next-line no-await-in-loop
+        response = await getIntervalRecommendations(
+            accessToken,
+            prefData,
+            intervalStatus
+        );
+        // TODO: Fix this
+        // eslint-disable-next-line no-await-in-loop
         songItems = await response.json();
     }
-    console.log("Queued a different song");
+    console.log('Queued a different song');
     const playlistURIs = await playlistScreening(songItems, prefData);
     res.status(200).json(playlistURIs);
 });

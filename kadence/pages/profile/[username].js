@@ -99,9 +99,9 @@ function BasicTabs({ userData }) {
                                 <Stack spacing={2} alignItems="center">
                                     {userData.private ? (
                                         <p>
-                                            This user is private, so you can't
-                                            see their music platform
-                                            information.
+                                            This user is private, so you
+                                            can`&apos;`t see their music
+                                            platform information.
                                         </p>
                                     ) : (
                                         <>
@@ -146,8 +146,9 @@ function BasicTabs({ userData }) {
                                 <Stack spacing={2} alignItems="center">
                                     {userData.private ? (
                                         <p>
-                                            This user is private, so you can't
-                                            see their device information.
+                                            This user is private, so you
+                                            can`&apos;`t see their device
+                                            information.
                                         </p>
                                     ) : (
                                         <>

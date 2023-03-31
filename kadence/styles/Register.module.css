@@ -17,8 +17,28 @@
     align-items: center;
 }
 
+.regForm {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-top: 10%;
+    padding-bottom: 10%;
+    gap: 1rem;
+    align-items: center;
+}
+
 .formInfo {
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: left;
+}
+
+.formRegInfo {
+    width: 80%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
