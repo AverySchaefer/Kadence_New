@@ -80,10 +80,9 @@ export default function MoodModePage() {
         const playlistID = await saveRes.json();
 
         const dequeueRoute = '/api/spotify/clearQueue';
-        const dequeueRes = await fetch(dequeueRoute, {
+        await fetch(dequeueRoute, {
             method: 'POST',
         });
-        console.log(dequeueRes);
 
         const queueRoute = '/api/spotify/queue';
         for (let i = 0; i < playlistURIs.length; i++) {
@@ -140,6 +139,7 @@ export default function MoodModePage() {
                 })
         );
         const playlistURIs = await res.json();
+        localStorage.setItem('playlistURIs', JSON.stringify(playlistURIs));
 
         const dequeueRoute = '/api/spotify/clearQueue';
         const dequeueRes = await fetch(dequeueRoute, {
@@ -185,6 +185,14 @@ export default function MoodModePage() {
             );
         }
         setSongs(songNames);
+    };
+
+    const generateClick = (save) => {
+        if (save === 'true') {
+            getRecommendations(numSongs, activeMood);
+        } else {
+            getAndSaveRecommendations();
+        }
     };
 
     const initializeMood = (currentMood) => {
@@ -403,14 +411,7 @@ export default function MoodModePage() {
                         variant="contained"
                         sx={{ borderRadius: 3, width: '100%' }}
                         className={`${styles.generateButton}`}
-                        onClick={() => {
-                            console.log('waitToSave', waitToSave);
-                            // if (waitToSave === true) {
-                            getRecommendations(numSongs, activeMood);
-                            // } else {
-                            // getAndSaveRecommendations();
-                            // }
-                        }}
+                        onClick={() => generateClick(waitToSave)}
                     >
                         Generate Playlist
                     </Button>
@@ -456,7 +457,7 @@ export default function MoodModePage() {
                                 variant="contained"
                                 sx={{ borderRadius: 3, width: '100%' }}
                                 className={`${styles.generateButton}`}
-                                onClick={() => router.push('/largePlayer')}
+                                onClick={() => router.push('/moodPlayer')}
                             >
                                 Kadence Player
                             </Button>

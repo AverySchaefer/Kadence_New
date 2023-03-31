@@ -52,6 +52,7 @@ export default function Login() {
             );
             localStorage.setItem('mood', userData.mood);
             localStorage.setItem('waitSave', userData.waitToSave);
+            localStorage.setItem('playlistURIs', null);
         } catch (err) {
             Dialog.alert({
                 title: 'Error',

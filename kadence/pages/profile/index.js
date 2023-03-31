@@ -67,7 +67,7 @@ function BasicTabs({
         platform = '/Spotify.jpg';
         alt = 'Spotify Logo';
         accountLink = Default.spotifyPlayerData.songURI;
-        useLink = '/spotify/display';
+        useLink = '/moodPlayer';
     } else if (musicPlatform === 'Apple Music') {
         platform = '/apple-music.jpg';
         alt = 'Apple Music Logo';
