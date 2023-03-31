@@ -14,13 +14,11 @@ export default function Display() {
 
     function signInToApple() {
         const music = MusicKit.getInstance();
-        console.log(music);
         music
             .authorize()
             .then((token) => {
                 localStorage.setItem('appleMusicUserToken', token);
                 localStorage.setItem('platform', 'apple');
-                console.log(token);
                 setLoggedIn(true);
                 NetworkAPI.post('/api/apple/signIn', {
                     username: localStorage.getItem('username'),

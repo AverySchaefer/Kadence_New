@@ -8,7 +8,7 @@ import NetworkAPI from '@/lib/networkAPI';
 import Default from '@/lib/default';
 import PageLayout from '@/components/PageLayout';
 import { signOut } from 'next-auth/react';
-import { useTheme, createTheme, ThemeProvider } from '@mui/material/styles';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import { useState, useEffect, useRef } from 'react';
 
@@ -21,12 +21,18 @@ function a11yProps(index) {
     };
 }
 
-function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
+function BasicTabs({
+    favArtist,
+    favSong,
+    favAlbum,
+    musicPlatform,
+    deviceName,
+}) {
     const [value, setValue] = useState(0);
     const router = useRouter();
     const theme = createTheme({
         palette: {
-            backgroud: {
+            background: {
                 main: '#1e1e1e',
             },
             button: {
@@ -125,6 +131,7 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
                                         sx={{
                                             width: '25ch',
                                             backgroundColor: 'button.primary',
+                                            color: '#242b2e',
                                         }}
                                         onClick={() =>
                                             router.push('/changeProfile')
@@ -154,6 +161,7 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
                                                     width: '25ch',
                                                     backgroundColor:
                                                         'button.primary',
+                                                    color: '#242b2e',
                                                 }}
                                                 onClick={() =>
                                                     router.push(useLink)
@@ -167,6 +175,9 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
                                                     width: '25ch',
                                                     backgroundColor:
                                                         'button.primary',
+                                                    color: '#242b2e',
+                                                    textTransform:
+                                                        'none !important',
                                                 }}
                                                 href={accountLink}
                                                 target="_blank"
@@ -180,6 +191,7 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
                                         sx={{
                                             width: '25ch',
                                             backgroundColor: 'button.primary',
+                                            color: '#242b2e',
                                         }}
                                         onClick={handleClick}
                                     >
@@ -192,19 +204,56 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform }) {
                         {value === 2 && (
                             <Box>
                                 <Stack spacing={2} alignItems="center">
-                                    <Button
-                                        variant="contained"
-                                        sx={{
-                                            width: '25ch',
-                                            backgroundColor: 'button.primary',
-                                            '&:active': {
-                                                backgroundColor:
-                                                    'button.primary',
-                                            },
-                                        }}
-                                    >
-                                        Connect
-                                    </Button>
+                                    {deviceName && (
+                                        <>
+                                            <Image
+                                                src="Fitbit-Symbol.jpg"
+                                                alt="Fitbit Logo"
+                                                width="300"
+                                                height="150"
+                                                className={styles.platformImage}
+                                                priority
+                                            />
+                                            <p>{deviceName} is connected!</p>
+                                            <Button
+                                                variant="contained"
+                                                sx={{
+                                                    width: '25ch',
+                                                    backgroundColor:
+                                                        'button.primary',
+                                                    color: '#242b2e',
+                                                    '&:active': {
+                                                        backgroundColor:
+                                                            'button.primary',
+                                                    },
+                                                }}
+                                            >
+                                                Disconnect
+                                            </Button>
+                                        </>
+                                    )}
+                                    {!deviceName && (
+                                        <>
+                                            <Button
+                                                variant="contained"
+                                                sx={{
+                                                    width: '25ch',
+                                                    color: '#242b2e',
+                                                    backgroundColor:
+                                                        'button.primary',
+                                                    '&:active': {
+                                                        backgroundColor:
+                                                            'button.primary',
+                                                    },
+                                                }}
+                                                onClick={() =>
+                                                    router.push('/fitbit')
+                                                }
+                                            >
+                                                Connect
+                                            </Button>
+                                        </>
+                                    )}
                                 </Stack>
                             </Box>
                         )}
@@ -222,6 +271,7 @@ export default function Profile() {
     const [bio, setBio] = useState('Something about me...');
     const [musicPlatform, setMusicPlatform] = useState('Spotify');
     const [profilePic, setProfilePic] = useState('');
+    const [deviceName, setDeviceName] = useState('');
 
     const [loaded, setLoaded] = useState(false);
 
@@ -242,6 +292,7 @@ export default function Profile() {
                 setBio(userData.bio);
                 setMusicPlatform(userData.musicPlatform);
                 setProfilePic(userData.profilePic ?? '');
+                setDeviceName(userData.deviceName ?? '');
             } catch (err) {
                 Dialog.alert({
                     title: 'Error',
@@ -330,6 +381,7 @@ export default function Profile() {
                         favAlbum={faveAlbum}
                         favSong={faveSong}
                         musicPlatform={musicPlatform}
+                        deviceName={deviceName}
                     />
                 </main>
             )}

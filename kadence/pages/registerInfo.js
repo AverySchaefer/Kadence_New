@@ -28,11 +28,11 @@ const inter = Inter({ subsets: ['latin'] });
 
 const theme = createTheme({
     palette: {
-      primary: {
-        main: '#69e267',
-      },
+        primary: {
+            main: '#69e267',
+        },
     },
-  });
+});
 
 export default function Register() {
     const [profilePrivate, setProfilePrivate] = useState(true);
@@ -67,15 +67,9 @@ export default function Register() {
 
     async function submitData(e) {
         e.preventDefault();
-        setFaveArtists(
-            faveArtists.push(favoriteArtist)
-        );
-        setBlacklistedArtists(
-            blacklistedArtists.push(dislikeArtist)
-        );
-        setBlacklistedSongs(
-            blacklistedSongs.push(dislikeSong)
-        );
+        setFaveArtists(faveArtists.push(favoriteArtist));
+        setBlacklistedArtists(blacklistedArtists.push(dislikeArtist));
+        setBlacklistedSongs(blacklistedSongs.push(dislikeSong));
 
         try {
             const musicPrefData = {
@@ -118,6 +112,7 @@ export default function Register() {
                 favoriteAlbum,
                 favoriteSong,
             };
+            localStorage.setItem('mood', mood);
             await NetworkAPI.patch('/api/users/update', userData);
             Dialog.alert({
                 title: 'Success',
@@ -227,7 +222,9 @@ export default function Register() {
                                             name="private"
                                             color="primary"
                                             onChange={(e) =>
-                                                setProfilePrivate(e.target.checked)
+                                                setProfilePrivate(
+                                                    e.target.checked
+                                                )
                                             }
                                         />
                                     }
@@ -251,7 +248,9 @@ export default function Register() {
                                             checked={allowExplicit}
                                             name="explicit"
                                             onChange={(e) => {
-                                                setAllowExplicit(e.target.checked);
+                                                setAllowExplicit(
+                                                    e.target.checked
+                                                );
                                             }}
                                         />
                                     }
@@ -259,20 +258,29 @@ export default function Register() {
                             </div>
                             <h3>Lyrical vs. Instrumental: </h3>
                             <div className={styles.sliderContainer}>
-                                <Stack spacing={2} direction="row" sx={{ mb: 1 }} alignItems="center" >
-                                <i className={styles.muiSliderLabel}>Lyrical</i>
-                                <Slider
-                                    min={0}
-                                    step={1}
-                                    max={100}                              
-                                    value={lyricalInstrumental}
-                                    onChange={(e) =>
-                                        setlyricalInstrumental(
-                                            parseInt(e.target.value, 10)
-                                        )
-                                    }
-                                />
-                                <i className={styles.muiSliderLabel}>Instrumental</i>
+                                <Stack
+                                    spacing={2}
+                                    direction="row"
+                                    sx={{ mb: 1 }}
+                                    alignItems="center"
+                                >
+                                    <i className={styles.muiSliderLabel}>
+                                        Lyrical
+                                    </i>
+                                    <Slider
+                                        min={0}
+                                        step={1}
+                                        max={100}
+                                        value={lyricalInstrumental}
+                                        onChange={(e) =>
+                                            setlyricalInstrumental(
+                                                parseInt(e.target.value, 10)
+                                            )
+                                        }
+                                    />
+                                    <i className={styles.muiSliderLabel}>
+                                        Instrumental
+                                    </i>
                                 </Stack>
                             </div>
                             <div>
@@ -280,14 +288,27 @@ export default function Register() {
                                 <div className={styles.subsetting}>
                                     <TextField
                                         required
-                                        color='primary'
-                                        focused 
+                                        color="primary"
+                                        focused
                                         label="Minimum"
                                         type="number"
-                                        sx={{ m: 1, width: '25ch', input: { color: 'white' } }}
+                                        sx={{
+                                            m: 1,
+                                            width: '25ch',
+                                            input: { color: 'white' },
+                                        }}
                                         value={minSongLength}
                                         InputProps={{
-                                            endAdornment: (<InputAdornment position="end" sx={{ color: 'primary.main' }}><p>seconds</p></InputAdornment>),
+                                            endAdornment: (
+                                                <InputAdornment
+                                                    position="end"
+                                                    sx={{
+                                                        color: 'primary.main',
+                                                    }}
+                                                >
+                                                    <p>seconds</p>
+                                                </InputAdornment>
+                                            ),
                                         }}
                                         onChange={(e) =>
                                             setMinSongLength(
@@ -300,14 +321,27 @@ export default function Register() {
                                 <div className={styles.subsetting}>
                                     <TextField
                                         required
-                                        color='primary'
-                                        focused 
+                                        color="primary"
+                                        focused
                                         label="Maximum"
                                         type="number"
-                                        sx={{ m: 1, width: '25ch', input: { color: 'white' } }}
+                                        sx={{
+                                            m: 1,
+                                            width: '25ch',
+                                            input: { color: 'white' },
+                                        }}
                                         value={maxSongLength}
                                         InputProps={{
-                                            endAdornment: (<InputAdornment position="end" sx={{ color: 'primary.main' }}><p>seconds</p></InputAdornment>),
+                                            endAdornment: (
+                                                <InputAdornment
+                                                    position="end"
+                                                    sx={{
+                                                        color: 'primary.main',
+                                                    }}
+                                                >
+                                                    <p>seconds</p>
+                                                </InputAdornment>
+                                            ),
                                         }}
                                         onChange={(e) =>
                                             setMaxSongLength(
@@ -321,16 +355,29 @@ export default function Register() {
                             <div>
                                 <h3>Playlist Length Preferences: </h3>
                                 <div className={styles.subsetting}>
-                                <TextField
+                                    <TextField
                                         required
-                                        color='primary'
-                                        focused 
+                                        color="primary"
+                                        focused
                                         label="Minimum"
                                         type="number"
-                                        sx={{ m: 1, width: '25ch', input: { color: 'white' } }}
+                                        sx={{
+                                            m: 1,
+                                            width: '25ch',
+                                            input: { color: 'white' },
+                                        }}
                                         value={minPlaylistLength}
                                         InputProps={{
-                                            endAdornment: (<InputAdornment position="end" sx={{ color: 'primary.main' }}><p>minutes</p></InputAdornment>),
+                                            endAdornment: (
+                                                <InputAdornment
+                                                    position="end"
+                                                    sx={{
+                                                        color: 'primary.main',
+                                                    }}
+                                                >
+                                                    <p>minutes</p>
+                                                </InputAdornment>
+                                            ),
                                         }}
                                         onChange={(e) =>
                                             setMinPlaylistLength(
@@ -343,14 +390,27 @@ export default function Register() {
                                 <div className={styles.subsetting}>
                                     <TextField
                                         required
-                                        color='primary'
-                                        focused 
+                                        color="primary"
+                                        focused
                                         label="Maximum"
                                         type="number"
-                                        sx={{ m: 1, width: '25ch', input: { color: 'white' } }}
+                                        sx={{
+                                            m: 1,
+                                            width: '25ch',
+                                            input: { color: 'white' },
+                                        }}
                                         value={maxPlaylistLength}
                                         InputProps={{
-                                            endAdornment: (<InputAdornment position="end" sx={{ color: 'primary.main' }}><p>minutes</p></InputAdornment>),
+                                            endAdornment: (
+                                                <InputAdornment
+                                                    position="end"
+                                                    sx={{
+                                                        color: 'primary.main',
+                                                    }}
+                                                >
+                                                    <p>minutes</p>
+                                                </InputAdornment>
+                                            ),
                                         }}
                                         onChange={(e) =>
                                             setMaxPlaylistLength(
@@ -364,27 +424,43 @@ export default function Register() {
                             <div>
                                 <h3>Preferred Language: </h3>
                                 <div className={styles.subsetting}>
-                                    <FormControl required sx={{ m: 1, width : '25ch' }}>
-                                        <InputLabel id="language-select-input-label" sx={{ color: 'primary.main' }}>Language</InputLabel>
+                                    <FormControl
+                                        required
+                                        sx={{ m: 1, width: '25ch' }}
+                                    >
+                                        <InputLabel
+                                            id="language-select-input-label"
+                                            sx={{ color: 'primary.main' }}
+                                        >
+                                            Language
+                                        </InputLabel>
                                         <Select
                                             labelId="language-select-input-label"
                                             id="language-select-input"
                                             value={lyricalLanguage}
                                             label="Language"
-                                            sx={{ color: 'white', 
-                                                '& .MuiOutlinedInput-notchedOutline': {
-                                                    borderColor: 'primary.main'
-                                                },
+                                            sx={{
+                                                color: 'white',
+                                                '& .MuiOutlinedInput-notchedOutline':
+                                                    {
+                                                        borderColor:
+                                                            'primary.main',
+                                                    },
                                                 '& .MuiSvgIcon-root': {
-                                                    color: 'primary.main'
-                                                } 
+                                                    color: 'primary.main',
+                                                },
                                             }}
                                             onChange={(e) =>
-                                                setlyricalLanguage(e.target.value)
+                                                setlyricalLanguage(
+                                                    e.target.value
+                                                )
                                             }
                                         >
                                             {languages.map((language) => (
-                                                <MenuItem value={language} key={language}>
+                                                <MenuItem
+                                                    value={language}
+                                                    key={language}
+                                                >
                                                     {language}
                                                 </MenuItem>
                                             ))}
@@ -395,52 +471,76 @@ export default function Register() {
                             <div>
                                 <h3>Preferred Genre:</h3>
                                 <div className={styles.subsetting}>
-
-                                <FormControl required sx={{ m: 1, width : '25ch' }}>
-                                    <InputLabel id="genre-select-input-label" sx={{ color: 'primary.main' }}>Genre</InputLabel>
-                                    <Select
-                                        labelId="genre-select-input-label"
-                                        id="genre-select-input"
-                                        value={faveGenres}
-                                        label="Genre"
-                                        sx={{ color: 'white',
-                                            '& .MuiOutlinedInput-notchedOutline': {
-                                                borderColor: 'primary.main'
-                                            },
-                                            '& .MuiSvgIcon-root': {
-                                                color: 'primary.main'
-                                            }
-                                        }}
-                                        onChange={(e) =>
-                                            setFaveGenres(e.target.value)
-                                        }
+                                    <FormControl
+                                        required
+                                        sx={{ m: 1, width: '25ch' }}
                                     >
-                                        {genres.map((genre) => (
-                                            <MenuItem value={genre} key={genre}>
-                                                {genre}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
+                                        <InputLabel
+                                            id="genre-select-input-label"
+                                            sx={{ color: 'primary.main' }}
+                                        >
+                                            Genre
+                                        </InputLabel>
+                                        <Select
+                                            labelId="genre-select-input-label"
+                                            id="genre-select-input"
+                                            value={faveGenres}
+                                            label="Genre"
+                                            sx={{
+                                                color: 'white',
+                                                '& .MuiOutlinedInput-notchedOutline':
+                                                    {
+                                                        borderColor:
+                                                            'primary.main',
+                                                    },
+                                                '& .MuiSvgIcon-root': {
+                                                    color: 'primary.main',
+                                                },
+                                            }}
+                                            onChange={(e) =>
+                                                setFaveGenres(e.target.value)
+                                            }
+                                        >
+                                            {genres.map((genre) => (
+                                                <MenuItem
+                                                    value={genre}
+                                                    key={genre}
+                                                >
+                                                    {genre}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
                                 </div>
                             </div>
-                            <h2>
-                                Mode-Specific Settings!
-                            </h2>
+                            <h2>Mode-Specific Settings!</h2>
                             <div className={styles.settingsSection}>
                                 <div>
                                     <h3>Interval Mode Times: </h3>
                                     <div className={styles.subsetting}>
                                         <TextField
                                             required
-                                            color='primary'
-                                            focused 
+                                            color="primary"
+                                            focused
                                             label="Short"
                                             type="number"
-                                            sx={{ m: 1, width: '25ch', input: { color: 'white' } }}
+                                            sx={{
+                                                m: 1,
+                                                width: '25ch',
+                                                input: { color: 'white' },
+                                            }}
                                             value={intervalShort}
                                             InputProps={{
-                                                endAdornment: (<InputAdornment position="end" sx={{ color: 'primary.main' }}><p>minutes</p></InputAdornment>),
+                                                endAdornment: (
+                                                    <InputAdornment
+                                                        position="end"
+                                                        sx={{
+                                                            color: 'primary.main',
+                                                        }}
+                                                    >
+                                                        <p>minutes</p>
+                                                    </InputAdornment>
+                                                ),
                                             }}
                                             onChange={(e) =>
                                                 setIntervalShort(
@@ -455,14 +555,27 @@ export default function Register() {
                                     <div className={styles.subsetting}>
                                         <TextField
                                             required
-                                            color='primary'
-                                            focused 
+                                            color="primary"
+                                            focused
                                             label="Long"
                                             type="number"
-                                            sx={{ m: 1, width: '25ch', input: { color: 'white' } }}
+                                            sx={{
+                                                m: 1,
+                                                width: '25ch',
+                                                input: { color: 'white' },
+                                            }}
                                             value={intervalLong}
                                             InputProps={{
-                                                endAdornment: (<InputAdornment position="end" sx={{ color: 'primary.main' }}><p>minutes</p></InputAdornment>),
+                                                endAdornment: (
+                                                    <InputAdornment
+                                                        position="end"
+                                                        sx={{
+                                                            color: 'primary.main',
+                                                        }}
+                                                    >
+                                                        <p>minutes</p>
+                                                    </InputAdornment>
+                                                ),
                                             }}
                                             onChange={(e) =>
                                                 setIntervalLong(
@@ -480,14 +593,27 @@ export default function Register() {
                                     <div className={styles.subsetting}>
                                         <TextField
                                             required
-                                            color='primary'
-                                            focused 
+                                            color="primary"
+                                            focused
                                             label="Ramp Up"
                                             type="number"
-                                            sx={{ m: 1, width: '25ch', input: { color: 'white' } }}
+                                            sx={{
+                                                m: 1,
+                                                width: '25ch',
+                                                input: { color: 'white' },
+                                            }}
                                             value={rampUpTime}
                                             InputProps={{
-                                                endAdornment: (<InputAdornment position="end" sx={{ color: 'primary.main' }}><p>minutes</p></InputAdornment>),
+                                                endAdornment: (
+                                                    <InputAdornment
+                                                        position="end"
+                                                        sx={{
+                                                            color: 'primary.main',
+                                                        }}
+                                                    >
+                                                        <p>minutes</p>
+                                                    </InputAdornment>
+                                                ),
                                             }}
                                             onChange={(e) =>
                                                 setRampUpTime(
@@ -502,14 +628,27 @@ export default function Register() {
                                     <div className={styles.subsetting}>
                                         <TextField
                                             required
-                                            color='primary'
-                                            focused 
+                                            color="primary"
+                                            focused
                                             label="Ramp Down"
                                             type="number"
-                                            sx={{ m: 1, width: '25ch', input: { color: 'white' } }}
+                                            sx={{
+                                                m: 1,
+                                                width: '25ch',
+                                                input: { color: 'white' },
+                                            }}
                                             value={rampDownTime}
                                             InputProps={{
-                                                endAdornment: (<InputAdornment position="end" sx={{ color: 'primary.main' }}><p>minutes</p></InputAdornment>),
+                                                endAdornment: (
+                                                    <InputAdornment
+                                                        position="end"
+                                                        sx={{
+                                                            color: 'primary.main',
+                                                        }}
+                                                    >
+                                                        <p>minutes</p>
+                                                    </InputAdornment>
+                                                ),
                                             }}
                                             onChange={(e) =>
                                                 setRampDownTime(
@@ -525,20 +664,31 @@ export default function Register() {
                                 <div>
                                     <h3>Mood Mode Selection:</h3>
                                     <div className={styles.subsetting}>
-                                        <FormControl required sx={{ m: 1, width : '25ch' }}>
-                                            <InputLabel id="mood-select-input-label" sx={{ color: 'primary.main' }}>Mood</InputLabel>
+                                        <FormControl
+                                            required
+                                            sx={{ m: 1, width: '25ch' }}
+                                        >
+                                            <InputLabel
+                                                id="mood-select-input-label"
+                                                sx={{ color: 'primary.main' }}
+                                            >
+                                                Mood
+                                            </InputLabel>
                                             <Select
                                                 labelId="mood-select-input-label"
                                                 id="mood-select-input"
                                                 value={mood}
                                                 label="Mood"
-                                                sx={{ color: 'white',
-                                                    '& .MuiOutlinedInput-notchedOutline': {
-                                                        borderColor: 'primary.main'
-                                                    },
+                                                sx={{
+                                                    color: 'white',
+                                                    '& .MuiOutlinedInput-notchedOutline':
+                                                        {
+                                                            borderColor:
+                                                                'primary.main',
+                                                        },
                                                     '& .MuiSvgIcon-root': {
-                                                        color: 'primary.main'
-                                                    }
+                                                        color: 'primary.main',
+                                                    },
                                                 }}
                                                 onChange={(e) =>
                                                     setMood(e.target.value)
@@ -559,21 +709,28 @@ export default function Register() {
                                     <div className={styles.subsetting}>
                                         <TextField
                                             required
-                                            color='primary'
+                                            color="primary"
                                             focused
                                             label="Zip Code"
                                             type="number"
-                                            
-                                            sx={{ m: 1, width: '25ch', input: { color: 'white' } }}
+                                            sx={{
+                                                m: 1,
+                                                width: '25ch',
+                                                input: { color: 'white' },
+                                            }}
                                             value={zipCode}
                                             InputProps={{}}
                                             onChange={(e) => {
-                                                var value = parseInt(e.target.value, 10);
+                                                let value = parseInt(
+                                                    e.target.value,
+                                                    10
+                                                );
 
                                                 if (value < 0) value = 0;
-                                                if (value > 99999) value = 99999;
+                                                if (value > 99999)
+                                                    value = 99999;
 
-                                                setZipCode(value)
+                                                setZipCode(value);
                                             }}
                                         />
                                     </div>
@@ -582,9 +739,7 @@ export default function Register() {
                             </div>
                         </ThemeProvider>
                         <div className={styles.center}>
-                            <Button type="submit">
-                                Next
-                            </Button>
+                            <Button type="submit">Next</Button>
                         </div>
                     </form>
                 </div>

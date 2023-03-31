@@ -1,7 +1,7 @@
 .player {
     background-color: #242b2e;
     width: 100%;
-    padding: 1.5rem;
+    padding: 1rem 1.5rem;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -27,7 +27,7 @@
 }
 
 .songName {
-    margin-top: 1.5rem;
+    margin-top: 1rem;
     font-weight: bold;
     font-size: 1.5em;
 }
@@ -68,7 +68,7 @@
 }
 
 .controlButtons {
-    margin-top: 0.5rem;
+    margin-top: -0.5rem;
     display: flex;
     justify-content: center;
     align-items: center;

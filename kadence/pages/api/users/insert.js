@@ -30,6 +30,7 @@ handler.post(async (req, res) => {
         favoriteArtist: req.body.favoriteArtist,
         favoriteSong: req.body.favoriteSong,
         favoriteAlbum: req.body.favoriteAlbum,
+        deviceName: req.body.deviceName,
     };
 
     if (!req.body.username) {

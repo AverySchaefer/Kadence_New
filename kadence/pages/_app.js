@@ -4,6 +4,7 @@ import Script from 'next/script';
 
 import { useState } from 'react';
 import { MusicKitContext } from '@/lib/useMusicKit';
+import { StyledEngineProvider } from '@mui/material/styles';
 
 const AppleMusicConfiguration = {
     developerToken:
@@ -21,9 +22,12 @@ export default function App({
     const [musicKit, setMusicKit] = useState(null);
 
     function configureAppleMusic() {
-        document.addEventListener('musickitloaded', function () {
+        document.addEventListener('musickitloaded', () => {
             // MusicKit global is now defined
+
+            // eslint-disable-next-line no-undef
             MusicKit.configure(AppleMusicConfiguration);
+            // eslint-disable-next-line no-undef
             setMusicKit(MusicKit);
         });
     }
@@ -36,7 +40,9 @@ export default function App({
                     onLoad={configureAppleMusic}
                     strategy="afterInteractive"
                 />
-                <Component {...pageProps} />
+                <StyledEngineProvider injectFirst>
+                    <Component {...pageProps} />
+                </StyledEngineProvider>
             </SessionProvider>
         </MusicKitContext.Provider>
     );

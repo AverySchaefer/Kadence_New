@@ -4,16 +4,15 @@ import nextConnect from 'next-connect';
 import refreshToken from '@/lib/spotify/refreshToken';
 import middleware from '../../../middleware/database';
 
-const CURRENT_SONG_ENDPOINT =
-    'https://api.spotify.com/v1/me/player/currently-playing';
+const GET_QUEUE_ENDPOINT =
+    'https://api.spotify.com/v1/me/player/queue';
 
 const handler = nextConnect();
-
 handler.use(middleware);
 
-async function getCurrentSong(token) {
+async function getQueue(token) {
     const { access_token: accessToken } = await refreshToken(token);
-    return fetch(CURRENT_SONG_ENDPOINT, {
+    return fetch(GET_QUEUE_ENDPOINT, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
         },
@@ -24,20 +23,21 @@ handler.get(async (req, res) => {
     const {
         token: { accessToken },
     } = await getSession({ req });
-    const response = await getCurrentSong(accessToken);
+    const response = await getQueue(accessToken);
 
     // Check if nothing is currently active (was throwing error before)
     if (response.status === 204 && response.statusText === 'No Content') {
         res.status(200).json({
             item: {
-                name: 'Nothing is actively being listened to right now!',
+                name: 'Nothing in the queue!',
             },
         });
         return;
     }
 
-    const songItem = await response.json();
-    res.status(200).json(songItem);
+    const songItems = await response.json();
+    console.log(songItems);
+    res.status(200).json(songItems);
 });
 
 export default handler;

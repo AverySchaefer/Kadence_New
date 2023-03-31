@@ -211,17 +211,16 @@ export default function MusicPlayer({ size = 'small' }) {
             ? spotifyRefreshRateSeconds
             : appleRefreshRateSeconds;
 
-    function fetchPlayerDataSpotify() {
+    const fetchPlayerDataSpotify = useCallback(() => {
         NetworkAPI.get('/api/spotify/playerInfo')
             .then(({ data }) => {
                 setPlayerData(data);
                 setTimer(0);
             })
             .catch(handleError);
-    }
+    }, []);
 
     const fetchPlayerDataApple = useCallback(() => {
-        // TODO: TEST
         if (MusicKit !== null) {
             const music = MusicKit.getInstance();
 
@@ -308,7 +307,6 @@ export default function MusicPlayer({ size = 'small' }) {
     }
 
     function handleSkipApple() {
-        // TODO: TEST
         const music = MusicKit.getInstance();
         music
             .skipToNextItem()

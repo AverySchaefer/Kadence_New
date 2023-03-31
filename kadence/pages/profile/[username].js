@@ -6,7 +6,7 @@ import { Avatar, Box, Button, Stack, Tab, Tabs } from '@mui/material/';
 import { useState, useEffect } from 'react';
 import NetworkAPI from '@/lib/networkAPI';
 import PageLayout from '@/components/PageLayout';
-import { useTheme, createTheme, ThemeProvider } from '@mui/material/styles';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 function a11yProps(index) {
     return {
@@ -123,6 +123,7 @@ function BasicTabs({ userData }) {
                                                             width: '25ch',
                                                             backgroundColor:
                                                                 'button.primary',
+                                                            color: '#242b2e',
                                                         }}
                                                         href={accountLink}
                                                     >
