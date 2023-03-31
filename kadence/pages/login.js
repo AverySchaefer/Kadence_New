@@ -33,12 +33,15 @@ export default function Login() {
                 localStorage.setItem('jwt', jwt);
                 localStorage.setItem('username', formUsername.value);
                 router.push('/home');
+            } else {
+                return;
             }
         } catch (err) {
             Dialog.alert({
                 title: 'Error Occurred',
                 message: `${err.status} ${err}`,
             });
+            return;
         }
 
         try {
@@ -53,7 +56,7 @@ export default function Login() {
         } catch (err) {
             Dialog.alert({
                 title: 'Error',
-                message: `An error occurred while fetching your data: ${err.message}. Some defaults have been set in their place.`,
+                message: `An error occurred while fetching your data: ${err.message}.`,
             });
         }
     }
