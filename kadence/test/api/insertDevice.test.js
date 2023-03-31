@@ -1,6 +1,6 @@
 import { testApiHandler } from 'next-test-api-route-handler';
-import handler from '../pages/api/devices/insert'; // TODO: change this to import the desired handler!
-import { initTestDB, teardownTestDB } from './testDB';
+import handler from '../../pages/api/devices/insert'; // TODO: change this to import the desired handler!
+import { initTestDB, teardownTestDB } from '../testDB';
 
 describe('POST /devices/insert', () => {
     let mongoServer;
