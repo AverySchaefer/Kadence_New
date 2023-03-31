@@ -78,7 +78,19 @@ export default function IntervalPage() {
                 playlistArray: playlistURIs,
             })
         });
-    }
+    };
+
+    const checkCurrentSong = async () => {
+        const currentSongData = await NetworkAPI.get(
+            '/api/spotify/currentSong'
+        );
+        if (currentSongData) {
+            if (currentSong !== currentSongData.data.item.name) {
+                currentSong = currentSongData.data.item.name;
+                queueNewSong(currentSongData);
+            }
+        }
+    };
 
     useEffect(() => {
         const counter = setInterval(() => {
@@ -88,10 +100,9 @@ export default function IntervalPage() {
                         if (currentMode === 'High') {
                             setCurrentMode('Low');
                             return intervalLow;
-                        } else {
-                            setCurrentMode('High');
-                            return intervalHigh;
                         }
+                        setCurrentMode('High');
+                        return intervalHigh;
                     }
                     checkCurrentSong();
                     return prev - 1;
@@ -103,8 +114,8 @@ export default function IntervalPage() {
 
     useEffect(() => {
         if (Object.keys(router.query).length > 0 && !ready) {
-            const low = parseInt(router.query.intervalLow) * 60;
-            const high = parseInt(router.query.intervalHigh) * 60;
+            const low = parseInt(router.query.intervalLow, 10) * 60;
+            const high = parseInt(router.query.intervalHigh, 10) * 60;
             setIntervalLow(low);
             setIntervalHigh(high);
             setTimer(low);

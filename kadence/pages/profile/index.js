@@ -5,10 +5,9 @@ import { Dialog } from '@capacitor/dialog';
 import { useRouter } from 'next/router';
 import { Avatar, Box, Button, Stack, Tab, Tabs } from '@mui/material/';
 import NetworkAPI from '@/lib/networkAPI';
-import Default from '@/lib/default';
 import PageLayout from '@/components/PageLayout';
 import { signOut } from 'next-auth/react';
-import { useTheme, createTheme, ThemeProvider } from '@mui/material/styles';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import { useState, useEffect, useRef } from 'react';
 
@@ -59,19 +58,6 @@ function BasicTabs({
         }
     };
 
-    const handleDeviceConnection = () => {
-        console.log('connecting a device');
-        const redirectUri =
-            process.env.NODE_ENV === 'development'
-                ? 'https://localhost:3000/fitbit'
-                : 'https://kadenceapp.com/fitbit';
-        window.location.assign(
-            `https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=23QTD8&scope=activity+cardio_fitness+electrocardiogram+heartrate+location+nutrition+oxygen_saturation+profile+respiratory_rate+settings+sleep+social+temperature+weight&code_challenge=vaC5salqWAhM5k50MMvXGPxkTQGyQeLa0NpP_K3689Y&code_challenge_method=S256&state=3j3k386j3x606u7000324b4x4n0b0o06&redirect_uri=${encodeURI(
-                redirectUri
-            )}`
-        );
-    };
-
     let platform = '';
     let alt = '';
     let useLink = '';
@@ -79,13 +65,13 @@ function BasicTabs({
     if (musicPlatform === 'Spotify') {
         platform = '/Spotify.jpg';
         alt = 'Spotify Logo';
-        accountLink = Default.spotifyPlayerData.songURI;
+        accountLink = 'https://open.spotify.com/';
         useLink = '/spotify/display';
     } else if (musicPlatform === 'Apple Music') {
         platform = '/apple-music.jpg';
         alt = 'Apple Music Logo';
         accountLink = 'https://music.apple.com/login';
-        useLink = '/spotify/display';
+        useLink = '/apple/display';
     } else {
         platform = '';
         alt = 'No platform chosen!';
@@ -193,6 +179,7 @@ function BasicTabs({
                                                         'none !important',
                                                 }}
                                                 href={accountLink}
+                                                target="_blank"
                                             >
                                                 Open {musicPlatform}
                                             </Button>
