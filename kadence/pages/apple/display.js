@@ -3,14 +3,44 @@ import styles from '@/styles/Spotify.module.css';
 import Button from '@mui/material/Button';
 import { PageLayout } from '@/components';
 import { useState, useEffect } from 'react';
+import { getMatchingSongs, queueSongs } from '@/lib/apple/AppleAPI';
 import useMusicKit from '@/lib/useMusicKit';
 import NetworkAPI from '@/lib/networkAPI';
 import { useRouter } from 'next/router';
 
+const songsToQueue = [
+    'Let Down',
+    'Mr. Saturday Night',
+    'Weird Fishes',
+    'Creep',
+    'Careless Whisper',
+];
+
 export default function Display() {
     const [loggedIn, setLoggedIn] = useState(false);
     const router = useRouter();
+
     const MusicKit = useMusicKit();
+
+    useEffect(() => {
+        setLoggedIn(localStorage.getItem('appleMusicUserToken') !== null);
+    }, []);
+
+    useEffect(() => {
+        async function startTestPlayback() {
+            if (MusicKit) {
+                const music = MusicKit.getInstance();
+                const songs = await getMatchingSongs(music, songsToQueue);
+
+                await queueSongs(
+                    music,
+                    songs.map((song) => song.id)
+                );
+                await music.play();
+            }
+        }
+        startTestPlayback();
+    }, [MusicKit]);
 
     function signInToApple() {
         const music = MusicKit.getInstance();

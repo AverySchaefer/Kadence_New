@@ -1,6 +1,5 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
 
 import SettingsIcon from '@mui/icons-material/Settings';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -28,11 +27,8 @@ export default function PageLayout({
     prevLink = '',
     children,
 }) {
-    const { data: session } = useSession();
-
     const playerName = player.toLowerCase().trim();
-    const showPlayer =
-        !!session && (playerName === 'spotify' || playerName === 'apple');
+    const showPlayer = playerName === 'spotify' || playerName === 'apple';
 
     return (
         <>
