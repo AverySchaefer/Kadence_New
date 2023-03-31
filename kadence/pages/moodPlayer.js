@@ -28,7 +28,7 @@ export default function LargePlayer() {
     return (
         <PageLayout title="" includeNav={true}>
             <div style={{ overflow: 'hidden', height: '100%' }}>
-                <MusicPlayer size="large" type="spotify" />
+                <MusicPlayer size="large" />
                 {playlistURIs && (
                     <>
                         <form

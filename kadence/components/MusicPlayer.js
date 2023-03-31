@@ -207,7 +207,7 @@ export default function MusicPlayer({ size = 'small' }) {
     const MusicKit = useMusicKit();
 
     const playerRefreshRateSeconds =
-        type === 'spotify'
+        type === 'Spotify'
             ? spotifyRefreshRateSeconds
             : appleRefreshRateSeconds;
 
@@ -315,7 +315,7 @@ export default function MusicPlayer({ size = 'small' }) {
     }
 
     const fetchPlayerData =
-        type === 'spotify' ? fetchPlayerDataSpotify : fetchPlayerDataApple;
+        type === 'Spotify' ? fetchPlayerDataSpotify : fetchPlayerDataApple;
 
     // Initial get on page load
     useEffect(fetchPlayerData, [fetchPlayerData]);
@@ -357,10 +357,10 @@ export default function MusicPlayer({ size = 'small' }) {
                 playerData={playerData}
                 songProgress={playerData.progressSeconds + timer}
                 handleSkip={
-                    type === 'spotify' ? handleSkipSpotify : handleSkipApple
+                    type === 'Spotify' ? handleSkipSpotify : handleSkipApple
                 }
                 togglePlayState={
-                    type === 'spotify'
+                    type === 'Spotify'
                         ? togglePlayStateSpotify
                         : togglePlayStateApple
                 }
@@ -373,10 +373,10 @@ export default function MusicPlayer({ size = 'small' }) {
                 playerData={playerData}
                 songProgress={playerData.progressSeconds + timer}
                 handleSkip={
-                    type === 'spotify' ? handleSkipSpotify : handleSkipApple
+                    type === 'Spotify' ? handleSkipSpotify : handleSkipApple
                 }
                 togglePlayState={
-                    type === 'spotify'
+                    type === 'Spotify'
                         ? togglePlayStateSpotify
                         : togglePlayStateApple
                 }
