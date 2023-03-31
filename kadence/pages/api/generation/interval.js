@@ -138,11 +138,8 @@ handler.get(async (req, res) => {
     console.log(prefData);
     /* END PREF DATA */
 
-    const response = await getIntervalRecommendations(
-        accessToken,
-        prefData,
-        intervalStatus
-    );
+    let response = await getIntervalRecommendations(accessToken, prefData, intervalStatus);
+    const currentSong = await getCurrentSong(accessToken);
 
     // Check if nothing is currently active (was throwing error before)
     if (response.status === 204 && response.statusText === 'No Content') {
@@ -154,7 +151,14 @@ handler.get(async (req, res) => {
         return;
     }
 
-    const songItems = await response.json();
+    let songItems = await response.json();
+    const currentSongItems = await currentSong.json();
+    while (currentSongItems.item.name === songItems.tracks[0].name) {
+        console.log("Queued same song");
+        response = await getIntervalRecommendations(accessToken, prefData, intervalStatus);
+        songItems = await response.json();
+    }
+    console.log("Queued a different song");
     const playlistURIs = await playlistScreening(songItems, prefData);
     res.status(200).json(playlistURIs);
 });

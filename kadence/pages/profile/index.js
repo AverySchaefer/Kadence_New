@@ -5,7 +5,6 @@ import { Dialog } from '@capacitor/dialog';
 import { useRouter } from 'next/router';
 import { Avatar, Box, Button, Stack, Tab, Tabs } from '@mui/material/';
 import NetworkAPI from '@/lib/networkAPI';
-import Default from '@/lib/default';
 import PageLayout from '@/components/PageLayout';
 import { signOut } from 'next-auth/react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -66,13 +65,13 @@ function BasicTabs({
     if (musicPlatform === 'Spotify') {
         platform = '/Spotify.jpg';
         alt = 'Spotify Logo';
-        accountLink = Default.spotifyPlayerData.songURI;
+        accountLink = 'https://open.spotify.com/';
         useLink = '/spotify/display';
     } else if (musicPlatform === 'Apple Music') {
         platform = '/apple-music.jpg';
         alt = 'Apple Music Logo';
         accountLink = 'https://music.apple.com/login';
-        useLink = '/spotify/display';
+        useLink = '/apple/display';
     } else {
         platform = '';
         alt = 'No platform chosen!';
@@ -180,6 +179,7 @@ function BasicTabs({
                                                         'none !important',
                                                 }}
                                                 href={accountLink}
+                                                target="_blank"
                                             >
                                                 Open {musicPlatform}
                                             </Button>

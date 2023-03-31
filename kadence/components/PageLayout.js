@@ -16,6 +16,7 @@ const inter = Inter({ subsets: ['latin'] });
 export default function PageLayout({
     includeNav = true,
     includeUpperRightIcon = false,
+    includeTitle = true,
     upperRightIcon = (
         <Link href="/settings">
             <SettingsIcon />
@@ -45,26 +46,28 @@ export default function PageLayout({
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <div className={[styles.pageContainer, inter.className].join(' ')}>
-                <div className={styles.headerContainer}>
-                    <div className={styles.title}>
-                        {prevLink && (
-                            <Link href={prevLink}>
-                                <ArrowBackIcon />
-                            </Link>
-                        )}
-                        {title}
-                    </div>
-
-                    {includeUpperRightIcon && (
-                        <div className={styles.upperRightIcon}>
-                            {upperRightIcon}
+                {includeTitle && (
+                    <div className={styles.headerContainer}>
+                        <div className={styles.title}>
+                            {prevLink && (
+                                <Link href={prevLink}>
+                                    <ArrowBackIcon />
+                                </Link>
+                            )}
+                            {title}
                         </div>
-                    )}
-                </div>
+
+                        {includeUpperRightIcon && (
+                            <div className={styles.upperRightIcon}>
+                                {upperRightIcon}
+                            </div>
+                        )}
+                    </div>
+                )}
                 <main className={styles.mainContainer}>{children}</main>
                 {showPlayer && (
                     <div className={styles.playerContainer}>
-                        <MusicPlayer type={playerName} size="small" />
+                        <MusicPlayer size="small" />
                     </div>
                 )}
                 {includeNav && (

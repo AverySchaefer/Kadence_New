@@ -35,7 +35,6 @@ export default function Display() {
                 process.env.NODE_ENV === 'development'
                     ? 'http://localhost:3000/fitbit'
                     : 'http://kadenceapp.com/fitbit';
-
             console.log(redirectUri);
             window.location.assign(
                 `https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=23QTD8&scope=activity+cardio_fitness+electrocardiogram+heartrate+location+nutrition+oxygen_saturation+profile+respiratory_rate+settings+sleep+social+temperature+weight&code_challenge=vaC5salqWAhM5k50MMvXGPxkTQGyQeLa0NpP_K3689Y&code_challenge_method=S256&state=3j3k386j3x606u7000324b4x4n0b0o06&redirect_uri=${encodeURI(
