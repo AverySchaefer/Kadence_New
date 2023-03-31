@@ -33,7 +33,7 @@ export default function TestAppleMusic() {
     return (
         <PageLayout>
             <h1>Testing Apple Music</h1>
-            <MusicPlayer size="large" type="apple" />
+            <MusicPlayer size="large" />
         </PageLayout>
     );
 }

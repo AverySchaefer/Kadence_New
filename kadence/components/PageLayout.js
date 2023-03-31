@@ -67,7 +67,7 @@ export default function PageLayout({
                 <main className={styles.mainContainer}>{children}</main>
                 {showPlayer && (
                     <div className={styles.playerContainer}>
-                        <MusicPlayer type={playerName} size="small" />
+                        <MusicPlayer size="small" />
                     </div>
                 )}
                 {includeNav && (

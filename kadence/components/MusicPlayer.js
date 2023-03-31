@@ -194,10 +194,15 @@ function LargePlayer({
     );
 }
 
-export default function MusicPlayer({ type = 'spotify', size = 'small' }) {
+export default function MusicPlayer({ size = 'small' }) {
     const [playerData, setPlayerData] = useState(Default.playerData);
     const [timer, setTimer] = useState(0);
     const [pausedTimer, setPausedTimer] = useState(0);
+    const [type, setType] = useState(null);
+
+    useEffect(() => {
+        setType(localStorage.getItem('platform'));
+    }, []);
 
     const MusicKit = useMusicKit();
 
@@ -345,6 +350,8 @@ export default function MusicPlayer({ type = 'spotify', size = 'small' }) {
         pausedTimer,
         playerRefreshRateSeconds,
     ]);
+
+    if (!type) return '';
 
     if (size === 'small') {
         return (

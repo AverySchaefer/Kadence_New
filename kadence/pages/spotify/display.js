@@ -30,6 +30,7 @@ export default function Display() {
         } catch (err) {
             console.log(err);
         } finally {
+            localStorage.removeItem('platform');
             signOut({ callbackUrl: '/profile' });
         }
     }

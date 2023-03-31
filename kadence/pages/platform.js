@@ -3,7 +3,7 @@ import styles from '@/styles/Platform.module.css';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { Dialog } from '@capacitor/dialog';
-import { Box, Button, Stack } from '@mui/material/';
+import { Button } from '@mui/material/';
 import NetworkAPI from '@/lib/networkAPI';
 import PageLayout from '@/components/PageLayout';
 import { signIn } from 'next-auth/react';
@@ -25,6 +25,7 @@ export default function Platform() {
                 message: `An error occurred while submitting your data: ${err.message}.`,
             });
         } finally {
+            localStorage.setItem('platform', 'spotify');
             signIn('spotify', { callbackUrl: '/spotify/display' });
         }
     }

@@ -3,12 +3,9 @@ import styles from '@/styles/Spotify.module.css';
 import Button from '@mui/material/Button';
 import { PageLayout } from '@/components';
 import { useState, useEffect } from 'react';
-import { Inter } from '@next/font/google';
 import useMusicKit from '@/lib/useMusicKit';
 import NetworkAPI from '@/lib/networkAPI';
 import { useRouter } from 'next/router';
-
-const inter = Inter({ subsets: ['latin'] });
 
 export default function Display() {
     const [loggedIn, setLoggedIn] = useState(false);
@@ -22,6 +19,7 @@ export default function Display() {
             .authorize()
             .then((token) => {
                 localStorage.setItem('appleMusicUserToken', token);
+                localStorage.setItem('platform', 'apple');
                 console.log(token);
                 setLoggedIn(true);
                 NetworkAPI.post('/api/apple/signIn', {
@@ -45,6 +43,7 @@ export default function Display() {
         const music = MusicKit.getInstance();
         music.unauthorize();
         localStorage.removeItem('appleMusicUserToken');
+        localStorage.removeItem('platform');
         setLoggedIn(false);
         NetworkAPI.post('/api/apple/signOut', {
             username: localStorage.getItem('username'),
