@@ -4,8 +4,7 @@ import nextConnect from 'next-connect';
 import refreshToken from '@/lib/spotify/refreshToken';
 import middleware from '../../../middleware/database';
 
-const GET_QUEUE_ENDPOINT =
-    'https://api.spotify.com/v1/me/player/queue';
+const GET_QUEUE_ENDPOINT = 'https://api.spotify.com/v1/me/player/queue';
 const SKIP_ENDPOINT = 'https://api.spotify.com/v1/me/player/next';
 
 const handler = nextConnect();
@@ -50,7 +49,9 @@ handler.post(async (req, res) => {
 
     const songItems = await response.json();
     for (let i = 0; i < songItems.length; i++) {
-      await skip(accessToken);
+        // TODO: Fix this
+        // eslint-disable-next-line no-await-in-loop
+        await skip(accessToken);
     }
     res.status(200).json(songItems);
 });

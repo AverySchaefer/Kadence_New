@@ -207,6 +207,9 @@ export default function Settings() {
             zipCode,
         };
 
+        localStorage.setItem('mood', mood);
+        localStorage.setItem('waitSave', waitToSave);
+
         try {
             await NetworkAPI.patch('/api/users/update', userData);
             await NetworkAPI.patch('/api/preferences/update', musicPrefData);

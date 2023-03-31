@@ -26,8 +26,10 @@ const theme = createTheme({
 
 export default function MoodModePage() {
     const [activeMood, setActiveMood] = useState(null);
+    const [waitToSave, setWaitToSave] = useState(false);
     useEffect(() => {
         setActiveMood(localStorage.getItem('mood').toLowerCase());
+        setWaitToSave(localStorage.getItem('waitSave'));
     }, []);
     const selectedColor = '#69e267';
     const unselectedColor = '#ffffff';
@@ -45,6 +47,12 @@ export default function MoodModePage() {
     const [songs, setSongs] = useState(null);
 
     const router = useRouter();
+
+    function MakeSong(name, art, key) {
+        this.name = name;
+        this.art = art;
+        this.key = key;
+    }
 
     // TODO: Remove this when it gets used
     // eslint-disable-next-line no-unused-vars
@@ -88,20 +96,31 @@ export default function MoodModePage() {
                     playlistID,
                 })
         );
+
+        const songNames = [];
         const playlistItems = await playlistRes.json();
         let playlistSongs = playlistItems.items[0].track.name;
+        songNames.push(
+            new MakeSong(
+                playlistItems.items[0].track.name,
+                playlistItems.items[0].track.album.images[0].url,
+                0
+            )
+        );
         for (let j = 1; j < playlistItems.items.length; j++) {
             playlistSongs = playlistSongs.concat(', ');
             const songName = playlistItems.items[j].track.name;
             playlistSongs = playlistSongs.concat(songName);
+            songNames.push(
+                new MakeSong(
+                    songName,
+                    playlistItems.items[j].track.album.images[0].url,
+                    j
+                )
+            );
         }
+        setSongs(songNames);
     };
-
-    function MakeSong(name, art, key) {
-        this.name = name;
-        this.art = art;
-        this.key = key;
-    }
 
     const getRecommendations = async (numberOfSongs, currentMood) => {
         const moodMode = '/api/generation/mood?';
@@ -116,11 +135,17 @@ export default function MoodModePage() {
         );
         const playlistURIs = await res.json();
 
+        const dequeueRoute = '/api/spotify/clearQueue';
+        const dequeueRes = await fetch(dequeueRoute, {
+            method: 'POST',
+        });
+        console.log(dequeueRes);
+
         const queueRoute = '/api/spotify/queue';
         for (let i = 0; i < playlistURIs.length; i++) {
             // TODO: Fix this
             // eslint-disable-next-line no-await-in-loop
-            await fetch(queueRoute, {
+            fetch(queueRoute, {
                 method: 'POST',
                 body: JSON.stringify({
                     songURI: playlistURIs[i],
@@ -132,17 +157,16 @@ export default function MoodModePage() {
         const getQueueRoute = '/api/spotify/getQueue';
         const queueRes = await fetch(getQueueRoute);
         const queueItems = await queueRes.json();
-        const startIndex = queueItems.queue.length - numberOfSongs + 1;
-        let queueSongs = queueItems.queue[startIndex].name;
+        let queueSongs = queueItems.queue[0].name;
         songNames.push(
             new MakeSong(
-                queueItems.queue[startIndex].name,
-                queueItems.queue[startIndex].album.images[0].url,
+                queueItems.queue[0].name,
+                queueItems.queue[0].album.images[0].url,
                 0
             )
         );
 
-        for (let j = startIndex + 1; j < queueItems.queue.length; j++) {
+        for (let j = 1; j < numberOfSongs; j++) {
             queueSongs = queueSongs.concat(', ');
             const songName = queueItems.queue[j].name;
             queueSongs = queueSongs.concat(songName);
@@ -241,8 +265,7 @@ export default function MoodModePage() {
 
     useEffect(() => {
         initializeMood(activeMood);
-        console.log(activeMood);
-    }, [activeMood]);
+    }, [activeMood, waitToSave]);
     return (
         <PageLayout title="Mood Mode" prevLink="/home">
             <p>What mood should your playlist be?</p>
@@ -374,7 +397,14 @@ export default function MoodModePage() {
                         variant="contained"
                         sx={{ borderRadius: 3, width: '100%' }}
                         className={`${styles.generateButton}`}
-                        onClick={() => getRecommendations(numSongs, activeMood)}
+                        onClick={() => {
+                            console.log('waitToSave', waitToSave);
+                            // if (waitToSave === true) {
+                            getRecommendations(numSongs, activeMood);
+                            // } else {
+                            // getAndSaveRecommendations();
+                            // }
+                        }}
                     >
                         Generate Playlist
                     </Button>
