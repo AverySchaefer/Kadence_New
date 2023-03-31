@@ -65,8 +65,8 @@ function BasicTabs({
     if (musicPlatform === 'Spotify') {
         platform = '/Spotify.jpg';
         alt = 'Spotify Logo';
+        useLink = '/moodPlayer';
         accountLink = 'https://open.spotify.com/';
-        useLink = '/spotify/display';
     } else if (musicPlatform === 'Apple Music') {
         platform = '/apple-music.jpg';
         alt = 'Apple Music Logo';

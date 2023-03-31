@@ -63,7 +63,7 @@ export default function Register() {
     }
 
     return (
-        <PageLayout title="Register" includeTitle={false}>
+        <PageLayout title="Register" includeTitle={false} includeNav={false}>
             <main className={[inter.className, styles.main].join(' ')}>
                 <Image
                     className={styles.img}

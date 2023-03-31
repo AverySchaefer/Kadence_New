@@ -53,6 +53,9 @@ export default function Login() {
                 }
             );
             localStorage.setItem('mood', userData.mood);
+            localStorage.setItem('waitSave', userData.waitToSave);
+            localStorage.setItem('playlistURIs', null);
+            localStorage.setItem('platform', userData.musicPlatform);
         } catch (err) {
             Dialog.alert({
                 title: 'Error',
@@ -67,7 +70,7 @@ export default function Login() {
     };
 
     return (
-        <PageLayout title="Login" includeTitle={false}>
+        <PageLayout title="Login" includeTitle={false} includeNav={false}>
             <main className={[inter.className, styles.main].join(' ')}>
                 <Image
                     className={styles.img}
