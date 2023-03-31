@@ -24,49 +24,10 @@ export default function IntervalPage() {
     const [intervalLow, setIntervalLow] = useState(0);
     const [intervalHigh, setIntervalHigh] = useState(0);
     const [currentMode, setCurrentMode] = useState('Low');
+    const [currentSong, setCurrentSong] = useState(null);
+    const [songCache, setSongCache] = useState([]);
 
-    let currentSong = '';
-    const songCache = [];
     const router = useRouter();
-
-    const checkCurrentSong = async () => {
-        const currentSongData = await NetworkAPI.get(
-            '/api/spotify/currentSong'
-        );
-        if (currentSongData) {
-            if (currentSong !== currentSongData?.data?.item?.name) {
-                currentSong = currentSongData?.data?.item?.name;
-                queueNewSong(currentSongData);
-            }
-        }
-    };
-
-    const queueNewSong = async () => {
-        const intervalMode = '/api/generation/interval?';
-        const queueRoute = '/api/spotify/queue';
-        let trackURI = '';
-        let status = '1';
-        if (currentMode === 'Low') {
-            status = '0';
-        }
-        const highRes = await fetch(
-            intervalMode +
-                new URLSearchParams({
-                    status: status,
-                    username: localStorage.getItem('username'),
-                })
-        );
-        trackURI = await highRes.json();
-        songCache.push(trackURI[0]);
-        sessionStorage.setItem("songCache", JSON.stringify(songCache));
-        console.log(songCache);
-        fetch(queueRoute, {
-            method: 'POST',
-            body: JSON.stringify({
-                songURI: trackURI,
-            }),
-        });
-    };
 
     const saveToProfile = async (playlistURIs) => {
         console.log(playlistURIs);
@@ -74,25 +35,54 @@ export default function IntervalPage() {
         await fetch(saveRoute, {
             method: 'POST',
             body: JSON.stringify({
-                playlistName: "Kadence Interval Mode",
+                playlistName: 'Kadence Interval Mode',
                 playlistArray: playlistURIs,
-            })
+            }),
         });
     };
 
-    const checkCurrentSong = async () => {
-        const currentSongData = await NetworkAPI.get(
-            '/api/spotify/currentSong'
-        );
-        if (currentSongData) {
-            if (currentSong !== currentSongData.data.item.name) {
-                currentSong = currentSongData.data.item.name;
-                queueNewSong(currentSongData);
+    useEffect(() => {
+        async function queueNewSong() {
+            const intervalMode = '/api/generation/interval?';
+            const queueRoute = '/api/spotify/queue';
+            let trackURI = '';
+            let status = '1';
+            if (currentMode === 'Low') {
+                status = '0';
+            }
+            const highRes = await fetch(
+                intervalMode +
+                    new URLSearchParams({
+                        status,
+                        username: localStorage.getItem('username'),
+                    })
+            );
+            trackURI = await highRes.json();
+            setSongCache((prev) => {
+                const newCache = [...prev, trackURI[0]];
+                console.log('New Cache', newCache);
+                return newCache;
+            });
+            fetch(queueRoute, {
+                method: 'POST',
+                body: JSON.stringify({
+                    songURI: trackURI,
+                }),
+            });
+        }
+
+        async function checkCurrentSong() {
+            const currentSongData = await NetworkAPI.get(
+                '/api/spotify/currentSong'
+            );
+            if (currentSongData) {
+                if (currentSong !== currentSongData?.data?.item?.name) {
+                    setCurrentSong(currentSongData?.data?.item?.name);
+                    queueNewSong(currentSongData);
+                }
             }
         }
-    };
 
-    useEffect(() => {
         const counter = setInterval(() => {
             if (ready) {
                 setTimer((prev) => {
@@ -110,7 +100,7 @@ export default function IntervalPage() {
             }
         }, 1000);
         return () => clearInterval(counter);
-    }, [ready]);
+    }, [ready, currentMode, currentSong, intervalHigh, intervalLow]);
 
     useEffect(() => {
         if (Object.keys(router.query).length > 0 && !ready) {
@@ -121,10 +111,10 @@ export default function IntervalPage() {
             setTimer(low);
             setReady(true);
         }
-    }, [router.query]);
+    }, [router.query, ready]);
 
     async function handleEndSession() {
-        if (JSON.parse(sessionStorage.getItem('songCache')).length > 0) {
+        if (songCache.length > 0) {
             const { value: saveToPlaylist } = await Dialog.confirm({
                 title: 'What did you think?',
                 message: 'Would you like to save these songs to a playlist?',
@@ -132,8 +122,8 @@ export default function IntervalPage() {
                 cancelButtonTitle: 'No',
             });
             if (saveToPlaylist) {
-                console.log(JSON.parse(sessionStorage.getItem('songCache')));
-                saveToProfile(JSON.parse(sessionStorage.getItem('songCache')));
+                console.log('Saving', songCache);
+                saveToProfile(songCache);
             }
         }
         router.push('/home');
