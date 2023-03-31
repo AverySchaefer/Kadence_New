@@ -146,8 +146,8 @@ function BasicTabs({ userData }) {
                                 <Stack spacing={2} alignItems="center">
                                     {userData.private ? (
                                         <p>
-                                            This user is private, so you
-                                            can`&apos;`t see their device
+                                            This user is private, so you cannot
+                                            see their music platform
                                             information.
                                         </p>
                                     ) : (
