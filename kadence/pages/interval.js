@@ -1,9 +1,14 @@
 import { useState, useEffect } from 'react';
 
+import styles from '@/styles/Interval.module.css';
+
 import NetworkAPI from '@/lib/networkAPI';
 import PageLayout from '@/components/PageLayout';
 import { MusicPlayer } from '@/components';
+import { Dialog } from '@capacitor/dialog';
 import { useRouter } from 'next/router';
+
+import { Button } from '@mui/material';
 
 function secondsToTime(seconds) {
     const minutes = Math.floor(seconds / 60);
@@ -21,8 +26,20 @@ export default function IntervalPage() {
     const [currentMode, setCurrentMode] = useState('Low');
 
     let currentSong = '';
-    const songsToSave = [];
+    const songCache = [];
     const router = useRouter();
+
+    const checkCurrentSong = async () => {
+        const currentSongData = await NetworkAPI.get(
+            '/api/spotify/currentSong'
+        );
+        if (currentSongData) {
+            if (currentSong !== currentSongData?.data?.item?.name) {
+                currentSong = currentSongData?.data?.item?.name;
+                queueNewSong(currentSongData);
+            }
+        }
+    };
 
     const queueNewSong = async () => {
         const intervalMode = '/api/generation/interval?';
@@ -35,18 +52,31 @@ export default function IntervalPage() {
         const highRes = await fetch(
             intervalMode +
                 new URLSearchParams({
-                    status,
+                    status: status,
                     username: localStorage.getItem('username'),
                 })
         );
         trackURI = await highRes.json();
-        songsToSave.push(trackURI[0]);
-        console.log(songsToSave);
+        songCache.push(trackURI[0]);
+        sessionStorage.setItem("songCache", JSON.stringify(songCache));
+        console.log(songCache);
         fetch(queueRoute, {
             method: 'POST',
             body: JSON.stringify({
                 songURI: trackURI,
             }),
+        });
+    };
+
+    const saveToProfile = async (playlistURIs) => {
+        console.log(playlistURIs);
+        const saveRoute = '/api/generation/save';
+        await fetch(saveRoute, {
+            method: 'POST',
+            body: JSON.stringify({
+                playlistName: "Kadence Interval Mode",
+                playlistArray: playlistURIs,
+            })
         });
     };
 
@@ -90,17 +120,28 @@ export default function IntervalPage() {
             setIntervalHigh(high);
             setTimer(low);
             setReady(true);
-
-            // Queue songs? Might have to return them as well
-            // in the handler as the response so that I can cue
-            // them for Apple Music on the frontend
-            NetworkAPI.get('/').then(console.log);
         }
     }, [router.query]);
 
+    async function handleEndSession() {
+        if (JSON.parse(sessionStorage.getItem('songCache')).length > 0) {
+            const { value: saveToPlaylist } = await Dialog.confirm({
+                title: 'What did you think?',
+                message: 'Would you like to save these songs to a playlist?',
+                okButtonTitle: 'Yes',
+                cancelButtonTitle: 'No',
+            });
+            if (saveToPlaylist) {
+                console.log(JSON.parse(sessionStorage.getItem('songCache')));
+                saveToProfile(JSON.parse(sessionStorage.getItem('songCache')));
+            }
+        }
+        router.push('/home');
+    }
+
     return (
-        <PageLayout title="Interval Mode" includeNav={true}>
-            <div style={{ overflow: 'hidden', height: '100%' }}>
+        <PageLayout title="Interval Mode" includeNav={false}>
+            <div className={styles.pageWrapper}>
                 <p
                     style={{
                         textAlign: 'center',
@@ -111,6 +152,16 @@ export default function IntervalPage() {
                     {currentMode} Energy: {ready && secondsToTime(timer)}
                 </p>
                 <MusicPlayer size="large" type="spotify" />
+                <Button
+                    variant="contained"
+                    sx={{
+                        width: '25ch',
+                        backgroundColor: 'button.primary',
+                    }}
+                    onClick={handleEndSession}
+                >
+                    End Session
+                </Button>
             </div>
         </PageLayout>
     );
