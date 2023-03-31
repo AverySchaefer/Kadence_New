@@ -381,3 +381,26 @@
     -   400: No device is currently active
     -   401: Bad token, user needs to sign in again
     -   Others: random Spotify errors, message returned with status code
+
+## APPLE MUSIC (`/api/apple/~`)
+
+### POST `/api/spotify/signIn`
+
+-   Request body elements
+    -   username: STRING
+    -   userToken: STRING
+-   Return Body
+    -   NONE
+-   Response Status Codes
+    -   200: Request Successful
+    -   400: Bad request
+
+### POST `/api/spotify/signOut`
+
+-   Request body elements
+    -   username: STRING
+-   Return Body
+    -   NONE
+-   Response Status Codes
+    -   200: Request Successful
+    -   400: Bad request

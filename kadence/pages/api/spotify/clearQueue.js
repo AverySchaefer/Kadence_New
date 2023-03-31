@@ -4,8 +4,8 @@ import nextConnect from 'next-connect';
 import refreshToken from '@/lib/spotify/refreshToken';
 import middleware from '../../../middleware/database';
 
-const GET_QUEUE_ENDPOINT =
-    'https://api.spotify.com/v1/me/player/queue';
+const GET_QUEUE_ENDPOINT = 'https://api.spotify.com/v1/me/player/queue';
+const SKIP_ENDPOINT = 'https://api.spotify.com/v1/me/player/next';
 
 const handler = nextConnect();
 handler.use(middleware);
@@ -13,13 +13,26 @@ handler.use(middleware);
 async function getQueue(token) {
     const { access_token: accessToken } = await refreshToken(token);
     return fetch(GET_QUEUE_ENDPOINT, {
+        method: 'GET',
         headers: {
             Authorization: `Bearer ${accessToken}`,
         },
     });
 }
 
-handler.get(async (req, res) => {
+async function skip(token) {
+    console.log("skipping");
+    const { access_token: accessToken } = await refreshToken(token);
+    return fetch(SKIP_ENDPOINT, {
+        method: 'POST',
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+        },
+    });
+}
+
+handler.post(async (req, res) => {
     const {
         token: { accessToken },
     } = await getSession({ req });
@@ -36,6 +49,13 @@ handler.get(async (req, res) => {
     }
 
     const songItems = await response.json();
+    console.log(songItems);
+    for (let i = 0; i < songItems.queue.length; i++) {
+        console.log(i);
+        // TODO: Fix this
+        // eslint-disable-next-line no-await-in-loop
+        await skip(accessToken);
+    }
     res.status(200).json(songItems);
 });
 
