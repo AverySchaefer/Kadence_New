@@ -1,5 +1,5 @@
 import styles from '@/styles/PreMood.module.css';
-import { Button, Card, Slider, Stack, Avatar } from '@mui/material';
+import { Button, Card, Slider, Stack } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faFaceSmile,
@@ -14,6 +14,7 @@ import { PageLayout } from '@/components/';
 import { useState, useEffect } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 
 const theme = createTheme({
     palette: {
@@ -41,9 +42,9 @@ export default function MoodModePage() {
     const [melancholyIconColor, setMelancholyIconColor] =
         useState(unselectedColor);
     const [numSongs, setNumSongs] = useState(20);
-    const [generatedItems, setAllItems] = useState('');
     const [songs, setSongs] = useState(null);
-    const [albumArt, setAlbumArt] = useState([]);
+
+    const router = useRouter();
 
     // TODO: Remove this when it gets used
     // eslint-disable-next-line no-unused-vars
@@ -94,12 +95,12 @@ export default function MoodModePage() {
             const songName = playlistItems.items[j].track.name;
             playlistSongs = playlistSongs.concat(songName);
         }
-        setAllItems(playlistSongs);
     };
 
-    function makeSong(name, art) {
+    function MakeSong(name, art, key) {
         this.name = name;
         this.art = art;
+        this.key = key;
     }
 
     const getRecommendations = async (numberOfSongs, currentMood) => {
@@ -126,25 +127,34 @@ export default function MoodModePage() {
                 }),
             });
         }
-        
 
-        
         const songNames = [];
         const getQueueRoute = '/api/spotify/getQueue';
         const queueRes = await fetch(getQueueRoute);
         const queueItems = await queueRes.json();
         const startIndex = queueItems.queue.length - numberOfSongs + 1;
         let queueSongs = queueItems.queue[startIndex].name;
-        songNames.push(new makeSong(queueItems.queue[startIndex].name, queueItems.queue[startIndex].album.images[0].url));
+        songNames.push(
+            new MakeSong(
+                queueItems.queue[startIndex].name,
+                queueItems.queue[startIndex].album.images[0].url,
+                0
+            )
+        );
 
         for (let j = startIndex + 1; j < queueItems.queue.length; j++) {
             queueSongs = queueSongs.concat(', ');
             const songName = queueItems.queue[j].name;
             queueSongs = queueSongs.concat(songName);
-            songNames.push(new makeSong(songName, queueItems.queue[j].album.images[0].url));
+            songNames.push(
+                new MakeSong(
+                    songName,
+                    queueItems.queue[j].album.images[0].url,
+                    j
+                )
+            );
         }
         setSongs(songNames);
-        setAllItems(queueSongs);
     };
 
     const initializeMood = (currentMood) => {
@@ -371,31 +381,51 @@ export default function MoodModePage() {
                 </Stack>
                 <br />
                 {songs && (
-                    <div className={styles.songDisplay}>
-                        <h3>Your Playlist:</h3>
-                        <div className={styles.resultsContainer}>
-                            <div className={styles.songResults}>
-                                {songs.map((song) => (
-                                    <div key={song} className={styles.songContainer}>
-                                        <div className={styles.albumArtContainer}>
-                                        <Image
-                                            src={
-                                                song.art ?? 
-                                                'https://demofree.sirv.com/nope-not-here.jpg'
-                                            }
-                                            alt="Album Cover"
-                                            width={50}
-                                            height={50}
-                                        />
+                    <>
+                        <div className={styles.songDisplay}>
+                            <h3>Your Playlist:</h3>
+                            <div className={styles.resultsContainer}>
+                                <div className={styles.songResults}>
+                                    {songs.map((song) => (
+                                        <div
+                                            key={song.key}
+                                            className={styles.songContainer}
+                                        >
+                                            <div
+                                                className={
+                                                    styles.albumArtContainer
+                                                }
+                                            >
+                                                <Image
+                                                    src={
+                                                        song.art ??
+                                                        'https://demofree.sirv.com/nope-not-here.jpg'
+                                                    }
+                                                    alt="Album Cover"
+                                                    width={50}
+                                                    height={50}
+                                                />
+                                            </div>
+                                            <div className={styles.songName}>
+                                                <p>{song.name}</p>
+                                            </div>
                                         </div>
-                                        <div className={styles.songName}>
-                                            <p>{song.name}</p>
-                                        </div>
-                                    </div>
-                                ))}
+                                    ))}
+                                </div>
                             </div>
                         </div>
-                    </div>
+                        <br />
+                        <Stack alignItems="center" spacing={2}>
+                            <Button
+                                variant="contained"
+                                sx={{ borderRadius: 3, width: '100%' }}
+                                className={`${styles.generateButton}`}
+                                onClick={() => router.push('/largePlayer')}
+                            >
+                                Kadence Player
+                            </Button>
+                        </Stack>
+                    </>
                 )}
             </ThemeProvider>
         </PageLayout>
