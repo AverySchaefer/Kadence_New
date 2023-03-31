@@ -1,9 +1,14 @@
 import { useState, useEffect } from 'react';
 
+import styles from '@/styles/Interval.module.css';
+
 import NetworkAPI from '@/lib/networkAPI';
 import PageLayout from '@/components/PageLayout';
 import { MusicPlayer } from '@/components';
+import { Dialog } from '@capacitor/dialog';
 import { useRouter } from 'next/router';
+
+import { Button } from '@mui/material';
 
 function secondsToTime(seconds) {
     const minutes = Math.floor(seconds / 60);
@@ -19,45 +24,65 @@ export default function IntervalPage() {
     const [intervalLow, setIntervalLow] = useState(0);
     const [intervalHigh, setIntervalHigh] = useState(0);
     const [currentMode, setCurrentMode] = useState('Low');
+    const [currentSong, setCurrentSong] = useState(null);
+    const [songCache, setSongCache] = useState([]);
 
-    let currentSong = '';
-    const songsToSave = [];
     const router = useRouter();
 
-    const checkCurrentSong = async () => {
-        const currentSongData = await NetworkAPI.get('/api/spotify/currentSong');
-        if (currentSongData) {
-            if (currentSong !== currentSongData.data.item.name) {
-                currentSong = currentSongData.data.item.name;
-                queueNewSong(currentSongData);
-            }
-        }
-    }
-
-    const queueNewSong = async () => {
-        const intervalMode = '/api/generation/interval?';
-        const queueRoute = '/api/spotify/queue';
-        let trackURI = '';
-        let status = '1';
-        if (currentMode === "Low") {
-            status = '0';        
-        }
-        const highRes = await fetch(intervalMode + new URLSearchParams({
-            status: status,
-            username: localStorage.getItem('username'),
-        }));
-        trackURI = await highRes.json();
-        songsToSave.push(trackURI[0]);
-        console.log(songsToSave);
-        fetch(queueRoute, {
+    const saveToProfile = async (playlistURIs) => {
+        console.log(playlistURIs);
+        const saveRoute = '/api/generation/save';
+        await fetch(saveRoute, {
             method: 'POST',
             body: JSON.stringify({
-                songURI: trackURI
-            })
+                playlistName: 'Kadence Interval Mode',
+                playlistArray: playlistURIs,
+            }),
         });
-    }
+    };
 
     useEffect(() => {
+        async function queueNewSong() {
+            const intervalMode = '/api/generation/interval?';
+            const queueRoute = '/api/spotify/queue';
+            let trackURI = '';
+            let status = '1';
+            if (currentMode === 'Low') {
+                status = '0';
+            }
+            const highRes = await fetch(
+                intervalMode +
+                    new URLSearchParams({
+                        status,
+                        username: localStorage.getItem('username'),
+                    })
+            );
+            trackURI = await highRes.json();
+            setSongCache((prev) => {
+                const newCache = [...prev, trackURI[0]];
+                console.log('New Cache', newCache);
+                return newCache;
+            });
+            fetch(queueRoute, {
+                method: 'POST',
+                body: JSON.stringify({
+                    songURI: trackURI,
+                }),
+            });
+        }
+
+        async function checkCurrentSong() {
+            const currentSongData = await NetworkAPI.get(
+                '/api/spotify/currentSong'
+            );
+            if (currentSongData) {
+                if (currentSong !== currentSongData?.data?.item?.name) {
+                    setCurrentSong(currentSongData?.data?.item?.name);
+                    queueNewSong(currentSongData);
+                }
+            }
+        }
+
         const counter = setInterval(() => {
             if (ready) {
                 setTimer((prev) => {
@@ -65,10 +90,9 @@ export default function IntervalPage() {
                         if (currentMode === 'High') {
                             setCurrentMode('Low');
                             return intervalLow;
-                        } else {
-                            setCurrentMode('High');
-                            return intervalHigh;
                         }
+                        setCurrentMode('High');
+                        return intervalHigh;
                     }
                     checkCurrentSong();
                     return prev - 1;
@@ -76,27 +100,38 @@ export default function IntervalPage() {
             }
         }, 1000);
         return () => clearInterval(counter);
-    }, [ready]);
+    }, [ready, currentMode, currentSong, intervalHigh, intervalLow]);
 
     useEffect(() => {
         if (Object.keys(router.query).length > 0 && !ready) {
-            const low = parseInt(router.query.intervalLow) * 60;
-            const high = parseInt(router.query.intervalHigh) * 60;
+            const low = parseInt(router.query.intervalLow, 10) * 60;
+            const high = parseInt(router.query.intervalHigh, 10) * 60;
             setIntervalLow(low);
             setIntervalHigh(high);
             setTimer(low);
             setReady(true);
-
-            // Queue songs? Might have to return them as well
-            // in the handler as the response so that I can cue
-            // them for Apple Music on the frontend
-            NetworkAPI.get('/').then(console.log);
         }
-    }, [router.query]);
+    }, [router.query, ready]);
+
+    async function handleEndSession() {
+        if (songCache.length > 0) {
+            const { value: saveToPlaylist } = await Dialog.confirm({
+                title: 'What did you think?',
+                message: 'Would you like to save these songs to a playlist?',
+                okButtonTitle: 'Yes',
+                cancelButtonTitle: 'No',
+            });
+            if (saveToPlaylist) {
+                console.log('Saving', songCache);
+                saveToProfile(songCache);
+            }
+        }
+        router.push('/home');
+    }
 
     return (
-        <PageLayout title="Interval Mode" includeNav={true}>
-            <div style={{ overflow: 'hidden', height: '100%' }}>
+        <PageLayout title="Interval Mode" includeNav={false}>
+            <div className={styles.pageWrapper}>
                 <p
                     style={{
                         textAlign: 'center',
@@ -107,6 +142,16 @@ export default function IntervalPage() {
                     {currentMode} Energy: {ready && secondsToTime(timer)}
                 </p>
                 <MusicPlayer size="large" type="spotify" />
+                <Button
+                    variant="contained"
+                    sx={{
+                        width: '25ch',
+                        backgroundColor: 'button.primary',
+                    }}
+                    onClick={handleEndSession}
+                >
+                    End Session
+                </Button>
             </div>
         </PageLayout>
     );

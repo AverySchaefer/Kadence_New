@@ -10,7 +10,8 @@ handler.use(middleware);
 
 async function getCurrentSong(token) {
     const { access_token: accessToken } = await refreshToken(token);
-    const CURRENT_SONG_ENDPOINT = 'https://api.spotify.com/v1/me/player/currently-playing';
+    const CURRENT_SONG_ENDPOINT =
+        'https://api.spotify.com/v1/me/player/currently-playing';
     return fetch(CURRENT_SONG_ENDPOINT, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -56,7 +57,11 @@ async function getIntervalRecommendations(token, prefData, intervalStatus) {
     const response = await getCurrentSong(token);
     const songItem = await response.json();
     const songSeedID = songItem.item.id;
-    const searchParameters = await generateSearchParams(songSeedID, prefData, intervalStatus);
+    const searchParameters = await generateSearchParams(
+        songSeedID,
+        prefData,
+        intervalStatus
+    );
 
     const RECOMMENDATIONS_ENDPOINT = `https://api.spotify.com/v1/recommendations?`;
     return fetch(RECOMMENDATIONS_ENDPOINT + searchParameters, {
@@ -68,22 +73,22 @@ async function getIntervalRecommendations(token, prefData, intervalStatus) {
 
 async function playlistScreening(songItems, userData) {
     const explicitFlag = userData.allowExplicit;
-    const blacklistedArtists = userData.blacklistedArtists;
-    const blacklistedSongs = userData.blacklistedSongs;
+    const { blacklistedArtists } = userData;
+    const { blacklistedSongs } = userData;
     let blacklistFlag = false;
 
     const playlistURIs = [];
     for (let i = 0; i < songItems.tracks.length; i++) {
         if (explicitFlag === false && songItems.tracks[i].explicit === true) {
             blacklistFlag = true;
-        } 
+        }
 
         const songName = songItems.tracks[i].name;
         const songArtists = [];
         for (let j = 0; j < songItems.tracks[i].artists.length; j++) {
             songArtists.push(songItems.tracks[i].artists.name);
         }
-    
+
         /* Checking the current song against the blacklist songs list */
         for (let k = 0; k < blacklistedSongs.length; k++) {
             if (blacklistedSongs[k] === songName) {
@@ -93,6 +98,8 @@ async function playlistScreening(songItems, userData) {
         }
 
         /* Doing the same for artists */
+        // linter says this loop only allows one iteration
+        // eslint-disable-next-line no-unreachable-loop
         for (let l = 0; l < songArtists.length; l++) {
             for (let m = 0; m < blacklistedArtists.length; m++) {
                 if (songArtists[l] === blacklistedArtists[m]) {
@@ -102,7 +109,7 @@ async function playlistScreening(songItems, userData) {
             }
             break;
         }
-        
+
         /* Adding all the URIs of the clean songs */
         if (blacklistFlag === false) {
             playlistURIs.push(songItems.tracks[i].uri);
@@ -121,9 +128,7 @@ handler.get(async (req, res) => {
     const username = queryURL.get('username');
 
     /* CHECK THAT PREFERENCE DATA IS BEING FOUND CORRECTLY */
-    const userData = await req.db
-        .collection('Users')
-        .findOne({ username: username });
+    const userData = await req.db.collection('Users').findOne({ username });
 
     const prefData = await req.db
         .collection('Preferences')
@@ -133,7 +138,12 @@ handler.get(async (req, res) => {
     console.log(prefData);
     /* END PREF DATA */
 
-    const response = await getIntervalRecommendations(accessToken, prefData, intervalStatus);
+    let response = await getIntervalRecommendations(
+        accessToken,
+        prefData,
+        intervalStatus
+    );
+    const currentSong = await getCurrentSong(accessToken);
 
     // Check if nothing is currently active (was throwing error before)
     if (response.status === 204 && response.statusText === 'No Content') {
@@ -145,7 +155,22 @@ handler.get(async (req, res) => {
         return;
     }
 
-    const songItems = await response.json();
+    let songItems = await response.json();
+    const currentSongItems = await currentSong.json();
+    while (currentSongItems.item.name === songItems.tracks[0].name) {
+        console.log('Queued same song');
+        // TODO: Fix this
+        // eslint-disable-next-line no-await-in-loop
+        response = await getIntervalRecommendations(
+            accessToken,
+            prefData,
+            intervalStatus
+        );
+        // TODO: Fix this
+        // eslint-disable-next-line no-await-in-loop
+        songItems = await response.json();
+    }
+    console.log('Queued a different song');
     const playlistURIs = await playlistScreening(songItems, prefData);
     res.status(200).json(playlistURIs);
 });

@@ -4,8 +4,7 @@
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    padding: 5rem 1.5rem;
-    min-height: 100vh;
+    height: 100%;
     max-width: 380px;
 }
 
@@ -18,8 +17,28 @@
     align-items: center;
 }
 
+.regForm {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-top: 10%;
+    padding-bottom: 10%;
+    gap: 1rem;
+    align-items: center;
+}
+
 .formInfo {
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: left;
+}
+
+.formRegInfo {
+    width: 80%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -39,7 +58,6 @@
 .title {
     text-align: center;
     color: #69e267;
-
 }
 
 .text {
@@ -50,11 +68,12 @@
     width: 100%;
     height: auto;
     max-width: 380px;
+    margin-top: 2rem;
 }
 
 .note {
-    margin: 0 1rem 3rem 1rem;
-    font-size: 4vw;
+    margin: 0 0 6rem 0;
+    font-size: 16px;
 }
 
 .divider {
@@ -93,6 +112,8 @@
 .flexWrapper {
     display: flex;
     flex-wrap: wrap;
+    width: 100%;
+    justify-content: space-evenly;
 }
 
 .subsetting {

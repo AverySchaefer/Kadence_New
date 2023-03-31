@@ -5,10 +5,9 @@ import { Dialog } from '@capacitor/dialog';
 import { useRouter } from 'next/router';
 import { Avatar, Box, Button, Stack, Tab, Tabs } from '@mui/material/';
 import NetworkAPI from '@/lib/networkAPI';
-import Default from '@/lib/default';
 import PageLayout from '@/components/PageLayout';
 import { signOut } from 'next-auth/react';
-import { useTheme, createTheme, ThemeProvider } from '@mui/material/styles';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import { useState, useEffect, useRef } from 'react';
 
@@ -21,12 +20,18 @@ function a11yProps(index) {
     };
 }
 
-function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform, deviceName }) {
+function BasicTabs({
+    favArtist,
+    favSong,
+    favAlbum,
+    musicPlatform,
+    deviceName,
+}) {
     const [value, setValue] = useState(0);
     const router = useRouter();
     const theme = createTheme({
         palette: {
-            backgroud: {
+            background: {
                 main: '#1e1e1e',
             },
             button: {
@@ -53,11 +58,6 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform, deviceName }) 
         }
     };
 
-    const handleDeviceConnection = () => {
-        console.log("connecting a device");
-        window.location.assign('https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=23QTD8&scope=activity+cardio_fitness+electrocardiogram+heartrate+location+nutrition+oxygen_saturation+profile+respiratory_rate+settings+sleep+social+temperature+weight&code_challenge=vaC5salqWAhM5k50MMvXGPxkTQGyQeLa0NpP_K3689Y&code_challenge_method=S256&state=3j3k386j3x606u7000324b4x4n0b0o06&redirect_uri=https%3A%2F%2Flocalhost%3A3000%2Ffitbit');
-    }
-
     let platform = '';
     let alt = '';
     let useLink = '';
@@ -65,13 +65,13 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform, deviceName }) 
     if (musicPlatform === 'Spotify') {
         platform = '/Spotify.jpg';
         alt = 'Spotify Logo';
-        accountLink = Default.spotifyPlayerData.songURI;
-        useLink = '/spotify/display';
+        useLink = '/moodPlayer';
+        accountLink = 'https://open.spotify.com/';
     } else if (musicPlatform === 'Apple Music') {
         platform = '/apple-music.jpg';
         alt = 'Apple Music Logo';
         accountLink = 'https://music.apple.com/login';
-        useLink = '/spotify/display';
+        useLink = '/apple/display';
     } else {
         platform = '';
         alt = 'No platform chosen!';
@@ -130,6 +130,7 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform, deviceName }) 
                                         sx={{
                                             width: '25ch',
                                             backgroundColor: 'button.primary',
+                                            color: '#242b2e',
                                         }}
                                         onClick={() =>
                                             router.push('/changeProfile')
@@ -159,6 +160,7 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform, deviceName }) 
                                                     width: '25ch',
                                                     backgroundColor:
                                                         'button.primary',
+                                                    color: '#242b2e',
                                                 }}
                                                 onClick={() =>
                                                     router.push(useLink)
@@ -172,8 +174,12 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform, deviceName }) 
                                                     width: '25ch',
                                                     backgroundColor:
                                                         'button.primary',
+                                                    color: '#242b2e',
+                                                    textTransform:
+                                                        'none !important',
                                                 }}
                                                 href={accountLink}
+                                                target="_blank"
                                             >
                                                 Open {musicPlatform}
                                             </Button>
@@ -184,6 +190,7 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform, deviceName }) 
                                         sx={{
                                             width: '25ch',
                                             backgroundColor: 'button.primary',
+                                            color: '#242b2e',
                                         }}
                                         onClick={handleClick}
                                     >
@@ -211,7 +218,9 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform, deviceName }) 
                                                 variant="contained"
                                                 sx={{
                                                     width: '25ch',
-                                                    backgroundColor: 'button.primary',
+                                                    backgroundColor:
+                                                        'button.primary',
+                                                    color: '#242b2e',
                                                     '&:active': {
                                                         backgroundColor:
                                                             'button.primary',
@@ -228,13 +237,17 @@ function BasicTabs({ favArtist, favSong, favAlbum, musicPlatform, deviceName }) 
                                                 variant="contained"
                                                 sx={{
                                                     width: '25ch',
-                                                    backgroundColor: 'button.primary',
+                                                    color: '#242b2e',
+                                                    backgroundColor:
+                                                        'button.primary',
                                                     '&:active': {
                                                         backgroundColor:
                                                             'button.primary',
                                                     },
                                                 }}
-                                                onClick={() => router.push("/fitbit")}
+                                                onClick={() =>
+                                                    router.push('/fitbit')
+                                                }
                                             >
                                                 Connect
                                             </Button>

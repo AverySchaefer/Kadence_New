@@ -39,8 +39,9 @@
     gap: 0.5rem;
 }
 
-.slider input {
+.slider {
     width: 100%;
+    padding: 0 0.5rem;
 }
 
 .generateButton {

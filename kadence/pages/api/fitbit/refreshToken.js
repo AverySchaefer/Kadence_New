@@ -10,24 +10,26 @@ const handler = nextConnect();
 handler.use(middleware);
 
 handler.post(async (req, res) => {
-    const basic_token = encodeBase64(process.env.FITBIT_CLIENT_ID + ":" + process.env.FITBIT_CLIENT_SECRET);
+    const basicToken = encodeBase64(
+        `${process.env.FITBIT_CLIENT_ID}:${process.env.FITBIT_CLIENT_SECRET}`
+    );
     const doc = {
-        grant_type: "refresh_token",
+        grant_type: 'refresh_token',
         refresh_token: req.body.refreshToken,
-    }
+    };
 
     const response = fetch(GET_TOKEN_URL, {
         headers: {
-            Authorization: `Basic ${basic_token}`,
+            Authorization: `Basic ${basicToken}`,
             'Content-Type': 'application/x-www-form-urlencoded',
         },
-        method: "POST",
-        body: JSON.stringify(doc)
+        method: 'POST',
+        body: JSON.stringify(doc),
     });
 
     console.log(response);
     // TODO ADD ERROR HANDLING
     res.statusCode(response.status).json(response.json());
-})
+});
 
 export default handler;

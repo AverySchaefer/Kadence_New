@@ -6,7 +6,7 @@ import { Avatar, Box, Button, Stack, Tab, Tabs } from '@mui/material/';
 import { useState, useEffect } from 'react';
 import NetworkAPI from '@/lib/networkAPI';
 import PageLayout from '@/components/PageLayout';
-import { useTheme, createTheme, ThemeProvider } from '@mui/material/styles';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 function a11yProps(index) {
     return {
@@ -99,7 +99,7 @@ function BasicTabs({ userData }) {
                                 <Stack spacing={2} alignItems="center">
                                     {userData.private ? (
                                         <p>
-                                            This user is private, so you can't
+                                            This user is private, so you cannot
                                             see their music platform
                                             information.
                                         </p>
@@ -123,6 +123,7 @@ function BasicTabs({ userData }) {
                                                             width: '25ch',
                                                             backgroundColor:
                                                                 'button.primary',
+                                                            color: '#242b2e',
                                                         }}
                                                         href={accountLink}
                                                     >
@@ -145,8 +146,9 @@ function BasicTabs({ userData }) {
                                 <Stack spacing={2} alignItems="center">
                                     {userData.private ? (
                                         <p>
-                                            This user is private, so you can't
-                                            see their device information.
+                                            This user is private, so you cannot
+                                            see their music platform
+                                            information.
                                         </p>
                                     ) : (
                                         <>

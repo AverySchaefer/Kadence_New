@@ -1,9 +1,10 @@
+// TODO: fix this later
+/* eslint-disable no-await-in-loop */
 import { getSession } from 'next-auth/react';
 import nextConnect from 'next-connect';
 import { ObjectId } from 'mongodb';
 import refreshToken from '@/lib/spotify/refreshToken';
 import middleware from '../../../middleware/database';
-import { min } from 'rxjs';
 
 const handler = nextConnect();
 
@@ -11,7 +12,8 @@ handler.use(middleware);
 
 async function getCurrentSong(token) {
     const { access_token: accessToken } = await refreshToken(token);
-    const CURRENT_SONG_ENDPOINT = 'https://api.spotify.com/v1/me/player/currently-playing';
+    const CURRENT_SONG_ENDPOINT =
+        'https://api.spotify.com/v1/me/player/currently-playing';
     return fetch(CURRENT_SONG_ENDPOINT, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -20,13 +22,18 @@ async function getCurrentSong(token) {
 }
 
 // TODO: Stats for every mood: happy, sad, angry, relaxed, energetic, romantic, melancholy
-async function generateSearchParams(songSeedID, prefData, chosenMood, totalSongs) {
+async function generateSearchParams(
+    songSeedID,
+    prefData,
+    chosenMood,
+    totalSongs
+) {
     /* Generate the general search parameters */
     const minSongLength = prefData.minSongLength * 1000; // convert to ms
     const maxSongLength = prefData.maxSongLength * 1000; // convert to ms
     const lyricalInstrumental = prefData.lyricalInstrumental / 100; // convert to 0-1 scale
 
-    if (chosenMood === "happy") {
+    if (chosenMood === 'happy') {
         return new URLSearchParams({
             limit: totalSongs,
             seed_tracks: songSeedID,
@@ -39,7 +46,7 @@ async function generateSearchParams(songSeedID, prefData, chosenMood, totalSongs
             target_danceability: 0.65,
         });
     }
-    if (chosenMood === "sad") {
+    if (chosenMood === 'sad') {
         return new URLSearchParams({
             limit: totalSongs,
             seed_tracks: songSeedID,
@@ -51,7 +58,7 @@ async function generateSearchParams(songSeedID, prefData, chosenMood, totalSongs
             target_enegry: 0.25,
         });
     }
-    if (chosenMood === "angry") {
+    if (chosenMood === 'angry') {
         return new URLSearchParams({
             limit: totalSongs,
             seed_tracks: songSeedID,
@@ -63,7 +70,7 @@ async function generateSearchParams(songSeedID, prefData, chosenMood, totalSongs
             target_energy: 0.75,
         });
     }
-    if (chosenMood === "relaxed") {
+    if (chosenMood === 'relaxed') {
         return new URLSearchParams({
             limit: totalSongs,
             seed_tracks: songSeedID,
@@ -76,8 +83,8 @@ async function generateSearchParams(songSeedID, prefData, chosenMood, totalSongs
             target_tempo: 80,
             max_tempo: 100,
         });
-    } 
-    if (chosenMood === "energetic") {
+    }
+    if (chosenMood === 'energetic') {
         return new URLSearchParams({
             limit: totalSongs,
             seed_tracks: songSeedID,
@@ -90,8 +97,8 @@ async function generateSearchParams(songSeedID, prefData, chosenMood, totalSongs
             min_energy: 0.75,
             target_enegry: 0.8,
         });
-    } 
-    if (chosenMood === "romantic") {
+    }
+    if (chosenMood === 'romantic') {
         return new URLSearchParams({
             limit: totalSongs,
             seed_tracks: songSeedID,
@@ -101,8 +108,8 @@ async function generateSearchParams(songSeedID, prefData, chosenMood, totalSongs
             min_valence: 0.5,
             max_valence: 0.75,
         });
-    } 
-    if (chosenMood === "melancholy") {
+    }
+    if (chosenMood === 'melancholy') {
         return new URLSearchParams({
             limit: totalSongs,
             seed_tracks: songSeedID,
@@ -130,7 +137,12 @@ async function getMoodRecommendations(token, prefData, chosenMood, totalSongs) {
     const response = await getCurrentSong(token);
     const songItem = await response.json();
     const songSeedID = songItem.item.id;
-    const searchParameters = await generateSearchParams(songSeedID, prefData, chosenMood, totalSongs);
+    const searchParameters = await generateSearchParams(
+        songSeedID,
+        prefData,
+        chosenMood,
+        totalSongs
+    );
 
     const RECOMMENDATIONS_ENDPOINT = `https://api.spotify.com/v1/recommendations?`;
     return fetch(RECOMMENDATIONS_ENDPOINT + searchParameters, {
@@ -142,22 +154,22 @@ async function getMoodRecommendations(token, prefData, chosenMood, totalSongs) {
 
 async function playlistScreening(songItems, userData) {
     const explicitFlag = userData.allowExplicit;
-    const blacklistedArtists = userData.blacklistedArtists;
-    const blacklistedSongs = userData.blacklistedSongs;
+    const { blacklistedArtists } = userData;
+    const { blacklistedSongs } = userData;
     let blacklistFlag = false;
 
     const playlistURIs = [];
     for (let i = 0; i < songItems.tracks.length; i++) {
         if (explicitFlag === false && songItems.tracks[i].explicit === true) {
             blacklistFlag = true;
-        } 
+        }
 
         const songName = songItems.tracks[i].name;
         const songArtists = [];
         for (let j = 0; j < songItems.tracks[i].artists.length; j++) {
             songArtists.push(songItems.tracks[i].artists.name);
         }
-    
+
         /* Checking the current song against the blacklist songs list */
         for (let k = 0; k < blacklistedSongs.length; k++) {
             if (blacklistedSongs[k] === songName) {
@@ -167,6 +179,8 @@ async function playlistScreening(songItems, userData) {
         }
 
         /* Doing the same for artists */
+        // linter says this loop only allows one iteration
+        // eslint-disable-next-line no-unreachable-loop
         for (let l = 0; l < songArtists.length; l++) {
             for (let m = 0; m < blacklistedArtists.length; m++) {
                 if (songArtists[l] === blacklistedArtists[m]) {
@@ -176,7 +190,7 @@ async function playlistScreening(songItems, userData) {
             }
             break;
         }
-        
+
         /* Adding all the URIs of the clean songs */
         if (blacklistFlag === false) {
             playlistURIs.push(songItems.tracks[i].uri);
@@ -196,19 +210,22 @@ handler.get(async (req, res) => {
     const username = queryURL.get('username');
 
     /* CHECK THAT PREFERENCE DATA IS BEING FOUND CORRECTLY */
-    const userData = await req.db
-        .collection('Users')
-        .findOne({ username: username });
+    const userData = await req.db.collection('Users').findOne({ username });
 
     const prefData = await req.db
         .collection('Preferences')
         .findOne({ _id: new ObjectId(userData.musicPrefs) });
-    
+
     console.log(userData.musicPrefs);
     console.log(prefData);
     /* END PREF DATA */
 
-    const response = await getMoodRecommendations(accessToken, prefData, chosenMood, playlistLength);
+    const response = await getMoodRecommendations(
+        accessToken,
+        prefData,
+        chosenMood,
+        playlistLength
+    );
 
     // Check if nothing is currently active (was throwing error before)
     if (response.status === 204 && response.statusText === 'No Content') {
@@ -219,16 +236,22 @@ handler.get(async (req, res) => {
         });
         return;
     }
-    
+
     const songItems = await response.json();
     const playlistURIs = await playlistScreening(songItems, prefData);
     let lengthDifference = playlistLength - playlistURIs.length;
 
     while (lengthDifference > 0) {
-        const newResponse = await getMoodRecommendations(accessToken, chosenMood, lengthDifference);
+        console.log(lengthDifference);
+        const newResponse = await getMoodRecommendations(
+            accessToken,
+            prefData,
+            chosenMood,
+            lengthDifference
+        );
         const newSongItems = await newResponse.json();
-        const newPlaylistURIs = await playlistScreening(newSongItems);
-        playlistURIs.concat(newPlaylistURIs);
+        const newPlaylistURIs = await playlistScreening(newSongItems, prefData);
+        playlistURIs.push(...newPlaylistURIs);
         lengthDifference = playlistLength - playlistURIs.length;
     }
 
