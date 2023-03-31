@@ -3,6 +3,7 @@ import MusicPlayer from '@/components/MusicPlayer';
 import Textbox from '@/components/Textbox';
 import { Button } from '@mui/material';
 import { useState, useEffect } from 'react';
+import { Dialog } from '@capacitor/dialog';
 import styles from '@/styles/MoodPlayer.module.css';
 
 export default function LargePlayer() {
@@ -21,6 +22,10 @@ export default function LargePlayer() {
                 playlistName,
                 playlistArray: playlistURIs,
             }),
+        });
+        Dialog.alert({
+            title: 'Success',
+            message: 'Your playlist has been saved!',
         });
         localStorage.setItem('playlistURIs', null);
     }

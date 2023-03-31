@@ -70,7 +70,7 @@ export default function Login() {
     };
 
     return (
-        <PageLayout title="Login" includeTitle={false}>
+        <PageLayout title="Login" includeTitle={false} includeNav={false}>
             <main className={[inter.className, styles.main].join(' ')}>
                 <Image
                     className={styles.img}
