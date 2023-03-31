@@ -242,6 +242,7 @@ handler.get(async (req, res) => {
     let lengthDifference = playlistLength - playlistURIs.length;
 
     while (lengthDifference > 0) {
+        console.log(lengthDifference);
         const newResponse = await getMoodRecommendations(
             accessToken,
             prefData,

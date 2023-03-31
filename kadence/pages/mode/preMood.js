@@ -25,7 +25,7 @@ const theme = createTheme({
 });
 
 export default function MoodModePage() {
-    const [activeMood, setActiveMood] = useState(null);
+    const [activeMood, setActiveMood] = useState('');
     const [waitToSave, setWaitToSave] = useState(false);
     useEffect(() => {
         setActiveMood(localStorage.getItem('mood').toLowerCase());
