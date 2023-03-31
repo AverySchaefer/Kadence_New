@@ -79,6 +79,12 @@ export default function MoodModePage() {
         });
         const playlistID = await saveRes.json();
 
+        const dequeueRoute = '/api/spotify/clearQueue';
+        const dequeueRes = await fetch(dequeueRoute, {
+            method: 'POST',
+        });
+        console.log(dequeueRes);
+
         const queueRoute = '/api/spotify/queue';
         for (let i = 0; i < playlistURIs.length; i++) {
             fetch(queueRoute, {
