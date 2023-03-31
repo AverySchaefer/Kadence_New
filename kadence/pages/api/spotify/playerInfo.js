@@ -28,7 +28,7 @@ handler.get(async (req, res) => {
     const response = await getPlayerInfo(accessToken);
 
     if (response.status === 204 && response.statusText === 'No Content') {
-        res.status(200).json(Default.playerData);
+        res.status(200).json(Default.spotifyPlayerData);
         return;
     }
 

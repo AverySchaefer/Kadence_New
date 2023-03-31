@@ -113,8 +113,6 @@ export default function Register() {
                 favoriteSong,
             };
             localStorage.setItem('mood', mood);
-            localStorage.setItem('waitSave', waitToSave);
-            localStorage.setItem('playlistURIs', null);
             await NetworkAPI.patch('/api/users/update', userData);
             Dialog.alert({
                 title: 'Success',
@@ -142,8 +140,8 @@ export default function Register() {
                 />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main className={[inter.className, styles.regForm].join(' ')}>
-                <div className={styles.formRegInfo}>
+            <main className={[inter.className, styles.main].join(' ')}>
+                <div className={styles.formInfo}>
                     <h1 className={styles.title}>Get set up with</h1>
                     <Image
                         className={styles.img}

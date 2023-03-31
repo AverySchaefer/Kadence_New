@@ -13,8 +13,6 @@ import {
 import { PageLayout } from '@/components/';
 import { useState, useEffect } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import Image from 'next/image';
-import { useRouter } from 'next/router';
 
 const theme = createTheme({
     palette: {
@@ -25,11 +23,9 @@ const theme = createTheme({
 });
 
 export default function MoodModePage() {
-    const [activeMood, setActiveMood] = useState('');
-    const [waitToSave, setWaitToSave] = useState(false);
+    const [activeMood, setActiveMood] = useState(null);
     useEffect(() => {
         setActiveMood(localStorage.getItem('mood').toLowerCase());
-        setWaitToSave(localStorage.getItem('waitSave'));
     }, []);
     const selectedColor = '#69e267';
     const unselectedColor = '#ffffff';
@@ -44,15 +40,7 @@ export default function MoodModePage() {
     const [melancholyIconColor, setMelancholyIconColor] =
         useState(unselectedColor);
     const [numSongs, setNumSongs] = useState(20);
-    const [songs, setSongs] = useState(null);
-
-    const router = useRouter();
-
-    function MakeSong(name, art, key) {
-        this.name = name;
-        this.art = art;
-        this.key = key;
-    }
+    const [generatedItems, setAllItems] = useState('');
 
     // TODO: Remove this when it gets used
     // eslint-disable-next-line no-unused-vars
@@ -79,11 +67,6 @@ export default function MoodModePage() {
         });
         const playlistID = await saveRes.json();
 
-        const dequeueRoute = '/api/spotify/clearQueue';
-        await fetch(dequeueRoute, {
-            method: 'POST',
-        });
-
         const queueRoute = '/api/spotify/queue';
         for (let i = 0; i < playlistURIs.length; i++) {
             fetch(queueRoute, {
@@ -101,30 +84,14 @@ export default function MoodModePage() {
                     playlistID,
                 })
         );
-
-        const songNames = [];
         const playlistItems = await playlistRes.json();
         let playlistSongs = playlistItems.items[0].track.name;
-        songNames.push(
-            new MakeSong(
-                playlistItems.items[0].track.name,
-                playlistItems.items[0].track.album.images[0].url,
-                0
-            )
-        );
         for (let j = 1; j < playlistItems.items.length; j++) {
             playlistSongs = playlistSongs.concat(', ');
             const songName = playlistItems.items[j].track.name;
             playlistSongs = playlistSongs.concat(songName);
-            songNames.push(
-                new MakeSong(
-                    songName,
-                    playlistItems.items[j].track.album.images[0].url,
-                    j
-                )
-            );
         }
-        setSongs(songNames);
+        setAllItems(playlistSongs);
     };
 
     const getRecommendations = async (numberOfSongs, currentMood) => {
@@ -139,19 +106,12 @@ export default function MoodModePage() {
                 })
         );
         const playlistURIs = await res.json();
-        localStorage.setItem('playlistURIs', JSON.stringify(playlistURIs));
-
-        const dequeueRoute = '/api/spotify/clearQueue';
-        const dequeueRes = await fetch(dequeueRoute, {
-            method: 'POST',
-        });
-        console.log(dequeueRes);
 
         const queueRoute = '/api/spotify/queue';
         for (let i = 0; i < playlistURIs.length; i++) {
             // TODO: Fix this
             // eslint-disable-next-line no-await-in-loop
-            fetch(queueRoute, {
+            await fetch(queueRoute, {
                 method: 'POST',
                 body: JSON.stringify({
                     songURI: playlistURIs[i],
@@ -159,40 +119,16 @@ export default function MoodModePage() {
             });
         }
 
-        const songNames = [];
         const getQueueRoute = '/api/spotify/getQueue';
         const queueRes = await fetch(getQueueRoute);
         const queueItems = await queueRes.json();
         let queueSongs = queueItems.queue[0].name;
-        songNames.push(
-            new MakeSong(
-                queueItems.queue[0].name,
-                queueItems.queue[0].album.images[0].url,
-                0
-            )
-        );
-
-        for (let j = 1; j < numberOfSongs; j++) {
+        for (let j = 1; j < queueItems.queue.length; j++) {
             queueSongs = queueSongs.concat(', ');
             const songName = queueItems.queue[j].name;
             queueSongs = queueSongs.concat(songName);
-            songNames.push(
-                new MakeSong(
-                    songName,
-                    queueItems.queue[j].album.images[0].url,
-                    j
-                )
-            );
         }
-        setSongs(songNames);
-    };
-
-    const generateClick = (save) => {
-        if (save === 'true') {
-            getRecommendations(numSongs, activeMood);
-        } else {
-            getAndSaveRecommendations();
-        }
+        setAllItems(queueSongs);
     };
 
     const initializeMood = (currentMood) => {
@@ -279,7 +215,8 @@ export default function MoodModePage() {
 
     useEffect(() => {
         initializeMood(activeMood);
-    }, [activeMood, waitToSave]);
+        console.log(activeMood);
+    }, [activeMood]);
     return (
         <PageLayout title="Mood Mode" prevLink="/home">
             <p>What mood should your playlist be?</p>
@@ -411,59 +348,12 @@ export default function MoodModePage() {
                         variant="contained"
                         sx={{ borderRadius: 3, width: '100%' }}
                         className={`${styles.generateButton}`}
-                        onClick={() => generateClick(waitToSave)}
+                        onClick={() => getRecommendations(numSongs, activeMood)}
                     >
                         Generate Playlist
                     </Button>
+                    <h3>GENERATION PREVIEW: {generatedItems}</h3>
                 </Stack>
-                <br />
-                {songs && (
-                    <>
-                        <div className={styles.songDisplay}>
-                            <h3>Your Playlist:</h3>
-                            <div className={styles.resultsContainer}>
-                                <div className={styles.songResults}>
-                                    {songs.map((song) => (
-                                        <div
-                                            key={song.key}
-                                            className={styles.songContainer}
-                                        >
-                                            <div
-                                                className={
-                                                    styles.albumArtContainer
-                                                }
-                                            >
-                                                <Image
-                                                    src={
-                                                        song.art ??
-                                                        'https://demofree.sirv.com/nope-not-here.jpg'
-                                                    }
-                                                    alt="Album Cover"
-                                                    width={50}
-                                                    height={50}
-                                                />
-                                            </div>
-                                            <div className={styles.songName}>
-                                                <p>{song.name}</p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                        <br />
-                        <Stack alignItems="center" spacing={2}>
-                            <Button
-                                variant="contained"
-                                sx={{ borderRadius: 3, width: '100%' }}
-                                className={`${styles.generateButton}`}
-                                onClick={() => router.push('/moodPlayer')}
-                            >
-                                Kadence Player
-                            </Button>
-                        </Stack>
-                    </>
-                )}
             </ThemeProvider>
         </PageLayout>
     );

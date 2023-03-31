@@ -242,16 +242,14 @@ handler.get(async (req, res) => {
     let lengthDifference = playlistLength - playlistURIs.length;
 
     while (lengthDifference > 0) {
-        console.log(lengthDifference);
         const newResponse = await getMoodRecommendations(
             accessToken,
-            prefData,
             chosenMood,
             lengthDifference
         );
         const newSongItems = await newResponse.json();
-        const newPlaylistURIs = await playlistScreening(newSongItems, prefData);
-        playlistURIs.push(...newPlaylistURIs);
+        const newPlaylistURIs = await playlistScreening(newSongItems);
+        playlistURIs.concat(newPlaylistURIs);
         lengthDifference = playlistLength - playlistURIs.length;
     }
 

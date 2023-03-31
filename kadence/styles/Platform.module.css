@@ -2,16 +2,11 @@
     margin: auto;
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    justify-content: space-between;
     align-items: center;
-    height: 100%;
+    padding: 5rem 1.5rem;
+    min-height: 100vh;
     max-width: 380px;
-}
-
-.main div {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 }
 
 .card {
