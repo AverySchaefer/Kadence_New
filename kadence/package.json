@@ -11,6 +11,7 @@
         "test": "jest --testTimeout=25000"
     },
     "dependencies": {
+        "@awesome-cordova-plugins/in-app-browser": "^6.3.0",
         "@capacitor/android": "^4.6.2",
         "@capacitor/cli": "^4.6.3",
         "@capacitor/core": "^4.6.2",
