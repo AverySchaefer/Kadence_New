@@ -260,9 +260,9 @@ export default function MusicPlayer({
                 }));
                 setTimeout(fetchPlayerDataSpotify, fetchAfterSkipDelayMs);
                 if (onPlay && !playerData.isPlaying) {
-                    onPlay();
+                    onPlay(playerData);
                 } else if (onPause && playerData.isPlaying) {
-                    onPause();
+                    onPause(playerData);
                 }
             })
             .catch(handleError);
@@ -281,7 +281,7 @@ export default function MusicPlayer({
                     }));
                     setTimeout(fetchPlayerDataApple, fetchAfterSkipDelayMs);
                     if (onPause) {
-                        onPause();
+                        onPause(playerData);
                     }
                 })
                 .catch(handleError);
@@ -301,7 +301,7 @@ export default function MusicPlayer({
                                 fetchAfterSkipDelayMs
                             );
                             if (onPlay) {
-                                onPlay();
+                                onPlay(playerData);
                             }
                         })
                         .catch(handleError);
@@ -315,7 +315,7 @@ export default function MusicPlayer({
             .then(() => {
                 setTimeout(fetchPlayerDataSpotify, fetchAfterSkipDelayMs);
                 if (onSkip) {
-                    onSkip();
+                    onSkip(playerData);
                 }
             })
             .catch(handleError);
@@ -328,7 +328,7 @@ export default function MusicPlayer({
             .then(() => {
                 setTimeout(fetchPlayerDataApple, fetchAfterSkipDelayMs);
                 if (onSkip) {
-                    onSkip();
+                    onSkip(playerData);
                 }
             })
             .catch(handleError);
@@ -341,7 +341,7 @@ export default function MusicPlayer({
 
         // Run onDislike function if provided
         if (onDislike) {
-            onDislike();
+            onDislike(playerData);
         }
 
         // Automatically skip to next song
