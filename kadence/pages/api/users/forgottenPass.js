@@ -6,18 +6,10 @@ const handler = nextConnect();
 handler.use(middleware);
 
 handler.post(async (req, res) => {
-    console.log('Sending an email to change the password.');
-    /* Ensuring the request is of type POST */
-    if (req.method !== 'POST') {
-        return;
-    }
-
     /* Pulling information from register form as credentials */
     const credentials = {
         email: req.body.email,
     };
-
-    console.log(credentials);
 
     /* Checking if a user exists in the database with provided username */
     /* If one exists, respond with an error message */
@@ -58,8 +50,10 @@ handler.post(async (req, res) => {
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
             console.log(error);
+            res.status(500).send();
         } else {
             console.log(`Email sent: ${info.response}`);
+            res.status(200).send();
         }
     });
 });
