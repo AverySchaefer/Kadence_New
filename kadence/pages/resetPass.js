@@ -15,7 +15,7 @@ import {
 
 const inter = Inter({ subsets: ['latin'] });
 
-export default function ResetPass() {
+export default function ResetPassword() {
     const router = useRouter();
 
     async function handleSubmit(e) {

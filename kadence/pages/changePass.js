@@ -15,7 +15,7 @@ import NetworkAPI from '@/lib/networkAPI';
 
 const inter = Inter({ subsets: ['latin'] });
 
-export default function Login() {
+export default function ChangePassword() {
     const router = useRouter();
 
     async function handleSubmit(e) {

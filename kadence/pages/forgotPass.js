@@ -12,7 +12,7 @@ import { PageLayout } from '@/components';
 
 const inter = Inter({ subsets: ['latin'] });
 
-export default function ForgotPass() {
+export default function ForgotPassword() {
     const router = useRouter();
 
     async function handleSubmit(e) {
