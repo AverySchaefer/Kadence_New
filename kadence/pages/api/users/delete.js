@@ -1,5 +1,5 @@
 import nextConnect from 'next-connect';
-import middleware from '../../../middleware/database';
+import middleware from '@/middleware/database';
 
 const handler = nextConnect();
 
@@ -12,9 +12,23 @@ handler.delete(async (req, res) => {
         res.status(400).send('No username sent in request');
         return;
     }
+
     const result = await req.db.collection('Users').deleteOne(query);
+
     if (result.deletedCount === 1) {
         console.log('Successfully deleted one document.');
+
+        // Delete this user from anybody's friend (request) lists
+        await req.db.collection('Users').updateMany(
+            {},
+            {
+                $pull: {
+                    friendRequests: req.body.username,
+                    friends: req.body.username,
+                },
+            }
+        );
+
         res.status(200).json(result);
     } else {
         console.log('No documents matched the query. Deleted 0 documents.');
