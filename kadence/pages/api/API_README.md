@@ -211,7 +211,7 @@
 -   Request Body Elements
     -   username: STRING
 -   Response Body Elements
-    -   requests: ARRAY of usernames who have sent friend requests to this user
+    -   requests: ARRAY of {username, profilePic} for those who've sent requests
 -   Response Status Codes
     -   200: Request Successful
     -   400: Bad request (sender and recipient are same, one doesn't exist)

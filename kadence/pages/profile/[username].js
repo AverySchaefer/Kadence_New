@@ -165,7 +165,7 @@ export default function OtherProfile() {
     const sentMeRequest = userData?.sentMeRequest;
 
     let friendButtonText = 'Add Friend';
-    if (pendingFriend) friendButtonText = 'Cancel Friend Request';
+    if (pendingFriend) friendButtonText = 'Cancel Request';
     if (isFriend) friendButtonText = 'Remove Friend';
 
     // Fetch values from database
@@ -181,17 +181,16 @@ export default function OtherProfile() {
                     }
                 );
                 setUserData(data);
-                console.log(data);
             } catch (err) {
                 Dialog.alert({
                     title: 'Error',
                     message: `An error occurred while fetching profile data: ${err.message}.`,
-                });
+                }).then(router.replace('/search'));
             }
         }
         // Have to check because on first render, all query parameters are undefined
         if (router.isReady) fetchData();
-    }, [username, router.isReady]);
+    }, [username, router]);
 
     function updateFriendStatusOutgoing() {
         if (isFriend) {
@@ -273,9 +272,8 @@ export default function OtherProfile() {
                                         <Button
                                             variant="contained"
                                             sx={{
-                                                width: '25ch',
-                                                backgroundColor:
-                                                    'button.primary',
+                                                width: '20ch',
+                                                backgroundColor: '#69e267',
                                                 color: '#242b2e',
                                                 textTransform:
                                                     'none !important',
@@ -289,9 +287,9 @@ export default function OtherProfile() {
                                         <Button
                                             variant="contained"
                                             sx={{
-                                                width: '25ch',
+                                                width: '20ch',
                                                 backgroundColor:
-                                                    'button.primary',
+                                                    'rgb(245, 86, 86)',
                                                 color: '#242b2e',
                                                 textTransform:
                                                     'none !important',
@@ -309,8 +307,11 @@ export default function OtherProfile() {
                                     <Button
                                         variant="contained"
                                         sx={{
-                                            width: '25ch',
-                                            backgroundColor: 'button.primary',
+                                            width: '20ch',
+                                            backgroundColor:
+                                                pendingFriend || isFriend
+                                                    ? 'rgb(245, 86, 86)'
+                                                    : '#69e267',
                                             color: '#242b2e',
                                             textTransform: 'none !important',
                                         }}

@@ -20,9 +20,17 @@ handler.get(async (req, res) => {
         return;
     }
 
-    // TODO: get other information (profile pic, bio, etc.)
+    // Get information about users who have sent friend requests to this user
+    const cursor = await req.db
+        .collection('Users')
+        .find({ username: { $in: user.friendRequests } })
+        .project({ _id: 0, username: 1, profilePic: 1 });
+
+    const matches = [];
+    await cursor.forEach((match) => matches.push(match));
+
     res.status(200).json({
-        requests: user.friendRequests,
+        requests: matches,
     });
 });
 

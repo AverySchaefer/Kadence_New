@@ -49,15 +49,15 @@ handler.get(async (req, res) => {
     };
 
     if (viewee.private && !isFriend) {
-        console.log('Sending private user');
+        // Send private user
         res.status(200).json(alwaysAvailableData);
     } else {
-        console.log('Sending public user or friend');
+        // Send public user or friend
         res.status(200).json({
             ...alwaysAvailableData,
             musicPlatform: viewee.musicPlatform,
             actions: viewee.actions,
-            // Other private information (device?)
+            // TODO: Add other private information (device?)
         });
     }
 });
