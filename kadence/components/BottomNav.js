@@ -79,11 +79,9 @@ export default function BottomNav(props) {
                     styles.bnTab,
                     activeTabs === 'social' ? styles.active : '',
                 ].join(' ')}
+                onClick={() => changeActiveTab('social')}
             >
-                <NotificationsIcon
-                    sx={{ width: 35, height: 35 }}
-                    onClick={() => changeActiveTab('social')}
-                />
+                <NotificationsIcon sx={{ width: 35, height: 35 }} />
                 Social
             </div>
         </div>

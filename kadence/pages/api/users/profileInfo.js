@@ -33,7 +33,7 @@ handler.get(async (req, res) => {
 
     const isFriend = viewer.friends.includes(vieweeUsername);
     const isPendingFriend = viewee.friendRequests.includes(viewerUsername);
-    const wasSentRequest = viewer.friendRequests.includes(vieweeUsername);
+    const sentMeRequest = viewer.friendRequests.includes(vieweeUsername);
 
     const alwaysAvailableData = {
         username: viewee.username,
@@ -45,18 +45,19 @@ handler.get(async (req, res) => {
         favoriteSong: viewee.favoriteSong,
         isFriend,
         isPendingFriend,
-        wasSentRequest,
+        sentMeRequest,
     };
 
     if (viewee.private && !isFriend) {
         console.log('Sending private user');
         res.status(200).json(alwaysAvailableData);
     } else {
-        console.log('Sending public user');
+        console.log('Sending public user or friend');
         res.status(200).json({
             ...alwaysAvailableData,
             musicPlatform: viewee.musicPlatform,
-            // Other private information (device? activity log?)
+            actions: viewee.actions,
+            // Other private information (device?)
         });
     }
 });

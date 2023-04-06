@@ -66,10 +66,12 @@ handler.post(async (req, res) => {
     }
 
     // Add sender to recipient's list of friend requests
-    await req.db.updateOne(
-        { username: recipientUsername },
-        { $addToSet: { friendRequests: senderUsername } }
-    );
+    await req.db
+        .collection('Users')
+        .updateOne(
+            { username: recipientUsername },
+            { $addToSet: { friendRequests: senderUsername } }
+        );
 
     res.status(200).send();
 });

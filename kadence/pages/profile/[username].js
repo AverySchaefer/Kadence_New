@@ -39,6 +39,8 @@ function BasicTabs({ userData }) {
         accountLink = '';
     }
 
+    const hidePrivateInfo = (userData?.private && !userData?.isFriend) || false;
+
     return (
         <div className={styles.profileTabs}>
             <Box sx={{ width: '98%', bgcolor: '#222222', borderRadius: 4 }}>
@@ -86,7 +88,7 @@ function BasicTabs({ userData }) {
                     {value === 1 && (
                         <Box>
                             <Stack spacing={2} alignItems="center">
-                                {userData.private && !userData.isFriend ? (
+                                {hidePrivateInfo ? (
                                     <p>
                                         This user is private, so you cannot see
                                         their music platform information.
@@ -132,7 +134,7 @@ function BasicTabs({ userData }) {
                     {value === 2 && (
                         <Box>
                             <Stack spacing={2} alignItems="center">
-                                {userData.private && !userData.isFriend ? (
+                                {hidePrivateInfo ? (
                                     <p>
                                         This user is private, so you cannot see
                                         their music platform information.
@@ -158,9 +160,9 @@ export default function OtherProfile() {
     const { username } = router.query;
 
     // Determine friend button text
-    const isFriend = userData?.isFriend || false;
-    const pendingFriend = userData?.isPendingFriend || false;
-    const wasSentRequest = userData?.wasSentRequest || false;
+    const isFriend = userData?.isFriend;
+    const pendingFriend = userData?.isPendingFriend;
+    const sentMeRequest = userData?.sentMeRequest;
 
     let friendButtonText = 'Add Friend';
     if (pendingFriend) friendButtonText = 'Cancel Friend Request';
@@ -178,8 +180,8 @@ export default function OtherProfile() {
                         vieweeUsername: username,
                     }
                 );
-                console.log(data);
                 setUserData(data);
+                console.log(data);
             } catch (err) {
                 Dialog.alert({
                     title: 'Error',
@@ -191,26 +193,41 @@ export default function OtherProfile() {
         if (router.isReady) fetchData();
     }, [username, router.isReady]);
 
-    function updateFriendStatusSend() {
+    function updateFriendStatusOutgoing() {
         if (isFriend) {
             // Remove friend
-            console.log('Removing friend');
+            NetworkAPI.post('/api/friends/remove', {
+                username: localStorage.getItem('username'),
+                usernameToRemove: username,
+            }).then(() => router.reload());
         } else if (pendingFriend) {
             // Cancel request
-            console.log('Cancelling Request');
+            NetworkAPI.post('/api/friends/cancel', {
+                senderUsername: localStorage.getItem('username'),
+                recipientUsername: username,
+            }).then(() => router.reload());
         } else {
             // Add friend
-            console.log('Sending friend request');
+            NetworkAPI.post('/api/friends/request', {
+                senderUsername: localStorage.getItem('username'),
+                recipientUsername: username,
+            }).then(() => router.reload());
         }
     }
 
-    function updateFriendStatusReceive(acceptRequest) {
-        if (acceptRequest) {
+    function updateFriendStatusIncoming(isAcceptingRequest) {
+        if (isAcceptingRequest) {
             // Accept pending friend request
-            console.log('Accept request');
+            NetworkAPI.post('/api/friends/accept', {
+                senderUsername: username,
+                recipientUsername: localStorage.getItem('username'),
+            }).then(() => router.reload());
         } else {
             // Deny pending friend request
-            console.log('Deny request');
+            NetworkAPI.post('/api/friends/deny', {
+                senderUsername: username,
+                recipientUsername: localStorage.getItem('username'),
+            }).then(() => router.reload());
         }
     }
 
@@ -251,7 +268,7 @@ export default function OtherProfile() {
                                 spacing={2}
                                 direction={'row'}
                             >
-                                {wasSentRequest ? (
+                                {sentMeRequest ? (
                                     <>
                                         <Button
                                             variant="contained"
@@ -264,7 +281,7 @@ export default function OtherProfile() {
                                                     'none !important',
                                             }}
                                             onClick={() =>
-                                                updateFriendStatusReceive(true)
+                                                updateFriendStatusIncoming(true)
                                             }
                                         >
                                             Accept Request
@@ -280,7 +297,9 @@ export default function OtherProfile() {
                                                     'none !important',
                                             }}
                                             onClick={() =>
-                                                updateFriendStatusReceive(false)
+                                                updateFriendStatusIncoming(
+                                                    false
+                                                )
                                             }
                                         >
                                             Deny Request
@@ -295,7 +314,7 @@ export default function OtherProfile() {
                                             color: '#242b2e',
                                             textTransform: 'none !important',
                                         }}
-                                        onClick={updateFriendStatusSend}
+                                        onClick={updateFriendStatusOutgoing}
                                     >
                                         {friendButtonText}
                                     </Button>

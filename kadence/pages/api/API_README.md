@@ -64,8 +64,10 @@
     -   favoriteSong: STRING
     -   isFriend: BOOLEAN
     -   isPendingFriend: BOOLEAN
-    -   (Above are always sent, below are sent only for public users)
+    -   sentMeRequest: BOOLEAN
+    -   (Above are always sent, below are sent only for public users or friends)
     -   musicPlatform: STRING
+    -   actions: ARRAY of action objects
 -   Response Status Codes
     -   200: Request Successful (can return empty array)
     -   400: No username query given

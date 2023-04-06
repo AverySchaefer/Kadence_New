@@ -19,10 +19,12 @@ handler.post(async (req, res) => {
     }
 
     // Remove sender from recipient's list of friend requests
-    await req.db.updateOne(
-        { username: recipientUsername },
-        { $pull: { friendRequests: senderUsername } }
-    );
+    await req.db
+        .collection('Users')
+        .updateOne(
+            { username: recipientUsername },
+            { $pull: { friendRequests: senderUsername } }
+        );
 
     res.status(200).send();
 });
