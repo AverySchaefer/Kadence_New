@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { RiHomeSmile2Line, RiUser3Fill } from 'react-icons/ri';
 import { BiSearchAlt } from 'react-icons/bi';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 
 export default function BottomNav(props) {
     const router = useRouter();
@@ -25,6 +26,9 @@ export default function BottomNav(props) {
                 break;
             case 'profile':
                 router.push('/profile');
+                break;
+            case 'social':
+                router.push('/social');
                 break;
             default:
                 break;
@@ -69,6 +73,16 @@ export default function BottomNav(props) {
                     onClick={() => changeActiveTab('profile')}
                 />
                 Profile
+            </div>
+            <div
+                className={[
+                    styles.bnTab,
+                    activeTabs === 'social' ? styles.active : '',
+                ].join(' ')}
+                onClick={() => changeActiveTab('social')}
+            >
+                <NotificationsIcon sx={{ width: 35, height: 35 }} />
+                Social
             </div>
         </div>
     );

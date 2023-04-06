@@ -52,7 +52,8 @@
 ### GET `/api/users/profileInfo`
 
 -   Request Query Elements
-    -   username: STRING
+    -   viewerUsername: STRING
+    -   vieweeUsername: STRING
 -   Return Body Elements
     -   username: STRING
     -   bio: STRING
@@ -61,8 +62,12 @@
     -   favoriteAlbum: STRING
     -   favoriteArtist: STRING
     -   favoriteSong: STRING
-    -   (Above are always sent, below are sent only for public users)
+    -   isFriend: BOOLEAN
+    -   isPendingFriend: BOOLEAN
+    -   sentMeRequest: BOOLEAN
+    -   (Above are always sent, below are sent only for public users or friends)
     -   musicPlatform: STRING
+    -   actions: ARRAY of action objects
 -   Response Status Codes
     -   200: Request Successful (can return empty array)
     -   400: No username query given
@@ -153,6 +158,63 @@
     -   200: Request Successful
     -   400: Account cannot be found (incorrect or missing uid)
     -   500: No account was able to be updated
+
+## FRIENDS (`/api/friends/~`)
+
+### POST `/api/friends/request`
+
+-   Request Body Elements
+    -   senderUsername: STRING
+    -   recipientUsername: STRING
+-   Response Status Codes
+    -   200: Request Successful
+    -   400: Bad request (usernames missing, usernames same, one doesn't exist)
+
+### POST `/api/friends/cancel`
+
+-   Request Body Elements
+    -   senderUsername: STRING
+    -   recipientUsername: STRING
+-   Response Status Codes
+    -   200: Request Successful
+    -   400: Bad request (usernames missing, usernames same)
+
+### POST `/api/friends/accept`
+
+-   Request Body Elements
+    -   senderUsername: STRING
+    -   recipientUsername: STRING
+-   Response Status Codes
+    -   200: Request Successful
+    -   400: Bad request (usernames missing, request doesn't exist)
+
+### POST `/api/friends/deny`
+
+-   Request Body Elements
+    -   senderUsername: STRING
+    -   recipientUsername: STRING
+-   Response Status Codes
+    -   200: Request Successful
+    -   400: Bad request (usernames missing, usernames same)
+
+### POST `/api/friends/remove`
+
+-   Request Body Elements
+    -   username: STRING
+    -   usernameToRemove: STRING
+-   Response Status Codes
+    -   200: Request Successful
+    -   400: Bad request (usernames missing, usernames same)
+
+### GET `/api/friends/getRequests`
+
+-   Request Body Elements
+    -   username: STRING
+-   Response Body Elements
+    -   requests: ARRAY of {username, profilePic} for those who've sent requests
+-   Response Status Codes
+    -   200: Request Successful
+    -   400: Bad request (sender and recipient are same, one doesn't exist)
 
 ## PREFERENCES (`/api/preferences/~`)
 
