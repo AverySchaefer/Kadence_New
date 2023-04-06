@@ -43,11 +43,9 @@ export default function BottomNav(props) {
                     styles.bnTab,
                     activeTabs === 'home' ? styles.active : '',
                 ].join(' ')}
+                onClick={() => changeActiveTab('home')}
             >
-                <RiHomeSmile2Line
-                    size="35"
-                    onClick={() => changeActiveTab('home')}
-                />
+                <RiHomeSmile2Line size="35" />
                 Home
             </div>
             <div
@@ -55,11 +53,9 @@ export default function BottomNav(props) {
                     styles.bnTab,
                     activeTabs === 'search' ? styles.active : '',
                 ].join(' ')}
+                onClick={() => changeActiveTab('search')}
             >
-                <BiSearchAlt
-                    size="35"
-                    onClick={() => changeActiveTab('search')}
-                />
+                <BiSearchAlt size="35" />
                 Search
             </div>
             <div
@@ -67,11 +63,9 @@ export default function BottomNav(props) {
                     styles.bnTab,
                     activeTabs === 'profile' ? styles.active : '',
                 ].join(' ')}
+                onClick={() => changeActiveTab('profile')}
             >
-                <RiUser3Fill
-                    size="35"
-                    onClick={() => changeActiveTab('profile')}
-                />
+                <RiUser3Fill size="35" />
                 Profile
             </div>
             <div
