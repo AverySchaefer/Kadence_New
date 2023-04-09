@@ -32,7 +32,7 @@ describe('PATCH /music/update', () => {
                         'content-type': 'application/json',
                     },
                     body: JSON.stringify({
-                        uid: new ObjectId('63efd818545984788a2b0242'), 
+                        _id: new ObjectId('63efd818545984788a2b0242'), 
                         spotifyAccountID: '12345',
                         appleMusicAccountID: '12345',
                     }),
@@ -44,7 +44,7 @@ describe('PATCH /music/update', () => {
         });
     });
 
-    it('should respond with 400 status code if no uid', async () => {
+    it('should respond with 400 status code if no _id', async () => {
         await testApiHandler({
             handler,
             test: async ({ fetch }) => {
@@ -54,7 +54,7 @@ describe('PATCH /music/update', () => {
                         'content-type': 'application/json',
                     },
                     body: JSON.stringify({
-                        uid: '', 
+                        _id: '', 
                         spotifyAccountID: '12345',
                         appleMusicAccountID: '12345',
                     }),
@@ -76,7 +76,7 @@ describe('PATCH /music/update', () => {
                         'content-type': 'application/json',
                     },
                     body: JSON.stringify({
-                        uid: new ObjectId('63efd818545984788a2b0247'), 
+                        _id: new ObjectId('63efd818545984788a2b0247'), 
                         spotifyAccountID: '12345',
                         appleMusicAccountID: '12345',
                     }),

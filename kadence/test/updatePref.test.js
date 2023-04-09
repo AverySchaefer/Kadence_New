@@ -41,7 +41,7 @@ describe('PATCH /preferences/update', () => {
                         'content-type': 'application/json',
                     },
                     body: JSON.stringify({
-                        uid: new ObjectId('63efd818545984788a2b0242'), 
+                        _id: new ObjectId('63efd818545984788a2b0242'), 
                         allowExplicit: true,
                         lyricalInstrumental: 'Both',
                         lyricalLanguage: 'English',
@@ -103,7 +103,7 @@ describe('PATCH /preferences/update', () => {
                         'content-type': 'application/json',
                     },
                     body: JSON.stringify({
-                        uid: new ObjectId('63efd818545984788a2b0247'), 
+                        _id: new ObjectId('63efd818545984788a2b0247'), 
                         allowExplicit: true,
                         lyricalInstrumental: 'Both',
                         lyricalLanguage: 'English',

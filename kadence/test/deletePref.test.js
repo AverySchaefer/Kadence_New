@@ -41,7 +41,7 @@ describe('DELETE /preferences/delete', () => {
                         'content-type': 'application/json',
                     },
                     body: JSON.stringify({
-                        uid: new ObjectId('63efd818545984788a2b0247'),
+                        _id: new ObjectId('63efd818545984788a2b0247'),
                     }),
                 });
                 //console.log(res.status);
@@ -61,7 +61,7 @@ describe('DELETE /preferences/delete', () => {
                         'content-type': 'application/json',
                     },
                     body: JSON.stringify({
-                        uid: new ObjectId('63efd818545984788a2b0242'),
+                        _id: new ObjectId('63efd818545984788a2b0242'),
                     }),
                 });
                 //console.log(res.status);
@@ -71,7 +71,7 @@ describe('DELETE /preferences/delete', () => {
         });
     });
 
-    it('should respond with 400 status code if no UID is provided', async () => {
+    it('should respond with 400 status code if no _id is provided', async () => {
         await testApiHandler({
             handler,
             test: async ({ fetch }) => {
@@ -81,7 +81,7 @@ describe('DELETE /preferences/delete', () => {
                         'content-type': 'application/json',
                     },
                     body: JSON.stringify({
-                        uid: '',
+                        _id: '',
                     }),
                 });
                 //console.log(res.status);

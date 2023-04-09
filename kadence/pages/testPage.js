@@ -139,13 +139,13 @@ const API = {
             title: 'Get Preferences',
             url: '/api/preferences/getPreferences',
             method: 'GET',
-            dataReqs: [{ field: 'uid' }],
+            dataReqs: [{ field: '_id' }],
         },
         {
             title: 'Delete',
             url: '/api/preferences/delete',
             method: 'DELETE',
-            dataReqs: [{ field: 'uid' }],
+            dataReqs: [{ field: '_id' }],
         },
         {
             title: 'Insert',
@@ -170,7 +170,7 @@ const API = {
             url: '/api/preferences/update',
             method: 'PATCH',
             dataReqs: [
-                { field: 'uid' },
+                { field: '_id' },
                 { field: 'allowExplicit', type: 'flag' },
                 { field: 'lyricalInstrumental', type: 'number' },
                 { field: 'lyricalLanguage' },
@@ -190,13 +190,13 @@ const API = {
             title: 'Get Music Platform',
             url: '/api/music/getPlatform',
             method: 'GET',
-            dataReqs: [{ field: 'uid' }],
+            dataReqs: [{ field: '_id' }],
         },
         {
             title: 'Delete',
             url: '/api/music/delete',
             method: 'DELETE',
-            dataReqs: [{ field: 'uid' }],
+            dataReqs: [{ field: '_id' }],
         },
         {
             title: 'Insert',
@@ -212,7 +212,7 @@ const API = {
             url: '/api/music/update',
             method: 'PATCH',
             dataReqs: [
-                { field: 'uid' },
+                { field: '_id' },
                 { field: 'spotifyAccountID' },
                 { field: 'appleMusicID' },
             ],
@@ -223,13 +223,13 @@ const API = {
             title: 'Get Device',
             url: '/api/devices/getDevices',
             method: 'GET',
-            dataReqs: [{ field: 'uid' }],
+            dataReqs: [{ field: '_id' }],
         },
         {
             title: 'Delete',
             url: '/api/devices/delete',
             method: 'DELETE',
-            dataReqs: [{ field: 'uid' }],
+            dataReqs: [{ field: '_id' }],
         },
         {
             title: 'Insert',
@@ -247,7 +247,7 @@ const API = {
             url: '/api/devices/update',
             method: 'PATCH',
             dataReqs: [
-                { field: 'uid' },
+                { field: '_id' },
                 { field: 'deviceList', type: 'array' },
                 { field: 'selectedDeviceName' },
                 { field: 'selectedDeviceID' },

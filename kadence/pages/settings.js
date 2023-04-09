@@ -114,7 +114,7 @@ export default function Settings() {
                 const { data: prefData } = await NetworkAPI.get(
                     '/api/preferences/getPreferences',
                     {
-                        uid: userData.musicPrefs,
+                        _id: userData.musicPrefs,
                     }
                 );
                 setAllowExplicit(prefData.allowExplicit ?? false);
@@ -182,7 +182,7 @@ export default function Settings() {
 
     async function submitData() {
         const musicPrefData = {
-            uid: musicPrefId,
+            _id: musicPrefId,
             allowExplicit,
             lyricalInstrumental,
             lyricalLanguage,

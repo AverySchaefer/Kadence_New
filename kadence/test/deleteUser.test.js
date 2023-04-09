@@ -57,7 +57,7 @@ describe('DELETE /users/delete', () => {
         });
     });
 
-    it('should respond with 400 status code if no UID is provided', async () => {
+    it('should respond with 400 status code if no _id is provided', async () => {
         await testApiHandler({
             handler,
             test: async ({ fetch }) => {

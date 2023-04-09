@@ -132,7 +132,7 @@ handler.get(async (req, res) => {
 
     const prefData = await req.db
         .collection('Preferences')
-        .findOne({ uid: userData.musicPrefs });
+        .findOne({ _id: userData.musicPrefs });
 
     console.log(userData.musicPrefs);
     console.log(prefData);
