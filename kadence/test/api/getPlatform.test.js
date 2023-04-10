@@ -1,5 +1,5 @@
 import { testApiHandler } from 'next-test-api-route-handler';
-import handler from '../pages/api/music/getPlatform'; // TODO: change this to import the desired handler!
+import handler from '../pages/api/music/getPlatform';
 import { initTestDB, teardownTestDB } from './testDB';
 import { ObjectId } from 'mongodb';
 
@@ -12,13 +12,11 @@ describe('GET /api/music/getPlatform', () => {
     let db;
     beforeAll(async () => {
         ({ mongoServer, client, db } = await initTestDB(handler));
-        await db
-            .collection('Music')
-            .insertOne({
-                _id: new ObjectId('63efd818545984788a2b0242'), 
-                spotifyAccountID: '12345',
-                appleMusicAccountID: '67890',
-            });
+        await db.collection('Music').insertOne({
+            _id: new ObjectId('63efd818545984788a2b0242'),
+            spotifyAccountID: '12345',
+            appleMusicAccountID: '67890',
+        });
     });
 
     afterAll(async () => {
@@ -28,14 +26,13 @@ describe('GET /api/music/getPlatform', () => {
     it('should respond with 200 status code if doc is retrieved', async () => {
         await testApiHandler({
             handler,
-            url: `/users/getUsers?uid=${correctUID}`, // TODO: change this to the route path!
+            url: `/users/getUsers?uid=${correctUID}`,
             test: async ({ fetch }) => {
                 const res = await fetch({
                     method: 'GET',
                 });
-                //console.log(res.status);
+
                 expect(res.status).toStrictEqual(200);
-                //await expect(res.json()).resolves.toStrictEqual({}); // TODO: change this object to the expected response!
             },
         });
     });
@@ -43,13 +40,12 @@ describe('GET /api/music/getPlatform', () => {
     it('should respond with 400 status code if doc is not in database', async () => {
         await testApiHandler({
             handler,
-            url: `/users/getUsers?uid=${incorrectUID}`, // TODO: change this to the route path!
+            url: `/users/getUsers?uid=${incorrectUID}`,
             test: async ({ fetch }) => {
                 const res = await fetch({
                     method: 'GET',
                 });
                 expect(res.status).toStrictEqual(400);
-                //await expect(res.json()).resolves.toStrictEqual({}); // TODO: change this object to the expected response!
             },
         });
     });
@@ -57,13 +53,12 @@ describe('GET /api/music/getPlatform', () => {
     it('should respond with 400 status code if no uid is sent', async () => {
         await testApiHandler({
             handler,
-            url: `/users/getUsers?uid=${emptyUID}`, // TODO: change this to the route path!
+            url: `/users/getUsers?uid=${emptyUID}`,
             test: async ({ fetch }) => {
                 const res = await fetch({
                     method: 'GET',
                 });
                 expect(res.status).toStrictEqual(400);
-                //await expect(res.json()).resolves.toStrictEqual({}); // TODO: change this object to the expected response!
             },
         });
     });

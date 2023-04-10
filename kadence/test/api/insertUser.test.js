@@ -1,5 +1,5 @@
 import { testApiHandler } from 'next-test-api-route-handler';
-import handler from '../pages/api/users/insert'; // TODO: change this to import the desired handler!
+import handler from '../pages/api/users/insert';
 import { initTestDB, teardownTestDB } from './testDB';
 
 describe('POST /users/insert', () => {
@@ -45,9 +45,8 @@ describe('POST /users/insert', () => {
                         actions: [],
                     }),
                 });
-                //console.log(res.status);
+
                 expect(res.status).toStrictEqual(200);
-                //await expect(res.json()).resolves.toStrictEqual({});
             },
         });
     });
@@ -62,7 +61,6 @@ describe('POST /users/insert', () => {
                         'content-type': 'application/json',
                     },
                     body: JSON.stringify({
-                        //username: 'JohnDoe',
                         email: 'me@aol.com',
                         password: 'password',
                         bio: 'yo',
@@ -83,9 +81,8 @@ describe('POST /users/insert', () => {
                         actions: [],
                     }),
                 });
-                //console.log(res.status);
+
                 expect(res.status).toStrictEqual(400);
-                //await expect(res.json()).resolves.toStrictEqual({});
             },
         });
     });

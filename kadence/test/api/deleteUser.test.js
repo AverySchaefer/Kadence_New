@@ -1,5 +1,5 @@
 import { testApiHandler } from 'next-test-api-route-handler';
-import handler from '../pages/api/users/delete'; // TODO: change this to import the desired handler!
+import handler from '../pages/api/users/delete';
 import { initTestDB, teardownTestDB } from './testDB';
 
 describe('DELETE /users/delete', () => {
@@ -10,7 +10,7 @@ describe('DELETE /users/delete', () => {
         ({ mongoServer, client, db } = await initTestDB(handler));
         await db
             .collection('Users')
-            .insertOne({ _id: '1', username: "JohnDoe", password: "passw0rd" });
+            .insertOne({ _id: '1', username: 'JohnDoe', password: 'passw0rd' });
     });
 
     afterAll(async () => {
@@ -30,9 +30,8 @@ describe('DELETE /users/delete', () => {
                         username: 'IHaveABadName',
                     }),
                 });
-                //console.log(res.status);
+
                 expect(res.status).toStrictEqual(400);
-                //await expect(res.json()).resolves.toStrictEqual({});
             },
         });
     });
@@ -47,12 +46,11 @@ describe('DELETE /users/delete', () => {
                         'content-type': 'application/json',
                     },
                     body: JSON.stringify({
-                        username: "JohnDoe",
+                        username: 'JohnDoe',
                     }),
                 });
-                //console.log(res.status);
+
                 expect(res.status).toStrictEqual(200);
-                //await expect(res.json()).resolves.toStrictEqual({});
             },
         });
     });
@@ -70,9 +68,8 @@ describe('DELETE /users/delete', () => {
                         username: null,
                     }),
                 });
-                //console.log(res.status);
+
                 expect(res.status).toStrictEqual(400);
-                //await expect(res.json()).resolves.toStrictEqual({});
             },
         });
     });

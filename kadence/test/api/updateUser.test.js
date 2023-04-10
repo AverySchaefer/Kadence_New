@@ -1,5 +1,5 @@
 import { testApiHandler } from 'next-test-api-route-handler';
-import handler from '../pages/api/users/update'; // TODO: change this to import the desired handler!
+import handler from '../pages/api/users/update';
 import { initTestDB, teardownTestDB } from './testDB';
 
 describe('PATCH /users/update', () => {
@@ -48,9 +48,8 @@ describe('PATCH /users/update', () => {
                         actions: [],
                     }),
                 });
-                //console.log(res.status);
+
                 expect(res.status).toStrictEqual(200);
-                //await expect(res.json()).resolves.toStrictEqual({});
             },
         });
     });
@@ -65,7 +64,6 @@ describe('PATCH /users/update', () => {
                         'content-type': 'application/json',
                     },
                     body: JSON.stringify({
-                        //username: 'JohnDoe',
                         email: 'me@aol.com',
                         password: 'password',
                         bio: 'yo',
@@ -86,9 +84,8 @@ describe('PATCH /users/update', () => {
                         actions: [],
                     }),
                 });
-                //console.log(res.status);
+
                 expect(res.status).toStrictEqual(400);
-                //await expect(res.json()).resolves.toStrictEqual({});
             },
         });
     });
@@ -124,9 +121,8 @@ describe('PATCH /users/update', () => {
                         actions: [],
                     }),
                 });
-                //console.log(res.status);
+
                 expect(res.status).toStrictEqual(400);
-                //await expect(res.json()).resolves.toStrictEqual({});
             },
         });
     });

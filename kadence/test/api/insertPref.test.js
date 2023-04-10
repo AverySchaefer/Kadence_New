@@ -1,5 +1,5 @@
 import { testApiHandler } from 'next-test-api-route-handler';
-import handler from '../pages/api/preferences/insert'; // TODO: change this to import the desired handler!
+import handler from '../pages/api/preferences/insert';
 import { initTestDB, teardownTestDB } from './testDB';
 
 describe('POST /preferences/insert', () => {
@@ -37,9 +37,8 @@ describe('POST /preferences/insert', () => {
                         blacklistedSongs: ['wonderwall'],
                     }),
                 });
-                //console.log(res.status);
+
                 expect(res.status).toStrictEqual(200);
-                //await expect(res.json()).resolves.toStrictEqual({});
             },
         });
     });

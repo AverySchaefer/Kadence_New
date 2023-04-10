@@ -1,5 +1,5 @@
 import { testApiHandler } from 'next-test-api-route-handler';
-import handler from '../../pages/api/users/changePass'; // TODO: change this to import the desired handler!
+import handler from '../../pages/api/users/changePass';
 import { initTestDB, teardownTestDB } from '../testDB';
 
 describe('POST /users/changePass', () => {
@@ -10,7 +10,7 @@ describe('POST /users/changePass', () => {
         ({ mongoServer, client, db } = await initTestDB(handler));
         await db
             .collection('Users')
-            .insertOne({ _id: '1', username: "JohnDoe", password: "passw0rd" });
+            .insertOne({ _id: '1', username: 'JohnDoe', password: 'passw0rd' });
     });
 
     afterAll(async () => {
@@ -33,9 +33,8 @@ describe('POST /users/changePass', () => {
                         newConfirmedPassword: 'passw0rd',
                     }),
                 });
-                //console.log(res.status);
+
                 expect(res.status).toStrictEqual(400);
-                //await expect(res.json()).resolves.toStrictEqual({});
             },
         });
     });
@@ -56,9 +55,8 @@ describe('POST /users/changePass', () => {
                         newConfirmedPassword: null,
                     }),
                 });
-                //console.log(res.status);
+
                 expect(res.status).toStrictEqual(400);
-                //await expect(res.json()).resolves.toStrictEqual({});
             },
         });
     });
@@ -79,9 +77,8 @@ describe('POST /users/changePass', () => {
                         newConfirmedPassword: 'password',
                     }),
                 });
-                //console.log(res.status);
+
                 expect(res.status).toStrictEqual(400);
-                //await expect(res.json()).resolves.toStrictEqual({});
             },
         });
     });
@@ -102,9 +99,8 @@ describe('POST /users/changePass', () => {
                         newConfirmedPassword: 'password',
                     }),
                 });
-                //console.log(res.status);
+
                 expect(res.status).toStrictEqual(400);
-                //await expect(res.json()).resolves.toStrictEqual({});
             },
         });
     });
@@ -125,9 +121,8 @@ describe('POST /users/changePass', () => {
                         newConfirmedPassword: 'password',
                     }),
                 });
-                //console.log(res.status);
+
                 expect(res.status).toStrictEqual(200);
-                //await expect(res.json()).resolves.toStrictEqual({});
             },
         });
     });
