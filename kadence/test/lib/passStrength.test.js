@@ -1,29 +1,29 @@
-import Password from '@/lib/passwordStrength';
+import { passwordIsStrong } from '@/lib/passwordUtils';
 
 test('Null Password', () => {
-    expect(Password.isStrong(null)).toBe(false);
+    expect(passwordIsStrong(null)).toBe(false);
 });
 
 test('Password Too Short', () => {
-    expect(Password.isStrong('abc')).toBe(false);
+    expect(passwordIsStrong('abc')).toBe(false);
 });
 
 test('Password No Lowercase Letters', () => {
-    expect(Password.isStrong('ABC123!@#')).toBe(false);
+    expect(passwordIsStrong('ABC123!@#')).toBe(false);
 });
 
 test('Password No Uppercase Letters', () => {
-    expect(Password.isStrong('abc123!@#')).toBe(false);
+    expect(passwordIsStrong('abc123!@#')).toBe(false);
 });
 
 test('Password No Numbers', () => {
-    expect(Password.isStrong('abcABC!@#')).toBe(false);
+    expect(passwordIsStrong('abcABC!@#')).toBe(false);
 });
 
 test('Password No Symbols', () => {
-    expect(Password.isStrong('abcABC123')).toBe(false);
+    expect(passwordIsStrong('abcABC123')).toBe(false);
 });
 
 test('Password Valid w/ All Requirements', () => {
-    expect(Password.isStrong('abcABC123!@#')).toBe(true);
+    expect(passwordIsStrong('abcABC123!@#')).toBe(true);
 });

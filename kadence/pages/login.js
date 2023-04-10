@@ -7,6 +7,8 @@ import { useRouter } from 'next/router';
 import { Dialog } from '@capacitor/dialog';
 import { Divider } from '@mui/material';
 
+import { clientSideHash } from '@/lib/passwordUtils';
+
 import NetworkAPI from '@/lib/networkAPI';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -23,11 +25,12 @@ export default function Login() {
         try {
             const { data } = await NetworkAPI.get('/api/users/login', {
                 username: formUsername.value,
-                enteredPW: formPassword.value,
+                enteredPW: clientSideHash(
+                    formUsername.value,
+                    formPassword.value
+                ),
             });
             if (data) {
-                console.log('Adding things to local storage');
-                console.log(data);
                 // Publish user to subscribers and store in local storage to stay logged in between page refreshes
                 const jwt = data.token;
                 localStorage.setItem('jwt', jwt);

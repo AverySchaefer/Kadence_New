@@ -1,4 +1,5 @@
 import { testApiHandler } from 'next-test-api-route-handler';
+import { serverSideHash } from '@/lib/passwordUtils';
 import handler from '../../pages/api/users/changePass';
 import { initTestDB, teardownTestDB } from '../testDB';
 
@@ -8,9 +9,11 @@ describe('POST /users/changePass', () => {
     let db;
     beforeAll(async () => {
         ({ mongoServer, client, db } = await initTestDB(handler));
-        await db
-            .collection('Users')
-            .insertOne({ _id: '1', username: 'JohnDoe', password: 'passw0rd' });
+        await db.collection('Users').insertOne({
+            _id: '1',
+            username: 'JohnDoe',
+            password: await serverSideHash('passw0rd'),
+        });
     });
 
     afterAll(async () => {
@@ -33,7 +36,6 @@ describe('POST /users/changePass', () => {
                         newConfirmedPassword: 'passw0rd',
                     }),
                 });
-
                 expect(res.status).toStrictEqual(400);
             },
         });
@@ -55,7 +57,6 @@ describe('POST /users/changePass', () => {
                         newConfirmedPassword: null,
                     }),
                 });
-
                 expect(res.status).toStrictEqual(400);
             },
         });
@@ -77,7 +78,6 @@ describe('POST /users/changePass', () => {
                         newConfirmedPassword: 'password',
                     }),
                 });
-
                 expect(res.status).toStrictEqual(400);
             },
         });
@@ -99,7 +99,6 @@ describe('POST /users/changePass', () => {
                         newConfirmedPassword: 'password',
                     }),
                 });
-
                 expect(res.status).toStrictEqual(400);
             },
         });
@@ -121,7 +120,6 @@ describe('POST /users/changePass', () => {
                         newConfirmedPassword: 'password',
                     }),
                 });
-
                 expect(res.status).toStrictEqual(200);
             },
         });
