@@ -80,7 +80,7 @@
     -   Return Doc
 -   Response Status Codes
     -   200: Request Successful
-    -   400: Account cannot be found (incorrect or missing uid)
+    -   400: Account cannot be found (incorrect or missing _id)
 
 ### POST `/api/users/insert`
 
@@ -108,7 +108,7 @@
     -   NONE
 -   Response Status Codes
     -   200: Request Successful
-    -   400: No uid provided in request body
+    -   400: No _id provided in request body
     -   500: No account was able to be created
 
 ### POST `/api/users/signup`
@@ -156,7 +156,7 @@
     -   NONE
 -   Response Status Codes
     -   200: Request Successful
-    -   400: Account cannot be found (incorrect or missing uid)
+    -   400: Account cannot be found (incorrect or missing _id)
     -   500: No account was able to be updated
 
 ## FRIENDS (`/api/friends/~`)
@@ -221,22 +221,22 @@
 ### GET `/api/preferences/getPreferences`
 
 -   Request Body Elements
-    -   uid: PREFERENCES_ID
+    -   _id: PREFERENCES_ID
 -   Return Body Elements
     -   Result (document or NULL if no document found)
 -   Response Status Codes
     -   200: Request Successful
-    -   400: Document cannot be found (incorrect or missing uid)
+    -   400: Document cannot be found (incorrect or missing _id)
 
 ### DELETE `/api/preferences/delete`
 
 -   Request Body Elements
-    -   uid: PREFERENCES_ID
+    -   _id: PREFERENCES_ID
 -   Return Body Elements
     -   Return Doc
 -   Response Status Codes
     -   200: Request Successful
-    -   400: Preferences document cannot be found (incorrect or missing uid)
+    -   400: Preferences document cannot be found (incorrect or missing _id)
 
 ### POST `/api/preferences/insert`
 
@@ -256,13 +256,13 @@
     -   NONE
 -   Response Status Codes
     -   200: Request Successful
-    -   400: No uid provided in request body
+    -   400: No _id provided in request body
     -   500: No preferences document was able to be created
 
 ### PATCH `/api/preferences/update`
 
 -   Request Body Elements
-    -   uid: PREFERENCES_ID
+    -   _id: PREFERENCES_ID
     -   allowExplicit: BOOLEAN
     -   lyricalInstrumental: INT
     -   lyricalLanguage: STRING
@@ -278,7 +278,7 @@
     -   NONE
 -   Response Status Codes
     -   200: Request Successful
-    -   400: Preference document cannot be found (incorrect or missing uid)
+    -   400: Preference document cannot be found (incorrect or missing _id)
     -   500: No document was able to be updated
 
 ## MUSIC (`/api/music/~`)
@@ -286,22 +286,22 @@
 ### GET `/api/music/getPlatform`
 
 -   Request Body Elements
-    -   uid: MUSICS_ID
+    -   _id: MUSICS_ID
 -   Return Body Elements
     -   Result (document or NULL if no document found)
 -   Response Status Codes
     -   200: Request Successful
-    -   400: Document cannot be found (incorrect or missing uid)
+    -   400: Document cannot be found (incorrect or missing _id)
 
 ### DELETE `/api/music/delete`
 
 -   Request Body Elements
-    -   uid: MUSICS_ID
+    -   _id: MUSICS_ID
 -   Return Body Elements
     -   Return Doc
 -   Response Status Codes
     -   200: Request Successful
-    -   400: Platform document cannot be found (incorrect or missing uid)
+    -   400: Platform document cannot be found (incorrect or missing _id)
 
 ### POST `/api/music/insert`
 
@@ -312,20 +312,20 @@
     -   NONE
 -   Response Status Codes
     -   200: Request Successful
-    -   400: No uid provided in request body
+    -   400: No _id provided in request body
     -   500: No platform document was able to be created
 
 ### PATCH `/api/music/update`
 
 -   Request Body Elements
-    -   uid: MUSICS_ID
+    -   _id: MUSICS_ID
     -   spotifyAccountID: STRING
     -   appleMusicID: STRING
 -   Return Body Elements
     -   NONE
 -   Response Status Codes
     -   200: Request Successful
-    -   400: Platform document cannot be found (incorrect or missing uid)
+    -   400: Platform document cannot be found (incorrect or missing _id)
     -   500: No document was able to be updated
 
 ## DEVICES (`/api/devices/~`)
@@ -333,22 +333,22 @@
 ### GET `/api/devices/getDevices`
 
 -   Request Body Elements
-    -   uid: DEVICES_ID
+    -   _id: DEVICES_ID
 -   Return Body Elements
     -   Result (document or NULL if no document found)
 -   Response Status Codes
     -   200: Request Successful
-    -   400: Document cannot be found (incorrect or missing uid)
+    -   400: Document cannot be found (incorrect or missing _id)
 
 ### DELETE `/api/devices/delete`
 
 -   Request Body Elements
-    -   uid: DEVICES_ID
+    -   _id: DEVICES_ID
 -   Return Body Elements
     -   Return Doc
 -   Response Status Codes
     -   200: Request Successful
-    -   400: Device document cannot be found (incorrect or missing uid)
+    -   400: Device document cannot be found (incorrect or missing _id)
 
 ### POST `/api/devices/insert`
 
@@ -361,13 +361,13 @@
     -   NONE
 -   Response Status Codes
     -   200: Request Successful
-    -   400: No uid provided in request body
+    -   400: No _id provided in request body
     -   500: No device document was able to be created
 
 ### PATCH `/api/devices/update`
 
 -   Request Body Elements
-    -   uid: DEVICES_ID
+    -   _id: DEVICES_ID
     -   deviceList: STRING[]
     -   selectedDeviceName: STRING
     -   selectedDeviceID: STRING
@@ -376,7 +376,7 @@
     -   NONE
 -   Response Status Codes
     -   200: Request Successful
-    -   400: Device document cannot be found (incorrect or missing uid)
+    -   400: Device document cannot be found (incorrect or missing _id)
     -   500: No document was able to be updated
 
 ## SPOTIFY (`/api/spotify/~`)

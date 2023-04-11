@@ -34,7 +34,7 @@ describe('PATCH /devices/update', () => {
                         'content-type': 'application/json',
                     },
                     body: JSON.stringify({
-                        uid: new ObjectId('63efd818545984788a2b0242'), 
+                        _id: new ObjectId('63efd818545984788a2b0242'), 
                         deviceList: [],
                         selectedDeviceName: 'my watch',
                         selectedDeviceID: '12345',
@@ -48,7 +48,7 @@ describe('PATCH /devices/update', () => {
         });
     });
 
-    it('should respond with 400 status code if no uid', async () => {
+    it('should respond with 400 status code if no _id', async () => {
         await testApiHandler({
             handler,
             test: async ({ fetch }) => {
@@ -58,7 +58,7 @@ describe('PATCH /devices/update', () => {
                         'content-type': 'application/json',
                     },
                     body: JSON.stringify({
-                        uid: '', 
+                        _id: '', 
                         deviceList: [],
                         selectedDeviceName: 'my watch',
                         selectedDeviceID: '12345',
@@ -82,7 +82,7 @@ describe('PATCH /devices/update', () => {
                         'content-type': 'application/json',
                     },
                     body: JSON.stringify({
-                        uid: new ObjectId('63efd818545984788a2b0247'), 
+                        _id: new ObjectId('63efd818545984788a2b0247'), 
                         deviceList: [],
                         selectedDeviceName: 'my watch',
                         selectedDeviceID: '12345',

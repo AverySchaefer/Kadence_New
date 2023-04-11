@@ -4,9 +4,9 @@ import { initTestDB, teardownTestDB } from './testDB';
 import { ObjectId } from 'mongodb';
 
 describe('GET /api/preferences/getPreferences', () => {
-    const correctUID = new ObjectId('63efd818545984788a2b0242');
-    const incorrectUID = new ObjectId('63efd818545984788a2b0247');
-    const emptyUID = '';
+    const correct_id = new ObjectId('63efd818545984788a2b0242');
+    const incorrect_id = new ObjectId('63efd818545984788a2b0247');
+    const empty_id = '';
     let mongoServer;
     let client;
     let db;
@@ -37,7 +37,7 @@ describe('GET /api/preferences/getPreferences', () => {
     it('should respond with 200 status code if doc is retrieved', async () => {
         await testApiHandler({
             handler,
-            url: `/users/getUsers?uid=${correctUID}`, // TODO: change this to the route path!
+            url: `/users/getUsers?_id=${correct_id}`, // TODO: change this to the route path!
             test: async ({ fetch }) => {
                 const res = await fetch({
                     method: 'GET',
@@ -52,7 +52,7 @@ describe('GET /api/preferences/getPreferences', () => {
     it('should respond with 400 status code if doc is not in database', async () => {
         await testApiHandler({
             handler,
-            url: `/users/getUsers?uid=${incorrectUID}`, // TODO: change this to the route path!
+            url: `/users/getUsers?_id=${incorrect_id}`, // TODO: change this to the route path!
             test: async ({ fetch }) => {
                 const res = await fetch({
                     method: 'GET',
@@ -63,10 +63,10 @@ describe('GET /api/preferences/getPreferences', () => {
         });
     });
 
-    it('should respond with 400 status code if no uid is sent', async () => {
+    it('should respond with 400 status code if no _id is sent', async () => {
         await testApiHandler({
             handler,
-            url: `/users/getUsers?uid=${emptyUID}`, // TODO: change this to the route path!
+            url: `/users/getUsers?_id=${empty_id}`, // TODO: change this to the route path!
             test: async ({ fetch }) => {
                 const res = await fetch({
                     method: 'GET',
