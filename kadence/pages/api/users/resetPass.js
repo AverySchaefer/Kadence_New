@@ -25,6 +25,7 @@ handler.post(async (req, res) => {
 
     /* Pulling information from register form as credentials */
     const credentials = {
+        id: req.body.id,
         username: req.body.username,
         newPassword: req.body.newPassword,
         newConfirmedPassword: req.body.newConfirmedPassword,
@@ -66,6 +67,13 @@ handler.post(async (req, res) => {
         });
         return;
     }
+    if (credentials.id !== findExistingUser._id.toHexString()) {
+        res.status(403).json({
+            message:
+                'Cannot update password for this user. Permission not granted.',
+        });
+        return;
+    }
     const enteredUsername = credentials.username;
     const newHashedPassword = await hashPassword(credentials.newPassword);
 
@@ -85,12 +93,12 @@ handler.post(async (req, res) => {
                     );
                 if (updateResult.acknowledged === false) {
                     console.log('Request not acknowledged by database');
-                    updateResult.status(500).send();
+                    res.status(500).send();
                 } else {
                     console.log(
                         'The password has been reset properly. Log-in again!'
                     );
-                    updateResult.status(200).send();
+                    res.status(200).send();
                 }
             } else {
                 console.log('User inputted old password. Try a new one!');

@@ -18,9 +18,14 @@ export default function Login() {
         const { username, newPassword, newConfirmedPassword } = form;
         e.preventDefault();
 
+        // Getting ID from the URL parameters
+        const id = new URLSearchParams(window.location.search).get('id');
+        console.log(id);
+
         // Send Request
         try {
             const data = await NetworkAPI.post('/api/users/resetPass', {
+                id,
                 username: username.value,
                 newPassword: newPassword.value,
                 newConfirmedPassword: newConfirmedPassword.value,

@@ -33,18 +33,18 @@ handler.post(async (req, res) => {
         });
         return;
     }
-    const { username } = findExistingUser;
+    const {username} = findExistingUser;
+    const userHexString = findExistingUser._id.toHexString();
     const resetLink =
         process.env.NODE_ENV === 'development'
-            ? 'http://localhost:3000/resetPass'
-            : 'http://kadenceapp.com/resetPass';
-    console.log(username);
+            ? 'http://localhost:3000/resetPass?id='.concat(userHexString)
+            : 'http://kadenceapp.com/resetPass?id='.concat(userHexString);
 
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
             user: 'jackrosenberg17@gmail.com',
-            pass: 'kzakelglsvhsijik',
+            pass: 'deqahjpnbogfklcw',
         },
     });
 
