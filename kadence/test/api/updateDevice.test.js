@@ -1,21 +1,21 @@
 import { testApiHandler } from 'next-test-api-route-handler';
-import handler from '../pages/api/music/update'; // TODO: change this to import the desired handler!
-import { initTestDB, teardownTestDB } from './testDB';
+import handler from '@/pages/api/devices/update';
+import { initTestDB, teardownTestDB } from '@/test/testDB';
 import { ObjectId } from 'mongodb';
 
-describe('PATCH /music/update', () => {
+describe('PATCH /devices/update', () => {
     let mongoServer;
     let client;
     let db;
     beforeAll(async () => {
         ({ mongoServer, client, db } = await initTestDB(handler));
-        await db
-            .collection('Music')
-            .insertOne({
-                _id: new ObjectId('63efd818545984788a2b0242'), 
-                spotifyAccountID: '12345',
-                appleMusicAccountID: '67890',
-            });
+        await db.collection('Devices').insertOne({
+            _id: new ObjectId('63efd818545984788a2b0242'),
+            deviceList: [],
+            selectedDeviceName: 'my watch',
+            selectedDeviceID: '12345',
+            tracking: true,
+        });
     });
 
     afterAll(async () => {
@@ -32,14 +32,15 @@ describe('PATCH /music/update', () => {
                         'content-type': 'application/json',
                     },
                     body: JSON.stringify({
-                        _id: new ObjectId('63efd818545984788a2b0242'), 
-                        spotifyAccountID: '12345',
-                        appleMusicAccountID: '12345',
+                        _id: new ObjectId('63efd818545984788a2b0242'),
+                        deviceList: [],
+                        selectedDeviceName: 'my watch',
+                        selectedDeviceID: '12345',
+                        tracking: true,
                     }),
                 });
                 console.log(res);
                 expect(res.status).toStrictEqual(200);
-                //await expect(res.json()).resolves.toStrictEqual({});
             },
         });
     });
@@ -54,19 +55,20 @@ describe('PATCH /music/update', () => {
                         'content-type': 'application/json',
                     },
                     body: JSON.stringify({
-                        _id: '', 
-                        spotifyAccountID: '12345',
-                        appleMusicAccountID: '12345',
+                        _id: '',
+                        deviceList: [],
+                        selectedDeviceName: 'my watch',
+                        selectedDeviceID: '12345',
+                        tracking: true,
                     }),
                 });
-                //console.log(res);
+
                 expect(res.status).toStrictEqual(400);
-                //await expect(res.json()).resolves.toStrictEqual({});
             },
         });
     });
 
-    it('should respond with 400 status code if doc can\'t be found', async () => {
+    it("should respond with 400 status code if device can't be found", async () => {
         await testApiHandler({
             handler,
             test: async ({ fetch }) => {
@@ -76,14 +78,15 @@ describe('PATCH /music/update', () => {
                         'content-type': 'application/json',
                     },
                     body: JSON.stringify({
-                        _id: new ObjectId('63efd818545984788a2b0247'), 
-                        spotifyAccountID: '12345',
-                        appleMusicAccountID: '12345',
+                        _id: new ObjectId('63efd818545984788a2b0247'),
+                        deviceList: [],
+                        selectedDeviceName: 'my watch',
+                        selectedDeviceID: '12345',
+                        tracking: true,
                     }),
                 });
-                //console.log(res.status);
+
                 expect(res.status).toStrictEqual(400);
-                //await expect(res.json()).resolves.toStrictEqual({});
             },
         });
     });

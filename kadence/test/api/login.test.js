@@ -2,8 +2,8 @@ import { testApiHandler } from 'next-test-api-route-handler';
 import { hash } from 'bcryptjs';
 import getConfig from 'next/config';
 import jwt from 'jsonwebtoken';
-import handler from '../pages/api/users/login';
-import { initTestDB, teardownTestDB } from './testDB';
+import handler from '@/pages/api/users/login';
+import { initTestDB, teardownTestDB } from '@/test/testDB';
 
 describe('GET /api/users/login', () => {
     const username = 'JohnDoe';

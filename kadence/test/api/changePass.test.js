@@ -1,7 +1,7 @@
 import { testApiHandler } from 'next-test-api-route-handler';
 import { serverSideHash } from '@/lib/passwordUtils';
-import handler from '../pages/api/users/changePass'; // TODO: change this to import the desired handler!
-import { initTestDB, teardownTestDB } from './testDB';
+import handler from '@/pages/api/users/changePass';
+import { initTestDB, teardownTestDB } from '@/test/testDB';
 
 describe('POST /users/changePass', () => {
     let mongoServer;
