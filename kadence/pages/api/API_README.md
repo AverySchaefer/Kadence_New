@@ -509,3 +509,40 @@
     - 200: Request Successful
     - 400: Bad Request
     - 401: Bad Refresh Code
+
+## Apple `/api/apple/~`
+
+### POST `/api/apple/conversion`
+
+- Request Body Elements
+    - playlistName: STRING
+    - playlistArray: STRING[]
+- Return Body
+    - NONE
+- Response Status Codes
+    - 200: Request Successful
+    - 400: Bad Request
+    - 401: Bad Refresh Code
+
+### POST `/api/apple/signIn`
+
+- Request Body Elements
+    - username: STRING
+    - userToken: STRING
+- Return Body
+    - NONE
+- Response Status Codes
+    - 200: Token Saved
+    - 400: User account could not be found
+    - 500: Request not acknowleged by database
+
+### POST `/api/apple/signOut`
+
+- Request Body Elements
+    - username: STRING
+- Return Body
+    - NONE
+- Response Status Codes
+    - 200: Token Deleted
+    - 400: User account could not be found
+    - 500: Request not acknowleged by database
