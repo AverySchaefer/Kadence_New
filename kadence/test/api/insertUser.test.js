@@ -1,13 +1,12 @@
 import { testApiHandler } from 'next-test-api-route-handler';
-import handler from '../pages/api/users/insert';
-import { initTestDB, teardownTestDB } from './testDB';
+import handler from '@/pages/api/users/insert';
+import { initTestDB, teardownTestDB } from '@/test/testDB';
 
 describe('POST /users/insert', () => {
     let mongoServer;
     let client;
-    let db;
     beforeAll(async () => {
-        ({ mongoServer, client, db } = await initTestDB(handler));
+        ({ mongoServer, client } = await initTestDB(handler));
     });
 
     afterAll(async () => {

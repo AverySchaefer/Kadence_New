@@ -1,6 +1,6 @@
 import { testApiHandler } from 'next-test-api-route-handler';
-import handler from '../pages/api/users/getUsers';
-import { initTestDB, teardownTestDB } from './testDB';
+import handler from '@/pages/api/users/getUsers';
+import { initTestDB, teardownTestDB } from '@/test/testDB';
 
 describe('GET /api/users/getUsers', () => {
     const correctUsername = 'JohnDoe';

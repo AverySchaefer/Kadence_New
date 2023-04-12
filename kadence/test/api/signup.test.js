@@ -1,6 +1,6 @@
 import { testApiHandler } from 'next-test-api-route-handler';
-import handler from '../pages/api/users/signup';
-import { initTestDB, teardownTestDB } from './testDB';
+import handler from '@/pages/api/users/signup';
+import { initTestDB, teardownTestDB } from '@/test/testDB';
 
 describe('POST /users/signup', () => {
     let mongoServer;

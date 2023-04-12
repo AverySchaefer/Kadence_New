@@ -1,6 +1,6 @@
 import { testApiHandler } from 'next-test-api-route-handler';
-import handler from '../pages/api/preferences/getPreferences';
-import { initTestDB, teardownTestDB } from './testDB';
+import handler from '@/pages/api/preferences/getPreferences';
+import { initTestDB, teardownTestDB } from '@/test/testDB';
 import { ObjectId } from 'mongodb';
 
 describe('GET /api/preferences/getPreferences', () => {

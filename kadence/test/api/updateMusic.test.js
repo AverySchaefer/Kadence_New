@@ -1,6 +1,6 @@
 import { testApiHandler } from 'next-test-api-route-handler';
-import handler from '../pages/api/music/update';
-import { initTestDB, teardownTestDB } from './testDB';
+import handler from '@/pages/api/music/update';
+import { initTestDB, teardownTestDB } from '@/test/testDB';
 import { ObjectId } from 'mongodb';
 
 describe('PATCH /music/update', () => {
