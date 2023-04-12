@@ -4,6 +4,10 @@ NEW Repository for the mobile application Kadence
 
 Developers: Raymond Xie, Colston Streit, Avery Schaefer, Jackson Rosenberg, Nathan Simon
 
+### Production Build
+
+The current production build of the project resides at `kadenceapp.com`. Visit to see the current build of the project, which will be up to date with the "main" branch.
+
 ### ESLint and Prettier
 
 ESLint is a linter for catching code quality/style issues and forcing you to fix them before building. To see error highlighting in-editor, you need to install the [ESLint extension](vscode:extension/dbaeumer.vscode-eslint) in the VSCode marketplace. Rules can be turned off within a file using a comment or globally in the `.eslintrc.json` file.
@@ -31,6 +35,15 @@ If you opened the `Kadence_New` root directory as your workspace instead of the 
 
 `{package} should be listed in the project's dependencies. Run 'npm i -S {package}' to add it`
 If you see this for a package that you added as a dev-dependency, and you're sure that it should be a dev-dependency, then just make sure everything has been installed properly with `npm ci`, and then restart VSCode. The error should go away.
+
+### Building On Web
+
+NPM allows for testing on the web using a live build of the project. To build and use this feature, run the following command:
+```bash
+npm run dev
+```
+Then, navigate to the url shown (http://localhost:3000) and you will be taken to the libe build of the project in the repository you ran the project in.
+Note that if you make any changes to the code while the live build is running, then save them, reloading the live web build will update the page to contain the changes you made.
 
 ### Building With Capacitor
 
