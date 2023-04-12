@@ -1,6 +1,6 @@
 import { testApiHandler } from 'next-test-api-route-handler';
-import handler from '@/pages/api/preferences/update';
-import { initTestDB, teardownTestDB } from '@/test/testDB';
+import handler from '../pages/api/preferences/update'; // TODO: change this to import the desired handler!
+import { initTestDB, teardownTestDB } from './testDB';
 import { ObjectId } from 'mongodb';
 
 describe('PATCH /preferences/update', () => {
@@ -9,20 +9,22 @@ describe('PATCH /preferences/update', () => {
     let db;
     beforeAll(async () => {
         ({ mongoServer, client, db } = await initTestDB(handler));
-        await db.collection('Preferences').insertOne({
-            _id: new ObjectId('63efd818545984788a2b0242'),
-            allowExplicit: true,
-            lyricalInstrumental: 'Both',
-            lyricalLanguage: 'English',
-            minSongLength: 1,
-            maxSongLength: 20,
-            minPlaylistLength: 1,
-            maxPlaylistLength: 100,
-            faveGenres: ['rock', 'alternative', 'metal'],
-            faveArtists: ['radiohead', 'tool'],
-            blacklistedArtists: ['oasis', 'genesis'],
-            blacklistedSongs: ['wonderwall'],
-        });
+        await db
+            .collection('Preferences')
+            .insertOne({
+                _id: new ObjectId('63efd818545984788a2b0242'), 
+                allowExplicit: true,
+                lyricalInstrumental: 'Both',
+                lyricalLanguage: 'English',
+                minSongLength: 1,
+                maxSongLength: 20,
+                minPlaylistLength: 1,
+                maxPlaylistLength: 100,
+                faveGenres: ['rock', 'alternative', 'metal'],
+                faveArtists: ['radiohead', 'tool'],
+                blacklistedArtists: ['oasis', 'genesis'],
+                blacklistedSongs: ['wonderwall'],
+            });
     });
 
     afterAll(async () => {
@@ -39,7 +41,7 @@ describe('PATCH /preferences/update', () => {
                         'content-type': 'application/json',
                     },
                     body: JSON.stringify({
-                        uid: new ObjectId('63efd818545984788a2b0242'),
+                        _id: new ObjectId('63efd818545984788a2b0242'), 
                         allowExplicit: true,
                         lyricalInstrumental: 'Both',
                         lyricalLanguage: 'English',
@@ -55,6 +57,7 @@ describe('PATCH /preferences/update', () => {
                 });
                 console.log(res);
                 expect(res.status).toStrictEqual(200);
+                //await expect(res.json()).resolves.toStrictEqual({});
             },
         });
     });
@@ -69,6 +72,7 @@ describe('PATCH /preferences/update', () => {
                         'content-type': 'application/json',
                     },
                     body: JSON.stringify({
+                        //_id: '1', 
                         allowExplicit: true,
                         lyricalInstrumental: 'Both',
                         lyricalLanguage: 'English',
@@ -82,12 +86,14 @@ describe('PATCH /preferences/update', () => {
                         blacklistedSongs: ['wonderwall'],
                     }),
                 });
+                //console.log(res);
                 expect(res.status).toStrictEqual(400);
+                //await expect(res.json()).resolves.toStrictEqual({});
             },
         });
     });
 
-    it("should respond with 400 status code if account can't be found", async () => {
+    it('should respond with 400 status code if account can\'t be found', async () => {
         await testApiHandler({
             handler,
             test: async ({ fetch }) => {
@@ -97,7 +103,7 @@ describe('PATCH /preferences/update', () => {
                         'content-type': 'application/json',
                     },
                     body: JSON.stringify({
-                        uid: new ObjectId('63efd818545984788a2b0247'),
+                        _id: new ObjectId('63efd818545984788a2b0247'), 
                         allowExplicit: true,
                         lyricalInstrumental: 'Both',
                         lyricalLanguage: 'English',
@@ -111,8 +117,9 @@ describe('PATCH /preferences/update', () => {
                         blacklistedSongs: ['wonderwall'],
                     }),
                 });
-
+                //console.log(res.status);
                 expect(res.status).toStrictEqual(400);
+                //await expect(res.json()).resolves.toStrictEqual({});
             },
         });
     });

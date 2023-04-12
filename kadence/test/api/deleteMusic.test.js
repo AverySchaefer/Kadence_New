@@ -30,7 +30,7 @@ describe('DELETE /music/delete', () => {
                         'content-type': 'application/json',
                     },
                     body: JSON.stringify({
-                        uid: new ObjectId('63efd818545984788a2b0247'),
+                        _id: new ObjectId('63efd818545984788a2b0247'),
                     }),
                 });
 
@@ -49,7 +49,7 @@ describe('DELETE /music/delete', () => {
                         'content-type': 'application/json',
                     },
                     body: JSON.stringify({
-                        uid: new ObjectId('63efd818545984788a2b0242'),
+                        _id: new ObjectId('63efd818545984788a2b0242'),
                     }),
                 });
 
@@ -58,7 +58,7 @@ describe('DELETE /music/delete', () => {
         });
     });
 
-    it('should respond with 400 status code if no UID is provided', async () => {
+    it('should respond with 400 status code if no _id is provided', async () => {
         await testApiHandler({
             handler,
             test: async ({ fetch }) => {
@@ -68,7 +68,7 @@ describe('DELETE /music/delete', () => {
                         'content-type': 'application/json',
                     },
                     body: JSON.stringify({
-                        uid: '',
+                        _id: '',
                     }),
                 });
 
