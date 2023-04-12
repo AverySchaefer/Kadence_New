@@ -546,3 +546,70 @@
     - 200: Token Deleted
     - 400: User account could not be found
     - 500: Request not acknowleged by database
+
+## Friends `/api/friends/~`
+
+### POST `/api/friends/accept`
+
+- Request Body Elements
+    - senderUsername: STRING
+    - recipientUsername: STRING
+- Response Body
+    - NONE
+- Response Status Code
+    - 400: Bad Request (username missing, cannot accept request, recipient doesn't exist, no friend request to accept)
+    - 200: Request Accepted
+
+### POST `/api/friends/cancel`
+
+- Request Body Elements
+    - senderUsername: STRING
+    - recipientUsername: STRING
+- Response Body
+    - NONE
+- Response Status Code
+    - 400: Bad Request (username missing, cannot cancel request to yourself)
+    - 200: Request Cancelled
+
+### POST `/api/friends/deny`
+
+- Request Body Elements
+    - senderUsername: STRING
+    - recipientUsername: STRING
+- Response Body
+    - NONE
+- Response Status Code
+    - 400: Bad Request (username missing, cannot deny request to yourself)
+    - 200: Request Denied
+
+### GET `/api/friends/getRequests`
+
+- Request Query Elements
+    - username: STRING
+- Response Body
+    - requests: request[]
+- Response Status Codes
+    - 400: Username not found
+    - 200: Requests found
+
+### POST `/api/friends/remove`
+
+- Request Body Elements
+    - username: STRING
+    - usernameToRemove: STRING
+- Response Body
+    - NONE
+- Response Status Code
+    - 400: Bad Request (username missing, cannot remove yourself as a friend)
+    - 200: Friend removed
+
+### POST `/api/friends/request`
+
+- Request Body Elements
+    - senderUsername: STRING
+    - recipientUsername: STRING
+- Response Body
+    - NONE
+- Response Status Code
+    - 400: Bad Request (username missing, cannot send request to yourself, sender/recipient does not exist)
+    - 200: Request Sent
