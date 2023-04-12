@@ -459,10 +459,53 @@
 
 ### POST `/api/spotify/signOut`
 
--   Request body elements
+-   Request Body Elements
     -   username: STRING
 -   Return Body
     -   NONE
 -   Response Status Codes
     -   200: Request Successful
     -   400: Bad request
+
+## FITBIT `/api/fitbit/~`
+
+### GET `/api/fitbit/getHeartValue`
+
+- Request Body Elements
+    - access_token: STRING
+- Return Body:
+    - value: int
+- Response Status Codes
+    - 200: Request Successful
+    - 401: Authorization token expired
+    - 400: Bad request
+
+### POST `/api/fitbit/getTokens`
+
+- Request Body Elements
+    - authorizationCode: STRING
+- Return Body
+    - access_token: STRING
+    - expires_in: int
+    - refresh_token: STRING
+    - token_type: STING
+    - user_id: STRING
+- Response Status Codes
+    - 200: Request Successful
+    - 400: Bad Request
+    - 401: Bad Authorization Code
+
+### POST `/api/fitbit/refreshTokens`
+
+- Request Body Elements
+    - refreshToken: STRING
+- Return Body
+    - access_token: STRING
+    - expires_in: int
+    - refresh_token: STRING
+    - token_type: STING
+    - user_id: STRING
+- Response Status Codes
+    - 200: Request Successful
+    - 400: Bad Request
+    - 401: Bad Refresh Code
