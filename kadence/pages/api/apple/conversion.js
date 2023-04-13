@@ -61,7 +61,6 @@ async function saveApplePlaylist(playlistObjects, playlistName) {
         });
 }
 
-/* TO DO */
 function appleSearch(songName, songArtists) {
     let searchParameter = songArtists[0].concat('+') + songName;
     searchParameter = searchParameter.place(' ', '+');
@@ -122,6 +121,8 @@ handler.post(async (req, res) => {
     // Remove when function is finished
     // eslint-disable-next-line no-unused-vars
     const created = await createResponse.json();
+    console.log(created);
+    res.status(200).json(created);
 });
 
 export default handler;
