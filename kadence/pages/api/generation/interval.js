@@ -147,7 +147,7 @@ handler.get(async (req, res) => {
 
     // Check if nothing is currently active (was throwing error before)
     if (response.status === 204 && response.statusText === 'No Content') {
-        res.status(200).json({
+        res.status(204).json({
             item: {
                 name: 'Nothing could be generated in local mode!',
             },
