@@ -613,3 +613,51 @@
 - Response Status Code
     - 400: Bad Request (username missing, cannot send request to yourself, sender/recipient does not exist)
     - 200: Request Sent
+
+## Generation `/api/generation/~`
+
+### GET `/api/generation/interval`
+
+- Request Query
+    - status: STRING
+    - username: STRING
+- Response Body
+    - An array of the song URIs added to the playlist
+- Response Status Codes
+    - 200: Songs queued
+    - 204: Nothing could be generated
+
+### GET `/api/generation/local`
+
+- Request Query
+    - NONE
+- Response Body
+    - An array of the songs added to the playlist
+- Response Status Code
+    - 200: Songs queued
+    - 204: Nothing could be generated
+
+### GET `/api/generation/mood`
+
+- Request Query
+    - chosenMood: STRING
+    - playlistLength: int
+    - username: STRING
+- Response Body
+    - An array of the song URIs added to the playlist
+- Response Status Code
+    - 200: Songs queued
+    - 204: Nothing could be generated
+
+### POST `/api/generation/save`
+
+- Request Body Elements
+    - playlistName: STRING
+    - playlistArray: songURI[]
+- Response Body
+    - playlistID: ID of generated playlist
+- Response Status Codes
+    - 200: Playlist saved
+    - 401: Bad or expired auth token
+    - 403: Bad OAuth Request
+    - 429: Requests sent too quickly
