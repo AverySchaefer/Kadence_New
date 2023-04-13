@@ -1,6 +1,6 @@
 import { testApiHandler } from 'next-test-api-route-handler';
-import handler from '../pages/api/devices/update'; // TODO: change this to import the desired handler!
-import { initTestDB, teardownTestDB } from './testDB';
+import handler from '@/pages/api/devices/update';
+import { initTestDB, teardownTestDB } from '@/test/testDB';
 import { ObjectId } from 'mongodb';
 
 describe('PATCH /devices/update', () => {
@@ -9,15 +9,13 @@ describe('PATCH /devices/update', () => {
     let db;
     beforeAll(async () => {
         ({ mongoServer, client, db } = await initTestDB(handler));
-        await db
-            .collection('Devices')
-            .insertOne({
-                _id: new ObjectId('63efd818545984788a2b0242'), 
-                deviceList: [],
-                selectedDeviceName: 'my watch',
-                selectedDeviceID: '12345',
-                tracking: true,
-            });
+        await db.collection('Devices').insertOne({
+            _id: new ObjectId('63efd818545984788a2b0242'),
+            deviceList: [],
+            selectedDeviceName: 'my watch',
+            selectedDeviceID: '12345',
+            tracking: true,
+        });
     });
 
     afterAll(async () => {
@@ -34,7 +32,7 @@ describe('PATCH /devices/update', () => {
                         'content-type': 'application/json',
                     },
                     body: JSON.stringify({
-                        uid: new ObjectId('63efd818545984788a2b0242'), 
+                        _id: new ObjectId('63efd818545984788a2b0242'),
                         deviceList: [],
                         selectedDeviceName: 'my watch',
                         selectedDeviceID: '12345',
@@ -43,12 +41,11 @@ describe('PATCH /devices/update', () => {
                 });
                 console.log(res);
                 expect(res.status).toStrictEqual(200);
-                //await expect(res.json()).resolves.toStrictEqual({});
             },
         });
     });
 
-    it('should respond with 400 status code if no uid', async () => {
+    it('should respond with 400 status code if no _id', async () => {
         await testApiHandler({
             handler,
             test: async ({ fetch }) => {
@@ -58,21 +55,20 @@ describe('PATCH /devices/update', () => {
                         'content-type': 'application/json',
                     },
                     body: JSON.stringify({
-                        uid: '', 
+                        _id: '',
                         deviceList: [],
                         selectedDeviceName: 'my watch',
                         selectedDeviceID: '12345',
                         tracking: true,
                     }),
                 });
-                //console.log(res);
+
                 expect(res.status).toStrictEqual(400);
-                //await expect(res.json()).resolves.toStrictEqual({});
             },
         });
     });
 
-    it('should respond with 400 status code if device can\'t be found', async () => {
+    it("should respond with 400 status code if device can't be found", async () => {
         await testApiHandler({
             handler,
             test: async ({ fetch }) => {
@@ -82,16 +78,15 @@ describe('PATCH /devices/update', () => {
                         'content-type': 'application/json',
                     },
                     body: JSON.stringify({
-                        uid: new ObjectId('63efd818545984788a2b0247'), 
+                        _id: new ObjectId('63efd818545984788a2b0247'),
                         deviceList: [],
                         selectedDeviceName: 'my watch',
                         selectedDeviceID: '12345',
                         tracking: true,
                     }),
                 });
-                //console.log(res.status);
+
                 expect(res.status).toStrictEqual(400);
-                //await expect(res.json()).resolves.toStrictEqual({});
             },
         });
     });

@@ -6,7 +6,12 @@ import { Inter } from '@next/font/google';
 import { Dialog } from '@capacitor/dialog';
 import { useRouter } from 'next/router';
 
-import Password from '@/lib/passwordStrength';
+import {
+    passwordIsStrong,
+    clientSideHash,
+    weakPasswordMessage,
+} from '@/lib/passwordUtils';
+
 import NetworkAPI from '@/lib/networkAPI';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -16,7 +21,6 @@ export default function Register() {
 
     async function handleSubmit(e) {
         const form = e.target;
-        console.log('Handling the submission:');
         const { email, username, password, confirmedPassword } = form;
         e.preventDefault();
 
@@ -28,21 +32,23 @@ export default function Register() {
             });
             return;
         }
-        if (!Password.isStrong(password.value)) {
+        if (!passwordIsStrong(password.value)) {
             Dialog.alert({
                 title: 'Weak Password',
-                message: Password.errorMessage,
+                message: weakPasswordMessage,
             });
             return;
         }
+
+        const hashedPassword = clientSideHash(username.value, password.value);
 
         // Send Request
         try {
             const { data } = await NetworkAPI.post('/api/users/signup', {
                 email: email.value,
                 username: username.value,
-                password: password.value,
-                confirmedPassword: confirmedPassword.value,
+                password: hashedPassword,
+                confirmedPassword: hashedPassword,
             });
             if (data) {
                 Dialog.alert({

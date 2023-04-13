@@ -55,7 +55,7 @@ handler.get(async (req, res) => {
         responseDoc['activities-heart']['activities-heart-intraday'].dataset;
     const mostRecentVal = valuesArray[0].value;
     console.log(mostRecentVal);
-    res.status(200).json(mostRecentVal);
+    res.status(200).json({value: mostRecentVal});
 });
 
 export default handler;
