@@ -23,6 +23,10 @@ export default function ResetPassword() {
         const { username, newPassword, newConfirmedPassword } = form;
         e.preventDefault();
 
+        // Getting ID from the URL parameters
+        const id = new URLSearchParams(window.location.search).get('id');
+        console.log(id);
+
         // Validate Fields
         if (newPassword.value !== newConfirmedPassword.value) {
             Dialog.alert({
@@ -46,6 +50,7 @@ export default function ResetPassword() {
 
         // Send Request
         NetworkAPI.post('/api/users/resetPass', {
+            id,
             username: username.value,
             newPassword: hashedPassword,
             newConfirmedPassword: hashedPassword,

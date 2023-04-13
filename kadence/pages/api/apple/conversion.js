@@ -51,7 +51,7 @@ async function saveApplePlaylist(playlistObjects, playlistName) {
                     console.log(status);
                     console.log(response2.error);
                     console.log(
-                        'There was an error creating the playlis with the songs'
+                        'There was an error creating the playlist with the songs'
                     );
                 }
             });
@@ -61,12 +61,23 @@ async function saveApplePlaylist(playlistObjects, playlistName) {
         });
 }
 
-/* TO DO */
 function appleSearch(songName, songArtists) {
-    const searchParameter = songArtists[0] + songName;
-    // Remove this when the function is finished:
-    // eslint-disable-next-line no-unused-vars
-    const APPLE_SEARCH_SONG_ENDPOINT = `https://api.music.apple.com/v1/catalog/us/search?term=${searchParameter}&limit=25&types=songs`;
+    let searchParameter = songArtists[0].concat('+') + songName;
+    searchParameter = searchParameter.place(' ', '+');
+
+    const APPLE_SEARCH_SONG_ENDPOINT = `https://api.music.apple.com/v1/catalog/us/search?term=${searchParameter}&limit=1&types=songs`;
+    fetch(APPLE_SEARCH_SONG_ENDPOINT, {
+        headers: getAppleHeader(),
+        method: 'GET',
+    })
+        .then((response) => {
+            const res = response.json();
+            const songID = res.results.songs.data.id;
+            return (songID, "songs"); // returns a tuple of (id: String, type: String)
+        })
+        .catch((error) => {
+            console.log(error);
+        });
 }
 
 async function extractSongInformation(token, songURI) {
@@ -110,6 +121,8 @@ handler.post(async (req, res) => {
     // Remove when function is finished
     // eslint-disable-next-line no-unused-vars
     const created = await createResponse.json();
+    console.log(created);
+    res.status(200).json(created);
 });
 
 export default handler;
