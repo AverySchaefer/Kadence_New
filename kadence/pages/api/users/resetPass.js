@@ -1,4 +1,5 @@
 import nextConnect from 'next-connect';
+import { compare } from 'bcryptjs';
 
 import { serverSideHash } from '@/lib/passwordUtils';
 import middleware from '@/middleware/database';
