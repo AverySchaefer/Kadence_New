@@ -21,10 +21,9 @@ export default function Home() {
         if (localStorage.getItem('username') == null) {
             router.push('/login');
         }
-    });
+    }, []);
 
     async function handleLogout() {
-        console.log('Clicking the logout button!');
         localStorage.removeItem('jwt');
         localStorage.removeItem('username');
         // Send Request
@@ -52,6 +51,7 @@ export default function Home() {
                     <IconButton
                         className={styles.logoutBtn}
                         onClick={handleLogout}
+                        aria-label="logout"
                     >
                         <Logout />
                     </IconButton>

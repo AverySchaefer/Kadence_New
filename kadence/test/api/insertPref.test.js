@@ -1,13 +1,12 @@
 import { testApiHandler } from 'next-test-api-route-handler';
-import handler from '../pages/api/preferences/insert'; // TODO: change this to import the desired handler!
-import { initTestDB, teardownTestDB } from './testDB';
+import handler from '@/pages/api/preferences/insert';
+import { initTestDB, teardownTestDB } from '@/test/testDB';
 
 describe('POST /preferences/insert', () => {
     let mongoServer;
     let client;
-    let db;
     beforeAll(async () => {
-        ({ mongoServer, client, db } = await initTestDB(handler));
+        ({ mongoServer, client } = await initTestDB(handler));
     });
 
     afterAll(async () => {
@@ -37,9 +36,8 @@ describe('POST /preferences/insert', () => {
                         blacklistedSongs: ['wonderwall'],
                     }),
                 });
-                //console.log(res.status);
+
                 expect(res.status).toStrictEqual(200);
-                //await expect(res.json()).resolves.toStrictEqual({});
             },
         });
     });

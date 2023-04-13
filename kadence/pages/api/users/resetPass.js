@@ -1,28 +1,12 @@
-import { compare, hash } from 'bcryptjs';
 import nextConnect from 'next-connect';
-import Password from '../../../lib/passwordStrength';
-import middleware from '../../../middleware/database';
+
+import { serverSideHash } from '@/lib/passwordUtils';
+import middleware from '@/middleware/database';
 
 const handler = nextConnect();
 handler.use(middleware);
 
-async function hashPassword(password) {
-    const hashedPassword = await hash(password, 10);
-    return hashedPassword;
-}
-
-/* Add password strength algorithm here */
-async function verifyPasswordStrength(password) {
-    return Password.isStrong(password);
-}
-
 handler.post(async (req, res) => {
-    console.log('Updating the new password');
-    /* Ensuring the request is of type POST */
-    if (req.method !== 'POST') {
-        return;
-    }
-
     /* Pulling information from register form as credentials */
     const credentials = {
         id: req.body.id,
@@ -30,8 +14,6 @@ handler.post(async (req, res) => {
         newPassword: req.body.newPassword,
         newConfirmedPassword: req.body.newConfirmedPassword,
     };
-
-    console.log(credentials);
 
     /* Checking the validity of credentials */
     if (!credentials.newConfirmedPassword || !credentials.newPassword) {
@@ -43,12 +25,6 @@ handler.post(async (req, res) => {
     if (credentials.newConfirmedPassword !== credentials.newPassword) {
         res.status(400).json({
             message: 'Invalid input - the passwords do not match.',
-        });
-        return;
-    }
-    if (!verifyPasswordStrength(credentials.newPassword)) {
-        res.status(400).json({
-            message: 'Invalid input - please enter a stronger password.',
         });
         return;
     }
@@ -75,7 +51,7 @@ handler.post(async (req, res) => {
         return;
     }
     const enteredUsername = credentials.username;
-    const newHashedPassword = await hashPassword(credentials.newPassword);
+    const newHashedPassword = await serverSideHash(credentials.newPassword);
 
     compare(
         credentials.newPassword,

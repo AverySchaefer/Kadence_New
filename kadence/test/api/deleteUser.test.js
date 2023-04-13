@@ -1,28 +1,23 @@
 import { testApiHandler } from 'next-test-api-route-handler';
-import handler from '../pages/api/music/delete'; // TODO: change this to import the desired handler!
-import { initTestDB, teardownTestDB } from './testDB';
-import { ObjectId } from 'mongodb';
+import handler from '@/pages/api/users/delete';
+import { initTestDB, teardownTestDB } from '@/test/testDB';
 
-describe('DELETE /music/delete', () => {
+describe('DELETE /users/delete', () => {
     let mongoServer;
     let client;
     let db;
     beforeAll(async () => {
         ({ mongoServer, client, db } = await initTestDB(handler));
         await db
-            .collection('Music')
-            .insertOne({
-                _id: new ObjectId('63efd818545984788a2b0242'), 
-                spotifyAccountID: '12345',
-                appleMusicAccountID: '67890',
-            });
+            .collection('Users')
+            .insertOne({ _id: '1', username: 'JohnDoe', password: 'passw0rd' });
     });
 
     afterAll(async () => {
         await teardownTestDB(mongoServer, client);
     });
 
-    it('should respond with 400 status code if no matching doc was found', async () => {
+    it('should respond with 400 status code if no matching user was found', async () => {
         await testApiHandler({
             handler,
             test: async ({ fetch }) => {
@@ -32,12 +27,11 @@ describe('DELETE /music/delete', () => {
                         'content-type': 'application/json',
                     },
                     body: JSON.stringify({
-                        uid: new ObjectId('63efd818545984788a2b0247'),
+                        username: 'IHaveABadName',
                     }),
                 });
-                //console.log(res.status);
+
                 expect(res.status).toStrictEqual(400);
-                //await expect(res.json()).resolves.toStrictEqual({});
             },
         });
     });
@@ -52,17 +46,16 @@ describe('DELETE /music/delete', () => {
                         'content-type': 'application/json',
                     },
                     body: JSON.stringify({
-                        uid: new ObjectId('63efd818545984788a2b0242'),
+                        username: 'JohnDoe',
                     }),
                 });
-                //console.log(res.status);
+
                 expect(res.status).toStrictEqual(200);
-                //await expect(res.json()).resolves.toStrictEqual({});
             },
         });
     });
 
-    it('should respond with 400 status code if no UID is provided', async () => {
+    it('should respond with 400 status code if no _id is provided', async () => {
         await testApiHandler({
             handler,
             test: async ({ fetch }) => {
@@ -72,12 +65,11 @@ describe('DELETE /music/delete', () => {
                         'content-type': 'application/json',
                     },
                     body: JSON.stringify({
-                        uid: '',
+                        username: null,
                     }),
                 });
-                //console.log(res.status);
+
                 expect(res.status).toStrictEqual(400);
-                //await expect(res.json()).resolves.toStrictEqual({});
             },
         });
     });

@@ -132,7 +132,7 @@ handler.get(async (req, res) => {
 
     const prefData = await req.db
         .collection('Preferences')
-        .findOne({ uid: userData.musicPrefs });
+        .findOne({ _id: userData.musicPrefs });
 
     console.log(userData.musicPrefs);
     console.log(prefData);
@@ -147,7 +147,7 @@ handler.get(async (req, res) => {
 
     // Check if nothing is currently active (was throwing error before)
     if (response.status === 204 && response.statusText === 'No Content') {
-        res.status(200).json({
+        res.status(204).json({
             item: {
                 name: 'Nothing could be generated in local mode!',
             },
