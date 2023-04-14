@@ -301,7 +301,31 @@ export default function Profile() {
                 setLoaded(true);
             }
         }
+        async function connectFitbit() {
+            const fromFitbit = localStorage.getItem('fromFitbit');
+            console.log("fromFitbit: " + fromFitbit);
+            if (fromFitbit == 'true') {
+                // TODO Figure out why this won't go in the loop even with fromFitbit being true
+                console.log("fromFitbit == true");
+                console.log(window.location.search);
+                const url = new URLSearchParams(window.location.search);
+                const authorizationCode = url.get('code');
+                console.log(authorizationCode);
+                const response = NetworkAPI.post('/api/fitbit/getTokens', {
+                    authorizationCode,
+                });
+                console.log(response);
+                localStorage.setItem('authorization_code', authorizationCode);
+                localStorage.setItem('access_token', response.json().access_token);
+                localStorage.setItem(
+                    'refresh_token',
+                    response.json().refresh_token
+                );
+                localStorage.setItem('fromFitbit', 'false');
+            }
+        }
         fetchData();
+        connectFitbit();
     }, []);
 
     // References an HTML element (used for file input that is invisible)
