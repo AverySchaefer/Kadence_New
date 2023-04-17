@@ -4,14 +4,18 @@ import Textbox from '@/components/Textbox';
 import { Button } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { Dialog } from '@capacitor/dialog';
+import { useRouter } from 'next/router';
 import styles from '@/styles/MoodPlayer.module.css';
 
 export default function LargePlayer() {
     const [playlistURIs, setPlaylistURIs] = useState(null);
     const [playlistName, setPlaylistName] = useState('');
+
     useEffect(() => {
         setPlaylistURIs(JSON.parse(localStorage.getItem('playlistURIs')));
     }, []);
+
+    const router = useRouter();
 
     async function createPlaylist(e) {
         e.preventDefault();
@@ -28,6 +32,7 @@ export default function LargePlayer() {
             message: 'Your playlist has been saved!',
         });
         localStorage.setItem('playlistURIs', null);
+        router.push('/spotify/playlistSaved');
     }
 
     return (

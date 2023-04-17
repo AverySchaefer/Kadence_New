@@ -1,0 +1,36 @@
+.main {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.imageContianer {
+    margin-top: 0.5rem;
+    background-color: #222222;
+    padding: 0.5rem;
+    display: flex;
+}
+
+.oneImg {
+    grid-area: one;
+    text-transform: none;
+    display: block;
+}
+
+.twoImg {
+    grid-area: two;
+    text-transform: none;
+    display: block;
+}
+
+.threeImg {
+    grid-area: three;
+    text-transform: none;
+    display: block;
+}
+
+.fourImg {
+    grid-area: four;
+    text-transform: none;
+    display: block;
+}
