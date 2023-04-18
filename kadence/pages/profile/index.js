@@ -310,19 +310,35 @@ export default function Profile() {
                 console.log(window.location.search);
                 const url = new URLSearchParams(window.location.search);
                 const authorizationCode = url.get('code');
-                console.log(authorizationCode);
-                
-                const response = NetworkAPI.post('/api/fitbit/getTokens', {
-                    authorizationCode,
-                });
-                console.log(response); //! prints promise of result "Error: res.statusCode is not a function is not a function", status "rejected"
-                localStorage.setItem('authorization_code', authorizationCode);
-                localStorage.setItem('access_token', response.json().access_token); 
-                //! Getting TypeError: response.json is not a function (In 'response.json()', 'response.json' is undefined)
-                localStorage.setItem(
-                    'refresh_token',
-                    response.json().refresh_token
-                );
+                const state = url.get('state'); // TODO: We need to verify that this matches what we sent to Fitbit in the authorization step to prevent CSRF
+                console.log('authorizationCode: ', authorizationCode);
+                console.log('state: ', state);
+
+                const codeVerifier = localStorage.getItem('pkceVerifier');
+                try {
+                    const response = await NetworkAPI.post(
+                        '/api/fitbit/getTokens',
+                        {
+                            authorizationCode,
+                            codeVerifier,
+                        }
+                    );
+                    console.log('getTokens response in frontend:', response);
+                    localStorage.setItem(
+                        'authorization_code',
+                        authorizationCode
+                    );
+                    localStorage.setItem('access_token', response.access_token);
+                    localStorage.setItem(
+                        'refresh_token',
+                        response.refresh_token
+                    );
+                } catch (err) {
+                    Dialog.alert({
+                        title: 'Error',
+                        message: `An error occurred while authorizing to Fitbit: ${err.message}.`,
+                    });
+                }
                 localStorage.setItem('fromFitbit', 'false');
             }
         }
