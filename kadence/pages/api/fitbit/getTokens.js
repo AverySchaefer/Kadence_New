@@ -31,12 +31,13 @@ handler.post(async (req, res) => {
 
     let response = await axios.post(GET_TOKEN_URL, {
         headers: {
-            Authorization: `Basic ${hardcodedToken}`,
+            Authorization: `Basic MjNRVEQ4OmFhNzFkZTJmMzY3NTI4OWJmZTE3NmI5NTgzODY1NmQx`,
             'Content-Type': 'application/x-www-form-urlencoded',
         },
         method: 'POST',
         body: JSON.stringify(doc),
     });
+    //! response returns a 401 error
     /*let response = fetch(GET_TOKEN_URL, {
         headers: {
             Authorization: `Basic ${basicToken}`,
