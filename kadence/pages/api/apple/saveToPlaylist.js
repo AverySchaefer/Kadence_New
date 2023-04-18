@@ -9,23 +9,28 @@ const APPLE_SAVE_PLAYLIST_ENDPOINT =
 const handler = nextConnect();
 handler.use(middleware);
 
-// Remove when function is finished
+// Saves the given array of appleURIs to a playlist
 handler.post(async (req, res) => {
     const { name, appleURIs, appleUserToken } = req.body;
 
     // Construct payload for Apple Music API
+    const date = new Date();
     const data = {
         attributes: {
             name,
-            description: 'Created by Kadence (2023)',
+            description: `Created by Kadence at ${date.toLocaleTimeString()} on ${date.toLocaleDateString()}.`,
         },
         relationships: {
             tracks: {
-                data: appleURIs,
+                data: appleURIs.map((uri) => ({
+                    id: uri,
+                    type: 'songs',
+                })),
             },
         },
     };
 
+    // Make playlist
     fetch(APPLE_SAVE_PLAYLIST_ENDPOINT, {
         headers: {
             Authorization: `Bearer ${AppleMusicConfiguration.developerToken}`,
@@ -39,25 +44,21 @@ handler.post(async (req, res) => {
     })
         .then((response) => {
             const { status } = response;
-
             response.json().then((response2) => {
                 if (status !== 201) {
                     console.log(status);
                     console.log(response2.error);
-                    console.log(
+                    res.status(400).send(
                         'There was an error creating the playlist with the songs'
                     );
-                    res.status(400).send('IDK what happened');
                 } else {
-                    console.log('Playlist successfully created!');
-                    console.log(response2);
-                    res.status(200).send();
+                    res.status(200).json(response2);
                 }
             });
         })
         .catch((error) => {
             console.log(error);
-            res.status(400).send('Error bad');
+            res.status(400).send('Error occurred while saving to playlist');
         });
 });
 
