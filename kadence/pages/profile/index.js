@@ -303,20 +303,22 @@ export default function Profile() {
         }
         async function connectFitbit() {
             const fromFitbit = localStorage.getItem('fromFitbit');
-            console.log("fromFitbit: " + fromFitbit);
+            //console.log("fromFitbit: " + fromFitbit);
             if (fromFitbit == 'true') {
                 // TODO Figure out why this won't go in the loop even with fromFitbit being true
-                console.log("fromFitbit == true");
+                //console.log("fromFitbit == true");
                 console.log(window.location.search);
                 const url = new URLSearchParams(window.location.search);
                 const authorizationCode = url.get('code');
                 console.log(authorizationCode);
+                
                 const response = NetworkAPI.post('/api/fitbit/getTokens', {
                     authorizationCode,
                 });
-                console.log(response);
+                console.log(response); //! prints promise of result "Error: res.statusCode is not a function is not a function", status "rejected"
                 localStorage.setItem('authorization_code', authorizationCode);
-                localStorage.setItem('access_token', response.json().access_token);
+                localStorage.setItem('access_token', response.json().access_token); 
+                //! Getting TypeError: response.json is not a function (In 'response.json()', 'response.json' is undefined)
                 localStorage.setItem(
                     'refresh_token',
                     response.json().refresh_token
