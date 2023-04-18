@@ -48,6 +48,24 @@ export default function Social() {
                 senderUsername,
                 recipientUsername: localStorage.getItem('username'),
             }).then(() => {
+                NetworkAPI.post('/api/activity/insert', {
+                    username: senderUsername,
+                    timestamp: new Date().toLocaleString(),
+                    actionType: 'friend',
+                    friend: localStorage.getItem('username'),
+                    genMode: null,
+                    saved: null,
+                });
+
+                NetworkAPI.post('/api/activity/insert', {
+                    username: localStorage.getItem('username'),
+                    timestamp: new Date().toLocaleString(),
+                    actionType: 'friend',
+                    friend: senderUsername,
+                    genMode: null,
+                    saved: null,
+                });
+
                 setFriendRequests((prev) =>
                     prev.map((req) =>
                         req.username === senderUsername
