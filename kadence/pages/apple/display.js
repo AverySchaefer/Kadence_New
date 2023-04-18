@@ -32,10 +32,22 @@ export default function Display() {
                 const music = MusicKit.getInstance();
                 const songs = await getMatchingSongs(music, songsToQueue);
 
-                await queueSongs(
-                    music,
-                    songs.map((song) => song.id)
-                );
+                // await queueSongs(
+                //     music,
+                //     songs.map((song) => song.id)
+                // );
+                // await music.play();
+
+                // Test conversion
+                const { data } = await NetworkAPI.get('/api/apple/conversion', {
+                    appleUserToken: music.musicUserToken,
+                    spotifyURIs: JSON.stringify([
+                        'spotify:track:15irEKZ9D6FQqLoZ1qJ1Cx',
+                        'spotify:track:2fuYa3Lx06QQJAm0MjztKr',
+                    ]),
+                });
+
+                await queueSongs(music, data.appleURIs);
                 await music.play();
             }
         }

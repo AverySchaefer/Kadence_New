@@ -1,3 +1,12 @@
+export const AppleMusicConfiguration = {
+    developerToken:
+        'eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlRSNjhKSjlDSEcifQ.eyJpYXQiOjE2ODAwNDI2MjMsImV4cCI6MTY5NTU5NDYyMywiaXNzIjoiOFc0Nzk4SFNZNSJ9.WlMKX6aB2sZSK1sft2npNN3sbgiahHDXXn8fQqWKERvT1w5dkQDpPaVTIjrp5ueJIaHBDAFQNvshRd4OSJ6-VQ',
+    app: {
+        name: 'Kadence',
+        build: '1.0',
+    },
+};
+
 // Returns the first song that is returned by Apple Music
 // when querying "query"
 export async function getFirstMatchingSong(music, query) {
