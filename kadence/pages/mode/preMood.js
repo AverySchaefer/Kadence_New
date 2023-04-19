@@ -79,11 +79,6 @@ export default function MoodModePage() {
         });
         const playlistID = await saveRes.json();
 
-        const dequeueRoute = '/api/spotify/clearQueue';
-        await fetch(dequeueRoute, {
-            method: 'POST',
-        });
-
         const queueRoute = '/api/spotify/queue';
         for (let i = 0; i < playlistURIs.length; i++) {
             fetch(queueRoute, {
@@ -141,17 +136,11 @@ export default function MoodModePage() {
         const playlistURIs = await res.json();
         localStorage.setItem('playlistURIs', JSON.stringify(playlistURIs));
 
-        const dequeueRoute = '/api/spotify/clearQueue';
-        const dequeueRes = await fetch(dequeueRoute, {
-            method: 'POST',
-        });
-        console.log(dequeueRes);
-
         const queueRoute = '/api/spotify/queue';
         for (let i = 0; i < playlistURIs.length; i++) {
             // TODO: Fix this
             // eslint-disable-next-line no-await-in-loop
-            fetch(queueRoute, {
+            await fetch(queueRoute, {
                 method: 'POST',
                 body: JSON.stringify({
                     songURI: playlistURIs[i],
