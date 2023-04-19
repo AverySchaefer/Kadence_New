@@ -47,14 +47,14 @@ async function getAppleURIFromSpotifyURI(
     });
     const json = await response.json();
 
-    // Return that song's Apple Music id
-    return json.results.songs.data[0].id;
+    // Return that song's Apple Music id, or null if no results
+    return json.results?.songs?.data[0]?.id ?? null;
 }
 
 // Converts an array of Spotify URIs to an array of Apple Music URIs
 handler.get(async (req, res) => {
     const accessToken = await getSpotifyAccessToken();
-    const spotifyURIs = JSON.parse(req.query.spotifyURIs);
+    const spotifyURIs = JSON.parse(req.query.spotifyURIs) || [];
     const { appleUserToken } = req.query;
 
     try {
@@ -63,10 +63,12 @@ handler.get(async (req, res) => {
                 getAppleURIFromSpotifyURI(uri, accessToken, appleUserToken)
             )
         );
+        const filteredURIs = appleMusicURIs.filter((uri) => uri !== null);
         res.status(200).json({
-            appleURIs: appleMusicURIs,
+            appleURIs: filteredURIs,
         });
-    } catch {
+    } catch (err) {
+        console.log(err);
         res.status(400).send('Error occurred while converting to Apple URI');
     }
 });

@@ -323,15 +323,27 @@ export default function MusicPlayer({
 
     function handleSkipApple() {
         const music = MusicKit.getInstance();
-        music
-            .skipToNextItem()
-            .then(() => {
-                setTimeout(fetchPlayerDataApple, fetchAfterSkipDelayMs);
-                if (onSkip) {
-                    onSkip(playerData);
-                }
-            })
-            .catch(handleError);
+        if (music.player.queue.nextPlayableItem === undefined) {
+            music.player
+                .seekToTime(music.player.currentPlaybackDuration)
+                .then(() => {
+                    setTimeout(fetchPlayerDataApple, fetchAfterSkipDelayMs);
+                    if (onSkip) {
+                        onSkip(playerData);
+                    }
+                })
+                .catch(handleError);
+        } else {
+            music
+                .skipToNextItem()
+                .then(() => {
+                    setTimeout(fetchPlayerDataApple, fetchAfterSkipDelayMs);
+                    if (onSkip) {
+                        onSkip(playerData);
+                    }
+                })
+                .catch(handleError);
+        }
     }
 
     const handleSkip = type === 'Spotify' ? handleSkipSpotify : handleSkipApple;

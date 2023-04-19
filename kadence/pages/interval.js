@@ -9,6 +9,8 @@ import { Dialog } from '@capacitor/dialog';
 import { useRouter } from 'next/router';
 
 import { Button } from '@mui/material';
+import useMusicKit from '@/lib/useMusicKit';
+import { queueSongs } from '@/lib/apple/AppleAPI';
 
 function secondsToTime(seconds) {
     const minutes = Math.floor(seconds / 60);
@@ -26,59 +28,133 @@ export default function IntervalPage() {
     const [currentMode, setCurrentMode] = useState('Low');
     const [currentSong, setCurrentSong] = useState(null);
     const [songCache, setSongCache] = useState([]);
+    const [platform, setPlatform] = useState(null);
+    const [delayBeforeQueue, setDelayBeforeQueue] = useState(0);
+
+    const [lowSongsToQueue, setLowSongsToQueue] = useState([]);
+    const [highSongsToQueue, setHighSongsToQueue] = useState([]);
 
     const router = useRouter();
+    const music = useMusicKit()?.getInstance();
 
-    const saveToProfile = async (playlistURIs) => {
-        console.log(playlistURIs);
-        const saveRoute = '/api/generation/save';
-        await fetch(saveRoute, {
-            method: 'POST',
-            body: JSON.stringify({
-                playlistName: 'Kadence Interval Mode',
-                playlistArray: playlistURIs,
-            }),
-        });
-    };
-
+    // Initialize platform on page load
     useEffect(() => {
-        async function queueNewSong() {
-            const intervalMode = '/api/generation/interval?';
-            const queueRoute = '/api/spotify/queue';
-            let trackURI = '';
-            let status = '1';
-            if (currentMode === 'Low') {
-                status = '0';
-            }
-            const highRes = await fetch(
-                intervalMode +
+        setPlatform(localStorage.getItem('platform'));
+    }, []);
+
+    // Get intervalLow and intervalHigh values and songs when ready
+    useEffect(() => {
+        async function getRecommendedSongs(status) {
+            const intervalEndpoint = '/api/generation/interval?';
+            const response = await fetch(
+                intervalEndpoint +
                     new URLSearchParams({
                         status,
                         username: localStorage.getItem('username'),
                     })
             );
-            trackURI = await highRes.json();
-            setSongCache((prev) => {
-                const newCache = [...prev, trackURI[0]];
-                console.log('New Cache', newCache);
-                return newCache;
-            });
-            fetch(queueRoute, {
-                method: 'POST',
-                body: JSON.stringify({
-                    songURI: trackURI,
-                }),
-            });
+
+            const trackURIs = await response.json();
+
+            if (platform === 'apple' && music !== undefined) {
+                const { data } = await NetworkAPI.get('/api/apple/conversion', {
+                    spotifyURIs: JSON.stringify(trackURIs),
+                    appleUserToken: music.musicUserToken,
+                });
+                return data.appleURIs;
+            }
+            if (platform === 'Spotify') {
+                return trackURIs;
+            }
+            return null;
         }
 
-        async function checkCurrentSong() {
-            const currentSongData = await NetworkAPI.get(
-                '/api/spotify/currentSong'
-            );
-            if (currentSongData) {
-                if (currentSong !== currentSongData?.data?.item?.name) {
-                    setCurrentSong(currentSongData?.data?.item?.name);
-                    queueNewSong(currentSongData);
+        async function fetchSongs() {
+            try {
+                if (platform === 'Spotify' || (music && platform === 'apple')) {
+                    setLowSongsToQueue(await getRecommendedSongs('0'));
+                    setHighSongsToQueue(await getRecommendedSongs('1'));
+                }
+            } catch (err) {
+                Dialog.alert({
+                    title: 'Error Occurred',
+                    message:
+                        'Something went wrong while getting recommendations from Spotify.',
+                });
+                setTimeout(fetchSongs, 10000);
+            }
+        }
+
+        if (Object.keys(router.query).length > 0 && !ready) {
+            const low = parseInt(router.query.intervalLow, 10) * 60;
+            const high = parseInt(router.query.intervalHigh, 10) * 60;
+            setIntervalLow(low);
+            setIntervalHigh(high);
+            setTimer(low);
+            fetchSongs().then(() => setReady(true));
+        }
+    }, [router.query, ready, platform, music]);
+
+    useEffect(() => {
+        async function queueNewSong() {
+            if (
+                lowSongsToQueue.length > 1 &&
+                highSongsToQueue.length > 1 &&
+                delayBeforeQueue === 0
+            ) {
+                let newSong;
+                let rest;
+
+                if (currentMode === 'Low') {
+                    [newSong, ...rest] = lowSongsToQueue;
+                    setLowSongsToQueue([...rest, newSong]);
+                } else {
+                    [newSong, ...rest] = highSongsToQueue;
+                    setHighSongsToQueue([...rest, newSong]);
+                }
+
+                setSongCache((prev) => {
+                    const newCache = [...prev, newSong];
+                    console.log('New Cache: ', newCache);
+                    return newCache;
+                });
+
+                if (platform === 'Spotify') {
+                    const queueRoute = '/api/spotify/queue';
+                    await fetch(queueRoute, {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            songURI: [newSong],
+                        }),
+                    });
+                } else if (platform === 'apple') {
+                    await queueSongs(music, [newSong]);
+                    setTimeout(() => music.play(), 1000);
+                }
+
+                // Try to prevent double queues
+                setDelayBeforeQueue(2);
+            }
+        }
+
+        async function updateState() {
+            if (platform === 'Spotify') {
+                const currentSongData = await NetworkAPI.get(
+                    '/api/spotify/currentSong'
+                );
+                setCurrentSong((prev) => {
+                    const current = currentSongData?.data?.item?.name;
+                    if (current !== prev) {
+                        queueNewSong();
+                    }
+                    return current;
+                });
+            } else if (platform === 'apple' && music) {
+                if (
+                    music.player.currentPlaybackTimeRemaining === 0 ||
+                    music.player.queue.isEmpty
+                ) {
+                    queueNewSong();
                 }
             }
         }
@@ -94,24 +170,46 @@ export default function IntervalPage() {
                         setCurrentMode('High');
                         return intervalHigh;
                     }
-                    checkCurrentSong();
                     return prev - 1;
                 });
+                updateState();
+                setDelayBeforeQueue((prev) => (prev === 0 ? 0 : prev - 1));
             }
         }, 1000);
-        return () => clearInterval(counter);
-    }, [ready, currentMode, currentSong, intervalHigh, intervalLow]);
 
-    useEffect(() => {
-        if (Object.keys(router.query).length > 0 && !ready) {
-            const low = parseInt(router.query.intervalLow, 10) * 60;
-            const high = parseInt(router.query.intervalHigh, 10) * 60;
-            setIntervalLow(low);
-            setIntervalHigh(high);
-            setTimer(low);
-            setReady(true);
+        return () => clearInterval(counter);
+    }, [
+        currentMode,
+        intervalLow,
+        intervalHigh,
+        ready,
+        highSongsToQueue,
+        lowSongsToQueue,
+        platform,
+        music,
+        currentSong,
+        delayBeforeQueue,
+    ]);
+
+    async function saveToProfile(playlistURIs) {
+        if (platform === 'Spotify') {
+            const saveRoute = '/api/generation/save';
+            await fetch(saveRoute, {
+                method: 'POST',
+                body: JSON.stringify({
+                    playlistName: 'Kadence Interval Mode',
+                    playlistArray: playlistURIs,
+                }),
+            });
+        } else if (platform === 'apple') {
+            const saveRoute = '/api/apple/saveToPlaylist';
+            await NetworkAPI.post(saveRoute, {
+                name: 'Kadence Interval Mode',
+                appleURIs: playlistURIs,
+                appleUserToken: music.musicUserToken,
+            });
         }
-    }, [router.query, ready]);
+    }
 
     async function handleEndSession() {
         if (songCache.length > 0) {
@@ -122,9 +220,13 @@ export default function IntervalPage() {
                 cancelButtonTitle: 'No',
             });
             if (saveToPlaylist) {
-                console.log('Saving', songCache);
                 saveToProfile(songCache);
             }
+        }
+        if (platform === 'apple' && music) {
+            // Clear queue
+            await music.skipToNextItem();
+            await music.stop();
         }
         router.push('/home');
     }
