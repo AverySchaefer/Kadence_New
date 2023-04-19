@@ -520,7 +520,7 @@
 
 ### GET `/api/fitbit/getHeartValue`
 
-- Request Body Elements
+- Request Query Elements
     - access_token: STRING
 - Return Body:
     - value: int

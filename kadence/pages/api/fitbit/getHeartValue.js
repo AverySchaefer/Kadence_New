@@ -38,7 +38,7 @@ async function getValue(token) {
 }
 
 handler.get(async (req, res) => {
-    const accessToken = req.body.access_token;
+    const accessToken = req.query.access_token;
     const response = await getValue(accessToken);
 
     // Check response

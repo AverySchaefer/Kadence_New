@@ -25,9 +25,10 @@ handler.post(async (req, res) => {
         body: new URLSearchParams(doc),
     });
 
-    // TODO ADD ERROR HANDLING
     const result = await response.json();
     console.log('response in getTokens', result);
+
+    //TODO Add Error Handling
     res.status(200).json(result);
 });
 
