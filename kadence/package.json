@@ -27,6 +27,7 @@
         "@next/font": "13.1.6",
         "babel-jest": "^29.4.3",
         "bcryptjs": "^2.4.3",
+        "cordova-plugin-inappbrowser": "^5.0.0",
         "eslint": "8.33.0",
         "eslint-config-next": "13.1.6",
         "font-awesome": "^4.7.0",

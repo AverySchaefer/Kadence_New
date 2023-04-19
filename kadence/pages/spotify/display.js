@@ -1,8 +1,9 @@
 import Button from '@mui/material/Button';
 
-import { useSession, signIn, signOut } from 'next-auth/react';
+import { signIn, signOut } from 'next-auth/react';
 import Image from 'next/image';
-import { useState } from 'react';
+import { SessionContext } from '@/lib/session';
+import { useState, useContext } from 'react';
 
 import styles from '@/styles/Spotify.module.css';
 
@@ -10,7 +11,8 @@ import PageLayout from '@/components/PageLayout';
 import NetworkAPI from '@/lib/networkAPI';
 
 export default function Display() {
-    const { data: session } = useSession();
+    // const { data: session } = useSession();
+    const session = useContext(SessionContext);
     const [songName, setSongItem] = useState('');
     const [generatedItems, setAllItems] = useState('');
 

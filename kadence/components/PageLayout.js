@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
+import { SessionContext } from '@/lib/session';
+import { useContext } from 'react';
 
 import SettingsIcon from '@mui/icons-material/Settings';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -27,7 +28,8 @@ export default function PageLayout({
     prevLink = '',
     children,
 }) {
-    const { data: session } = useSession();
+    // const { data: session } = useSession();
+    const session = useContext(SessionContext);
 
     const playerName = player.toLowerCase().trim();
     const showPlayer =

@@ -13,6 +13,8 @@ const SpotifyScopeString = [
     'playlist-modify-public',
 ].join(',');
 
+const useSecureCookies = true;
+
 export default NextAuth({
     providers: [
         SpotifyProvider({
@@ -32,6 +34,20 @@ export default NextAuth({
         async session(session, user) {
             session.user = user;
             return session;
+        },
+    },
+    cookies: {
+        sessionToken: {
+            name: `${
+                useSecureCookies ? '__Secure-' : ''
+            }next-auth.session-token`,
+            options: {
+                httpOnly: true,
+                sameSite: 'none',
+                path: '/',
+                domain: `.kadenceapp.com`,
+                secure: useSecureCookies,
+            },
         },
     },
 });
