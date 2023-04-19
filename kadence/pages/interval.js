@@ -142,13 +142,11 @@ export default function IntervalPage() {
                 const currentSongData = await NetworkAPI.get(
                     '/api/spotify/currentSong'
                 );
-                setCurrentSong((prev) => {
-                    const current = currentSongData?.data?.item?.name;
-                    if (current !== prev) {
-                        queueNewSong();
-                    }
-                    return current;
-                });
+                const currentURI = currentSongData?.data?.item?.name;
+                if (currentSong !== currentURI) {
+                    setCurrentSong(currentURI);
+                    queueNewSong();
+                }
             } else if (platform === 'apple' && music) {
                 if (
                     music.player.currentPlaybackTimeRemaining === 0 ||

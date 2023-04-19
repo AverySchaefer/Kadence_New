@@ -61,9 +61,11 @@ async function getIntervalRecommendations(prefData, intervalStatus) {
         );
         const results = await response.json();
 
+        console.log(results);
         return results.tracks;
     } catch (err) {
         console.log('Something went wrong fetching recs from Spotify');
+        console.log(err);
         return null;
     }
 }
@@ -97,7 +99,8 @@ handler.get(async (req, res) => {
     );
 
     if (songItems) {
-        const playlistURIs = playlistScreening(songItems, prefData);
+        const playlistObjs = playlistScreening(songItems, prefData);
+        const playlistURIs = playlistObjs.map((obj) => obj.uri);
         res.status(200).json(shuffleArray(playlistURIs));
     } else {
         res.status(500).send(

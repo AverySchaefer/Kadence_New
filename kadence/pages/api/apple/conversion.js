@@ -29,9 +29,11 @@ async function getAppleURIFromSpotifyURI(
     const searchParams = new URLSearchParams({
         limit: 1,
         types: 'songs',
-        term: `${foundSong.name} ${foundSong.artists
-            .map((artist) => artist.name)
-            .join(' ')}`,
+        term: `${foundSong.name} ${
+            foundSong.artists
+                ? foundSong.artists.map((artist) => artist.name).join(' ')
+                : ''
+        }`,
     });
     const APPLE_SEARCH_SONG_ENDPOINT = `https://api.music.apple.com/v1/catalog/us/search?${searchParams}`;
 

@@ -178,11 +178,11 @@ handler.get(async (req, res) => {
     const songItems = await getMoodRecommendations(prefData, chosenMood);
 
     if (songItems) {
-        const playlistURIs = shuffleArray(
-            playlistScreening(songItems, prefData)
-        );
+        const playlistObjs = playlistScreening(songItems, prefData);
+        const playlistURIs = playlistObjs.map((obj) => obj.uri);
+        const shuffledURIs = shuffleArray(playlistURIs);
 
-        res.status(200).json(playlistURIs.slice(0, playlistLength));
+        res.status(200).json(shuffledURIs.slice(0, playlistLength));
     } else {
         res.status(500).send(
             'Something went wrong while connecting to Spotify'

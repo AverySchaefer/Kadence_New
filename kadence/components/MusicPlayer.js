@@ -19,9 +19,9 @@ import useMusicKit from '@/lib/useMusicKit';
 const inter = Inter({ subsets: ['latin'] });
 
 const appleRefreshRateSeconds = 1;
-const spotifyRefreshRateSeconds = 10;
+const spotifyRefreshRateSeconds = 1;
 
-const fetchAfterSkipDelayMs = 250;
+const fetchAfterSkipDelayMs = 750;
 
 function convertSecondsToTimeString(s) {
     const minutes = Math.floor(s / 60);
