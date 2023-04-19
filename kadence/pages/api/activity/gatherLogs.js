@@ -31,6 +31,7 @@ handler.get(async (req, res) => {
     const userLogResults = await req.db
         .collection('Activities')
         .find({ username: req.query.username })
+        .limit(20)
         .project({ _id: 0 });
     if (!userLogResults) {
         console.log('User logs could not be found');
@@ -41,6 +42,7 @@ handler.get(async (req, res) => {
     const totalFriendResults = await req.db
         .collection('Activities')
         .find({ username: { $in: friendList } })
+        .limit(50)
         .project({ _id: 0 });
     if (!totalFriendResults) {
         console.log('Friend logs could not be found');
