@@ -1,42 +1,29 @@
-// TODO: fix this later
 /* eslint-disable no-await-in-loop */
-import { getSession } from 'next-auth/react';
 import nextConnect from 'next-connect';
 import { ObjectId } from 'mongodb';
-import refreshToken from '@/lib/spotify/refreshToken';
-import middleware from '../../../middleware/database';
+import middleware from '@/middleware/database';
+import { shuffleArray } from '@/lib/arrayUtil';
+import getSpotifyAccessToken from '@/lib/spotify/getSpotifyAccessToken';
 
 const handler = nextConnect();
 
 handler.use(middleware);
 
-async function getCurrentSong(token) {
-    const { access_token: accessToken } = await refreshToken(token);
-    const CURRENT_SONG_ENDPOINT =
-        'https://api.spotify.com/v1/me/player/currently-playing';
-    return fetch(CURRENT_SONG_ENDPOINT, {
-        headers: {
-            Authorization: `Bearer ${accessToken}`,
-        },
-    });
-}
-
-// TODO: Stats for every mood: happy, sad, angry, relaxed, energetic, romantic, melancholy
-async function generateSearchParams(
-    songSeedID,
-    prefData,
-    chosenMood,
-    totalSongs
-) {
+// Stats for every mood: happy, sad, angry, relaxed, energetic, romantic, melancholy
+function generateSearchParams(prefData, chosenMood) {
     /* Generate the general search parameters */
     const minSongLength = prefData.minSongLength * 1000; // convert to ms
     const maxSongLength = prefData.maxSongLength * 1000; // convert to ms
     const lyricalInstrumental = prefData.lyricalInstrumental / 100; // convert to 0-1 scale
 
+    // TODO: remove this and use genres or seed tracks instead
+    const songSeedID = '0c6xIDDpzE81m2q797ordA';
+
     if (chosenMood === 'happy') {
         return new URLSearchParams({
-            limit: totalSongs,
+            limit: 100,
             seed_tracks: songSeedID,
+            seed_genres: `${prefData.faveGenres.join(',')}` || undefined,
             target_instrumentalness: lyricalInstrumental,
             min_duration_ms: minSongLength,
             max_duration_ms: maxSongLength,
@@ -48,8 +35,9 @@ async function generateSearchParams(
     }
     if (chosenMood === 'sad') {
         return new URLSearchParams({
-            limit: totalSongs,
+            limit: 100,
             seed_tracks: songSeedID,
+            seed_genres: `${prefData.faveGenres.join(',')}` || undefined,
             target_instrumentalness: lyricalInstrumental,
             min_duration_ms: minSongLength,
             max_duration_ms: maxSongLength,
@@ -60,8 +48,9 @@ async function generateSearchParams(
     }
     if (chosenMood === 'angry') {
         return new URLSearchParams({
-            limit: totalSongs,
+            limit: 100,
             seed_tracks: songSeedID,
+            seed_genres: `${prefData.faveGenres.join(',')}` || undefined,
             target_instrumentalness: lyricalInstrumental,
             min_duration_ms: minSongLength,
             max_duration_ms: maxSongLength,
@@ -72,8 +61,9 @@ async function generateSearchParams(
     }
     if (chosenMood === 'relaxed') {
         return new URLSearchParams({
-            limit: totalSongs,
+            limit: 100,
             seed_tracks: songSeedID,
+            seed_genres: `${prefData.faveGenres.join(',')}` || undefined,
             target_instrumentalness: lyricalInstrumental,
             min_duration_ms: minSongLength,
             max_duration_ms: maxSongLength,
@@ -86,8 +76,9 @@ async function generateSearchParams(
     }
     if (chosenMood === 'energetic') {
         return new URLSearchParams({
-            limit: totalSongs,
+            limit: 100,
             seed_tracks: songSeedID,
+            seed_genres: `${prefData.faveGenres.join(',')}` || undefined,
             target_instrumentalness: lyricalInstrumental,
             min_duration_ms: minSongLength,
             max_duration_ms: maxSongLength,
@@ -100,8 +91,9 @@ async function generateSearchParams(
     }
     if (chosenMood === 'romantic') {
         return new URLSearchParams({
-            limit: totalSongs,
+            limit: 100,
             seed_tracks: songSeedID,
+            seed_genres: `${prefData.faveGenres.join(',')}` || undefined,
             target_instrumentalness: lyricalInstrumental,
             min_duration_ms: minSongLength,
             max_duration_ms: maxSongLength,
@@ -111,8 +103,9 @@ async function generateSearchParams(
     }
     if (chosenMood === 'melancholy') {
         return new URLSearchParams({
-            limit: totalSongs,
+            limit: 100,
             seed_tracks: songSeedID,
+            seed_genres: `${prefData.faveGenres.join(',')}` || undefined,
             target_instrumentalness: lyricalInstrumental,
             min_duration_ms: minSongLength,
             max_duration_ms: maxSongLength,
@@ -124,138 +117,77 @@ async function generateSearchParams(
         });
     }
     return new URLSearchParams({
-        limit: totalSongs,
+        limit: 100,
         seed_tracks: songSeedID,
+        seed_genres: `${prefData.faveGenres.join(',')}` || undefined,
         target_instrumentalness: lyricalInstrumental,
         min_duration_ms: minSongLength,
         max_duration_ms: maxSongLength,
     });
 }
 
-async function getMoodRecommendations(token, prefData, chosenMood, totalSongs) {
-    const { access_token: accessToken } = await refreshToken(token);
-    const response = await getCurrentSong(token);
-    const songItem = await response.json();
-    const songSeedID = songItem.item.id;
-    const searchParameters = await generateSearchParams(
-        songSeedID,
-        prefData,
-        chosenMood,
-        totalSongs
-    );
+async function getMoodRecommendations(prefData, chosenMood) {
+    const accessToken = getSpotifyAccessToken();
+
+    const searchParameters = await generateSearchParams(prefData, chosenMood);
 
     const RECOMMENDATIONS_ENDPOINT = `https://api.spotify.com/v1/recommendations?`;
-    return fetch(RECOMMENDATIONS_ENDPOINT + searchParameters, {
-        headers: {
-            Authorization: `Bearer ${accessToken}`,
-        },
+
+    try {
+        const response = await fetch(
+            RECOMMENDATIONS_ENDPOINT + searchParameters,
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            }
+        );
+        const results = await response.json();
+
+        return results.tracks;
+    } catch (err) {
+        console.log('Something went wrong fetching recs from Spotify');
+        return null;
+    }
+}
+
+function playlistScreening(songItems, userData) {
+    const { allowExplicit, blacklistedArtists, blacklistedSongs } = userData;
+
+    return songItems.filter((song) => {
+        if (!allowExplicit && song.explicit) return false;
+        if (song.artists.some((artist) => blacklistedArtists.includes(artist)))
+            return false;
+        if (blacklistedSongs.includes(song.name)) return false;
+        return true;
     });
 }
 
-async function playlistScreening(songItems, userData) {
-    const explicitFlag = userData.allowExplicit;
-    const { blacklistedArtists } = userData;
-    const { blacklistedSongs } = userData;
-    let blacklistFlag = false;
-
-    const playlistURIs = [];
-    for (let i = 0; i < songItems.tracks.length; i++) {
-        if (explicitFlag === false && songItems.tracks[i].explicit === true) {
-            blacklistFlag = true;
-        }
-
-        const songName = songItems.tracks[i].name;
-        const songArtists = [];
-        for (let j = 0; j < songItems.tracks[i].artists.length; j++) {
-            songArtists.push(songItems.tracks[i].artists.name);
-        }
-
-        /* Checking the current song against the blacklist songs list */
-        for (let k = 0; k < blacklistedSongs.length; k++) {
-            if (blacklistedSongs[k] === songName) {
-                blacklistFlag = true;
-                break;
-            }
-        }
-
-        /* Doing the same for artists */
-        // linter says this loop only allows one iteration
-        // eslint-disable-next-line no-unreachable-loop
-        for (let l = 0; l < songArtists.length; l++) {
-            for (let m = 0; m < blacklistedArtists.length; m++) {
-                if (songArtists[l] === blacklistedArtists[m]) {
-                    blacklistFlag = true;
-                    break;
-                }
-            }
-            break;
-        }
-
-        /* Adding all the URIs of the clean songs */
-        if (blacklistFlag === false) {
-            playlistURIs.push(songItems.tracks[i].uri);
-        }
-    }
-    return playlistURIs;
-}
-
 handler.get(async (req, res) => {
-    const {
-        token: { accessToken },
-    } = await getSession({ req });
-
     const queryURL = new URLSearchParams('?'.concat(req.url.split('?')[1]));
     const chosenMood = queryURL.get('chosenMood');
-    const playlistLength = queryURL.get('playlistLength');
+    const playlistLength = parseInt(queryURL.get('playlistLength') ?? 20, 10);
     const username = queryURL.get('username');
 
-    /* CHECK THAT PREFERENCE DATA IS BEING FOUND CORRECTLY */
     const userData = await req.db.collection('Users').findOne({ username });
 
     const prefData = await req.db
         .collection('Preferences')
         .findOne({ _id: new ObjectId(userData.musicPrefs) });
 
-    console.log(userData.musicPrefs);
-    console.log(prefData);
-    /* END PREF DATA */
+    const songItems = await getMoodRecommendations(prefData, chosenMood);
 
-    const response = await getMoodRecommendations(
-        accessToken,
-        prefData,
-        chosenMood,
-        playlistLength
-    );
-
-    // Check if nothing is currently active (was throwing error before)
-    if (response.status === 204 && response.statusText === 'No Content') {
-        res.status(204).json({
-            item: {
-                name: 'Nothing could be generated in mood mode!',
-            },
-        });
-        return;
-    }
-
-    const songItems = await response.json();
-    const playlistURIs = await playlistScreening(songItems, prefData);
-    let lengthDifference = playlistLength - playlistURIs.length;
-
-    while (lengthDifference > 0) {
-        console.log(lengthDifference);
-        const newResponse = await getMoodRecommendations(
-            accessToken,
-            prefData,
-            chosenMood,
-            lengthDifference
+    if (songItems) {
+        const playlistURIs = shuffleArray(
+            playlistScreening(songItems, prefData)
         );
-        const newSongItems = await newResponse.json();
-        const newPlaylistURIs = await playlistScreening(newSongItems, prefData);
-        playlistURIs.push(...newPlaylistURIs);
-        lengthDifference = playlistLength - playlistURIs.length;
-    }
 
-    res.status(200).json(playlistURIs);
+        res.status(200).json(playlistURIs.slice(0, playlistLength));
+    } else {
+        res.status(500).send(
+            'Something went wrong while connecting to Spotify'
+        );
+    }
 });
 
 export default handler;
