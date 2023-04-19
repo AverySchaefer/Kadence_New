@@ -41,6 +41,14 @@ export default function Social() {
         return () => clearInterval(transparentLoop);
     }, []);
 
+    function handleActivity() {
+        NetworkAPI.get('/api/activity/gatherLogs', {
+            username: localStorage.getItem('username')
+        }).then((result) => {
+            console.log(result);
+        });
+    }
+
     function handleFriendRequest(isAcceptingRequest, senderUsername) {
         if (isAcceptingRequest) {
             // Accept pending friend request
@@ -178,6 +186,11 @@ export default function Social() {
                 <div className={styles.section}>
                     <h3>Friend Activity</h3>
                     <div>Friend Activity Box</div>
+                    <button
+                        className={styles.denyRequestButton}
+                        onClick={handleActivity}
+                    >  Get Friend Activity
+                    </button>
                 </div>
             </main>
         </PageLayout>

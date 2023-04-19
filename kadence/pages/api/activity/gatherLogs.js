@@ -41,7 +41,7 @@ handler.get(async (req, res) => {
     /* Getting the activity log of each of the friends */
     const totalFriendResults = await req.db
         .collection('Activities')
-        .find({ username: { $in: friendList } })
+        .find({ username: { $in: friendList }, actionType: { $in: ["gen", "save"] }})
         .limit(50)
         .project({ _id: 0 });
     if (!totalFriendResults) {
