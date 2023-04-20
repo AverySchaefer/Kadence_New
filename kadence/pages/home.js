@@ -39,7 +39,7 @@ export default function Home() {
 
     const fitnessModeRoute = '/mode/preFitness';
     const intervalModeRoute = '/mode/preInterval';
-    const moodModeRoute = '/mode/preMood';
+    const moodModeRoute = '/mode/mood';
     const localModeRoute = '/mode/preLocal';
     return (
         isLoggedIn && (

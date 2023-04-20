@@ -119,6 +119,15 @@ export default function MoodModePage() {
     }
 
     async function saveToPlaylist(playlistURIs) {
+        await NetworkAPI.post('/api/activity/insert', {
+            username: localStorage.getItem('username'),
+            timestamp: new Date().toLocaleString(),
+            actionType: 'save',
+            friend: null,
+            genMode: 'mood',
+            saved: `Kadence Mood Mode - ${activeMood.toUpperCase()}`,
+        }); 
+
         if (platform === 'Spotify') {
             const saveRoute = '/api/generation/save';
             await fetch(saveRoute, {
@@ -150,6 +159,15 @@ export default function MoodModePage() {
     }
 
     async function handleGenerateClick() {
+        await NetworkAPI.post('/api/activity/insert', {
+            username: localStorage.getItem('username'),
+            timestamp: new Date().toLocaleString(),
+            actionType: 'gen',
+            friend: null,
+            genMode: 'mood',
+            saved: null,
+        }); 
+
         const recommendations = await getRecommendedSongs();
 
         await queueURIs(recommendations.map((rec) => rec.uri));

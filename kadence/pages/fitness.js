@@ -19,6 +19,14 @@ export default function FitnessPage() {
     const router = useRouter();
 
     const saveToProfile = async (playlistURIs) => {
+        await NetworkAPI.post('/api/activity/insert', {
+            username: localStorage.getItem('username'),
+            timestamp: new Date().toLocaleString(),
+            actionType: 'save',
+            friend: null,
+            genMode: 'fitness',
+            saved: 'Kadence Fitness Mode',
+        }); 
         console.log(playlistURIs);
         const saveRoute = '/api/generation/save';
         await fetch(saveRoute, {
