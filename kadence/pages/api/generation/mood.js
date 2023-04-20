@@ -28,6 +28,8 @@ function generateSearchParams(prefData, chosenMood) {
             max_valence: 1.0,
             target_energy: 0.75,
             target_danceability: 0.65,
+            // Using this as a method for randomization
+            target_popularity: Math.floor(Math.random() * 101),
         });
     }
     if (chosenMood === 'sad') {
@@ -41,6 +43,8 @@ function generateSearchParams(prefData, chosenMood) {
             min_valence: 0.0,
             max_valence: 0.35,
             target_energy: 0.25,
+            // Using this as a method for randomization
+            target_popularity: Math.floor(Math.random() * 101),
         });
     }
     if (chosenMood === 'angry') {
@@ -54,6 +58,8 @@ function generateSearchParams(prefData, chosenMood) {
             min_valence: 0.0,
             max_valence: 0.35,
             target_energy: 0.75,
+            // Using this as a method for randomization
+            target_popularity: Math.floor(Math.random() * 101),
         });
     }
     if (chosenMood === 'relaxed') {
@@ -69,6 +75,8 @@ function generateSearchParams(prefData, chosenMood) {
             target_danceability: 0.25,
             target_tempo: 80,
             max_tempo: 100,
+            // Using this as a method for randomization
+            target_popularity: Math.floor(Math.random() * 101),
         });
     }
     if (chosenMood === 'energetic') {
@@ -84,6 +92,8 @@ function generateSearchParams(prefData, chosenMood) {
             min_danceability: 0.65,
             min_energy: 0.75,
             target_energy: 0.8,
+            // Using this as a method for randomization
+            target_popularity: Math.floor(Math.random() * 101),
         });
     }
     if (chosenMood === 'romantic') {
@@ -96,6 +106,8 @@ function generateSearchParams(prefData, chosenMood) {
             max_duration_ms: maxSongLength,
             min_valence: 0.5,
             max_valence: 0.75,
+            // Using this as a method for randomization
+            target_popularity: Math.floor(Math.random() * 101),
         });
     }
     if (chosenMood === 'melancholy') {
@@ -111,6 +123,8 @@ function generateSearchParams(prefData, chosenMood) {
             target_danceability: 0.25,
             target_tempo: 80,
             max_tempo: 100,
+            // Using this as a method for randomization
+            target_popularity: Math.floor(Math.random() * 101),
         });
     }
     return new URLSearchParams({
@@ -120,6 +134,8 @@ function generateSearchParams(prefData, chosenMood) {
         target_instrumentalness: lyricalInstrumental,
         min_duration_ms: minSongLength,
         max_duration_ms: maxSongLength,
+        // Using this as a method for randomization
+        target_popularity: Math.floor(Math.random() * 101),
     });
 }
 

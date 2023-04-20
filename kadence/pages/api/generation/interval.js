@@ -27,6 +27,8 @@ function generateSearchParams(prefData, intervalStatus) {
             min_energy: 0.6,
             min_tempo: 100,
             target_tempo: 120,
+            // Using this as a method for randomization
+            target_popularity: Math.floor(Math.random() * 101),
         });
     }
     return new URLSearchParams({
@@ -41,6 +43,8 @@ function generateSearchParams(prefData, intervalStatus) {
         target_tempo: 80,
         max_energy: 0.6,
         max_tempo: 100,
+        // Using this as a method for randomization
+        target_popularity: Math.floor(Math.random() * 101),
     });
 }
 
