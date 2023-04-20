@@ -21,7 +21,7 @@ export default function Home() {
         if (localStorage.getItem('username') == null) {
             router.push('/login');
         }
-    }, []);
+    }, [router]);
 
     async function handleLogout() {
         localStorage.removeItem('jwt');

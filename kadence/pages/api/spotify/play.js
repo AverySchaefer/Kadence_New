@@ -10,7 +10,7 @@ const handler = nextConnect();
 
 handler.use(middleware);
 
-async function play(token) {
+async function play(token, uris = undefined) {
     const { access_token: accessToken } = await refreshToken(token);
     return fetch(PLAY_ENDPOINT, {
         method: 'PUT',
@@ -18,6 +18,9 @@ async function play(token) {
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
+            uris,
+        }),
     });
 }
 
@@ -25,7 +28,7 @@ handler.put(async (req, res) => {
     const {
         token: { accessToken },
     } = await getSession({ req });
-    const response = await play(accessToken);
+    const response = await play(accessToken, req.body.uris);
     if (response.ok) {
         res.status(200).send();
         return;
