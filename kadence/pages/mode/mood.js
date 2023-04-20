@@ -1,4 +1,3 @@
-import styles from '@/styles/PreMood.module.css';
 import { Button, Card, Slider, Stack } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -19,6 +18,7 @@ import NetworkAPI from '@/lib/networkAPI';
 import useMusicKit from '@/lib/useMusicKit';
 import { queueSongs } from '@/lib/apple/AppleAPI';
 import { Dialog } from '@capacitor/dialog';
+import styles from '@/styles/Mood.module.css';
 
 const theme = createTheme({
     palette: {

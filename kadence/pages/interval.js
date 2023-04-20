@@ -85,14 +85,24 @@ export default function IntervalPage() {
             }
         }
 
-        if (Object.keys(router.query).length > 0 && !ready) {
-            const low = parseInt(router.query.intervalLow, 10) * 60;
-            const high = parseInt(router.query.intervalHigh, 10) * 60;
-            setIntervalLow(low);
-            setIntervalHigh(high);
-            setTimer(low);
-            fetchSongs().then(() => setReady(true));
+        async function onLoad() {
+            if (
+                Object.keys(router.query).length > 0 &&
+                !ready &&
+                music &&
+                platform
+            ) {
+                const low = parseInt(router.query.intervalLow, 10) * 60;
+                const high = parseInt(router.query.intervalHigh, 10) * 60;
+                setIntervalLow(low);
+                setIntervalHigh(high);
+                setTimer(low);
+                await fetchSongs();
+                setReady(true);
+            }
         }
+
+        onLoad();
     }, [router.query, ready, platform, music]);
 
     useEffect(() => {
@@ -120,12 +130,8 @@ export default function IntervalPage() {
                 });
 
                 if (platform === 'Spotify') {
-                    const queueRoute = '/api/spotify/queue';
-                    await fetch(queueRoute, {
-                        method: 'POST',
-                        body: JSON.stringify({
-                            songURI: [newSong],
-                        }),
+                    await NetworkAPI.post('/api/spotify/queue', {
+                        songURI: newSong,
                     });
                 } else if (platform === 'apple') {
                     await queueSongs(music, [newSong]);
@@ -149,7 +155,7 @@ export default function IntervalPage() {
                 }
             } else if (platform === 'apple' && music) {
                 if (
-                    music.player.currentPlaybackTimeRemaining === 0 ||
+                    music.player.currentPlaybackTimeRemaining <= 0 ||
                     music.player.queue.isEmpty
                 ) {
                     queueNewSong();
@@ -218,13 +224,12 @@ export default function IntervalPage() {
                 cancelButtonTitle: 'No',
             });
             if (saveToPlaylist) {
-                saveToProfile(songCache);
+                await saveToProfile(songCache);
             }
         }
         if (platform === 'apple' && music) {
             // Clear queue
-            await music.skipToNextItem();
-            await music.stop();
+            await music.queueSongs([]);
         }
         router.push('/home');
     }
@@ -239,9 +244,11 @@ export default function IntervalPage() {
                         fontSize: '1.2em',
                     }}
                 >
-                    {currentMode} Energy: {ready && secondsToTime(timer)}
+                    {ready
+                        ? `${currentMode} Energy: ${secondsToTime(timer)}`
+                        : `Fetching songs...`}
                 </p>
-                <MusicPlayer size="large" type="spotify" />
+                {ready && <MusicPlayer size="large" type="spotify" />}
                 <Button
                     variant="contained"
                     sx={{
