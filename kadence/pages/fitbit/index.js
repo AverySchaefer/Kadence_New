@@ -40,6 +40,7 @@ export default function Display() {
                     // Make code_verifier and challenge available to profile page later
                     localStorage.setItem('pkceVerifier', verifier);
                     localStorage.setItem('pkceChallenge', challenge);
+                    localStorage.setItem('state', '3j3k386j3x606u7000324b4x4n0b0o06');
                 }
 
                 const redirectUri =
@@ -54,7 +55,7 @@ export default function Display() {
                     code_challenge: localStorage.getItem('pkceChallenge'),
                     code_challenge_method: 'S256',
                     // TODO: Randomly generate this state random, it's to prevent CSRF
-                    state: '3j3k386j3x606u7000324b4x4n0b0o06',
+                    state: localStorage.getItem('state'),
                     redirect_uri: redirectUri,
                 };
 

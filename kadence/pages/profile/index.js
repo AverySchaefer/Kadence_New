@@ -303,41 +303,43 @@ export default function Profile() {
         }
         async function connectFitbit() {
             const fromFitbit = localStorage.getItem('fromFitbit');
-            //console.log("fromFitbit: " + fromFitbit);
             if (fromFitbit == 'true') {
-                // TODO Figure out why this won't go in the loop even with fromFitbit being true
-                //console.log("fromFitbit == true");
-                console.log(window.location.search);
+                //console.log(window.location.search);
                 const url = new URLSearchParams(window.location.search);
                 const authorizationCode = url.get('code');
                 const state = url.get('state'); // TODO: We need to verify that this matches what we sent to Fitbit in the authorization step to prevent CSRF
-                console.log('authorizationCode: ', authorizationCode);
-                console.log('state: ', state);
+                const sentState = localStorage.getItem('state');
+                //console.log('authorizationCode: ', authorizationCode);
+                //console.log('state: ', state);
+                //console.log('sentState: ', sentState);
 
-                const codeVerifier = localStorage.getItem('pkceVerifier');
-                try {
-                    const response = await NetworkAPI.post(
-                        '/api/fitbit/getTokens',
-                        {
-                            authorizationCode,
-                            codeVerifier,
-                        }
-                    );
-                    console.log('getTokens response in frontend:', response);
-                    localStorage.setItem(
-                        'authorization_code',
-                        authorizationCode
-                    );
-                    localStorage.setItem('access_token', response.access_token);
-                    localStorage.setItem(
-                        'refresh_token',
-                        response.refresh_token
-                    );
-                } catch (err) {
-                    Dialog.alert({
-                        title: 'Error',
-                        message: `An error occurred while authorizing to Fitbit: ${err.message}.`,
-                    });
+                if (state == sentState) {
+                    const codeVerifier = localStorage.getItem('pkceVerifier');
+                    try {
+                        const response = await NetworkAPI.post(
+                            '/api/fitbit/getTokens',
+                            {
+                                authorizationCode,
+                                codeVerifier,
+                            }
+                        );
+                        //console.log('getTokens response in frontend:', response);
+                        // TODO Make sure that these items set are correct!
+                        localStorage.setItem(
+                            'authorization_code',
+                            authorizationCode
+                        );
+                        localStorage.setItem('access_token', response.access_token);
+                        localStorage.setItem(
+                            'refresh_token',
+                            response.refresh_token
+                        );
+                    } catch (err) {
+                        Dialog.alert({
+                            title: 'Error',
+                            message: `An error occurred while authorizing to Fitbit: ${err.message}.`,
+                        });
+                    }
                 }
                 localStorage.setItem('fromFitbit', 'false');
             }

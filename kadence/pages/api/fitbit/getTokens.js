@@ -26,7 +26,7 @@ handler.post(async (req, res) => {
     });
 
     const result = await response.json();
-    console.log('response in getTokens', result);
+    //console.log('response in getTokens', result);
 
     //! Why does this default to "Unhandled Status Code" on a 200?
     if (result.status == 400) {
@@ -40,7 +40,7 @@ handler.post(async (req, res) => {
         res.status(200).json(result);
     } else {
         console.log("Unhandled Status Code, Check Response");
-        res.status(result.status).json(result);
+        res.status(200).json(result);
     }
 });
 
