@@ -23,58 +23,6 @@ export default function Home() {
         }
     }, []);
 
-    async function handleFitness() {
-        const fitnessModeRoute = '/mode/preFitness';
-        await NetworkAPI.post('/api/activity/insert', {
-            username: localStorage.getItem('username'),
-            timestamp: new Date().toLocaleString(),
-            actionType: 'gen',
-            friend: null,
-            genMode: 'fitness',
-            saved: null,
-        });
-        router.push(fitnessModeRoute);
-    }
-
-    async function handleInterval() {
-        const intervalModeRoute = '/mode/preInterval';
-        await NetworkAPI.post('/api/activity/insert', {
-            username: localStorage.getItem('username'),
-            timestamp: new Date().toLocaleString(),
-            actionType: 'gen',
-            friend: null,
-            genMode: 'interval',
-            saved: null,
-        });
-        router.push(intervalModeRoute);
-    }
-
-    async function handleMood() {
-        const moodModeRoute = '/mode/preMood';
-        await NetworkAPI.post('/api/activity/insert', {
-            username: localStorage.getItem('username'),
-            timestamp: new Date().toLocaleString(),
-            actionType: 'gen',
-            friend: null,
-            genMode: 'mood',
-            saved: null,
-        });
-        router.push(moodModeRoute);
-    }
-
-    async function handleLocal() {
-        const localModeRoute = '/mode/preLocal';
-        await NetworkAPI.post('/api/activity/insert', {
-            username: localStorage.getItem('username'),
-            timestamp: new Date().toLocaleString(),
-            actionType: 'gen',
-            friend: null,
-            genMode: 'local',
-            saved: null,
-        });
-        router.push(localModeRoute);
-    }
-
     async function handleLogout() {
         localStorage.removeItem('jwt');
         localStorage.removeItem('username');
@@ -89,6 +37,10 @@ export default function Home() {
         }
     }
 
+    const fitnessModeRoute = '/mode/preFitness';
+    const intervalModeRoute = '/mode/preInterval';
+    const moodModeRoute = '/mode/preMood';
+    const localModeRoute = '/mode/preLocal';
     return (
         isLoggedIn && (
             <PageLayout
@@ -113,25 +65,25 @@ export default function Home() {
                     <Card className={styles.moodContainer}>
                         <Button
                             className={`${styles.modeBtn} ${styles.heartRateBtn}`}
-                            onClick={handleFitness}
+                            onClick={() => router.push(fitnessModeRoute)}
                         >
                             Heart Rate
                         </Button>
                         <Button
                             className={`${styles.modeBtn} ${styles.intervalBtn}`}
-                            onClick={handleInterval}
+                            onClick={() => router.push(intervalModeRoute)}
                         >
                             Interval
                         </Button>
                         <Button
                             className={`${styles.modeBtn} ${styles.moodBtn}`}
-                            onClick={handleMood}
+                            onClick={() => router.push(moodModeRoute)}
                         >
                             Mood
                         </Button>
                         <Button
                             className={`${styles.modeBtn} ${styles.localArtistBtn}`}
-                            onClick={handleLocal}
+                            onClick={() => router.push(localModeRoute)}
                         >
                             Local Artist
                         </Button>
