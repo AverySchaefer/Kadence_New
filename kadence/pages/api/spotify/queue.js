@@ -33,7 +33,6 @@ handler.post(async (req, res) => {
     } = await getSession({ req });
 
     const { songURI: uri } = req.body;
-    console.log(uri);
 
     const response = await addToQueue(accessToken, uri);
     if (response.ok) {

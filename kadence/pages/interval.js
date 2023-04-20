@@ -177,7 +177,7 @@ export default function IntervalPage() {
                     return prev - 1;
                 });
                 updateState();
-                setDelayBeforeQueue((prev) => (prev === 0 ? 0 : prev - 1));
+                setDelayBeforeQueue((prev) => (prev <= 0 ? 0 : prev - 1));
             }
         }, 1000);
 
