@@ -96,7 +96,7 @@ export default function MoodModePage() {
     const music = useMusicKit()?.getInstance();
 
     async function getRecommendedSongs() {
-        const { data: playlistURIs } = await NetworkAPI.get(
+        const { data: playlistObjs } = await NetworkAPI.get(
             '/api/generation/mood',
             {
                 chosenMood: activeMood,
@@ -107,13 +107,13 @@ export default function MoodModePage() {
 
         if (platform === 'apple' && music !== undefined) {
             const { data } = await NetworkAPI.get('/api/apple/conversion', {
-                spotifyURIs: JSON.stringify(playlistURIs),
+                spotifyURIs: JSON.stringify(playlistObjs.map((obj) => obj.uri)),
                 appleUserToken: music.musicUserToken,
             });
-            return data.appleURIs;
+            return data.appleURIs.map((uri) => ({ uri }));
         }
         if (platform === 'Spotify') {
-            return playlistURIs;
+            return playlistObjs;
         }
         return null;
     }
@@ -140,13 +140,10 @@ export default function MoodModePage() {
 
     async function queueURIs(playlistURIs) {
         if (platform === 'Spotify') {
-            for (let i = 0; i < playlistURIs.length; i++) {
-                // Order matters so playlist that gets saved is same order
-                // eslint-disable-next-line no-await-in-loop
-                await NetworkAPI.post('/api/spotify/queue', {
-                    songURI: [playlistURIs[i]],
-                });
-            }
+            await NetworkAPI.put('/api/spotify/play', {
+                uris: playlistURIs,
+            });
+            await NetworkAPI.put('/api/spotify/pause');
         } else if (platform === 'apple') {
             await queueSongs(music, playlistURIs);
         }
@@ -155,11 +152,7 @@ export default function MoodModePage() {
     async function handleGenerateClick() {
         const recommendations = await getRecommendedSongs();
 
-        if (platform === 'Spotify') {
-            await NetworkAPI.put('/api/spotify/pause');
-        }
-
-        await queueURIs(recommendations);
+        await queueURIs(recommendations.map((rec) => rec.uri));
 
         // Get song info and art for display
         if (platform === 'apple') {
@@ -173,35 +166,28 @@ export default function MoodModePage() {
             });
             setSongs(songInfoObjs);
         } else if (platform === 'Spotify') {
-            const { data } = await NetworkAPI.get('/api/spotify/getQueue');
-            console.log(data.queue);
-            // TODO: Loop through recommendations and find one in data that matches, grab image
-            const songInfoObjs = recommendations.map((uri, idx) => {
-                console.log(
-                    uri,
-                    data.queue.find((item) => item.uri === uri)
-                );
-                const foundObj = data.queue.find((item) => item.uri === uri);
-                //const artwork = foundObj.album.images[0].url;
-                return new MakeSong(uri, 'foundObj.name', 'artwork', idx);
-            });
+            const songInfoObjs = recommendations.map(
+                (rec, idx) => new MakeSong(rec.uri, rec.name, rec.artwork, idx)
+            );
             setSongs(songInfoObjs);
         }
 
         if (!waitToSave) {
-            saveToPlaylist(recommendations).then(async () => {
-                Dialog.alert({
-                    title: 'Success',
-                    message: 'Saved playlist successfully.',
-                });
-                setAlreadySavedPlaylist(true);
-                setConfirmedPlaylist(true);
-                if (platform === 'apple') {
-                    await music.play();
-                } else if (platform === 'spotify') {
-                    await NetworkAPI.post('/api/spotify/skip');
+            saveToPlaylist(recommendations.map((rec) => rec.uri)).then(
+                async () => {
+                    Dialog.alert({
+                        title: 'Success',
+                        message: 'Saved playlist successfully.',
+                    });
+                    setAlreadySavedPlaylist(true);
+                    setConfirmedPlaylist(true);
+                    if (platform === 'apple') {
+                        await music.play();
+                    } else if (platform === 'spotify') {
+                        await NetworkAPI.put('/api/spotify/play');
+                    }
                 }
-            });
+            );
         }
     }
 
@@ -209,7 +195,7 @@ export default function MoodModePage() {
         if (platform === 'apple') {
             await music.play();
         } else if (platform === 'Spotify') {
-            await NetworkAPI.post('/api/spotify/skip');
+            await NetworkAPI.put('/api/spotify/play');
         }
         setConfirmedPlaylist(true);
     }
@@ -251,7 +237,6 @@ export default function MoodModePage() {
                     className={`${styles.generateButton}`}
                     onClick={async () => {
                         if (platform === 'Spotify') {
-                            await NetworkAPI.post('/api/spotify/clearQueue');
                             await NetworkAPI.put('/api/spotify/pause');
                         } else if (platform === 'apple') {
                             await queueSongs(music, []);
