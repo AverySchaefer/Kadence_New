@@ -32,7 +32,7 @@ export default function LargePlayer() {
             message: 'Your playlist has been saved!',
         });
         localStorage.setItem('playlistURIs', null);
-        router.push('/spotify/playlistSaved');
+        router.reload();
     }
 
     return (

@@ -10,16 +10,17 @@ export default function LocalModeSetup() {
     );
 
     return (
-        <PageLayout title="" prevLink="/home" includeNav={false}>
+        <PageLayout title="" prevLink="/moodPlayer" includeNav={false}>
             <main className={styles.main}>
                 <h3>Your playlist has been saved</h3>
                 <Card className={styles.imageContainer}>
                     <Grid
                         container
                         rowSpacing={0}
-                        columnSpacing={{ xs: 0, sm: 0, md: 0 }}
+                        columnSpacing={0}
+                        sx={{ flexGrow: 1, height: '100%', width: '100%' }}
                     >
-                        <Grid item xs={0}>
+                        <Grid item sx={{ height: '50%', width: '50%' }}>
                             <Image
                                 src={
                                     albumImgs[0] ??
@@ -30,7 +31,7 @@ export default function LocalModeSetup() {
                                 height={150}
                             />
                         </Grid>
-                        <Grid item xs={0}>
+                        <Grid item sx={{ height: '50%', width: '50%' }}>
                             <Image
                                 src={
                                     albumImgs[1] ??
@@ -41,7 +42,7 @@ export default function LocalModeSetup() {
                                 height={150}
                             />
                         </Grid>
-                        <Grid item xs={0}>
+                        <Grid item sx={{ height: '50%', width: '50%' }}>
                             <Image
                                 src={
                                     albumImgs[2] ??
@@ -52,7 +53,7 @@ export default function LocalModeSetup() {
                                 height={150}
                             />
                         </Grid>
-                        <Grid item xs={0}>
+                        <Grid item sx={{ height: '50%', width: '50%' }}>
                             <Image
                                 src={
                                     albumImgs[3] ??
