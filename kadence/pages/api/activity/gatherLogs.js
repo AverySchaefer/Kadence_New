@@ -5,7 +5,13 @@ const handler = nextConnect();
 handler.use(middleware);
 
 function compareLogs(a, b) {
-    return Date.parse(a.timestamp) > Date.parse(b.timestamp);
+    if (Date.parse(a.timestamp) === Date.parse(b.timestamp)) {
+        return 0;
+    }
+    if (Date.parse(a.timestamp) > Date.parse(b.timestamp)) {
+        return -1;
+    }
+    return 1;
 }
 
 handler.get(async (req, res) => {
@@ -26,9 +32,9 @@ handler.get(async (req, res) => {
 
     /* Finding the user's friends */
     const friendList = user.friends;
-    
+
     /* Getting the activity log of the user */
-    const userLogResults = await req.db
+    /* const userLogResults = await req.db
         .collection('Activities')
         .find({ username: req.query.username })
         .limit(20)
@@ -36,12 +42,15 @@ handler.get(async (req, res) => {
     if (!userLogResults) {
         console.log('User logs could not be found');
         res.status(400).send('User logs could not be found');
-    }
+    } */
 
     /* Getting the activity log of each of the friends */
     const totalFriendResults = await req.db
         .collection('Activities')
-        .find({ username: { $in: friendList }, actionType: { $in: ["gen", "save"] }})
+        .find({
+            username: { $in: friendList },
+            actionType: { $in: ['gen', 'save'] },
+        })
         .limit(50)
         .project({ _id: 0 });
     if (!totalFriendResults) {
@@ -50,7 +59,7 @@ handler.get(async (req, res) => {
     }
 
     const totalLogs = [];
-    await userLogResults.forEach((log) => totalLogs.push(log));
+    // await userLogResults.forEach((log) => totalLogs.push(log));
     await totalFriendResults.forEach((log) => totalLogs.push(log));
     totalLogs.sort(compareLogs);
     res.status(200).json(totalLogs);
