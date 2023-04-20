@@ -129,7 +129,7 @@ export default function IntervalPage() {
                     });
                 } else if (platform === 'apple') {
                     await queueSongs(music, [newSong]);
-                    setTimeout(() => music.play(), 1000);
+                    await music.play();
                 }
 
                 // Try to prevent double queues

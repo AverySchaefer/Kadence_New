@@ -61,7 +61,6 @@ async function getIntervalRecommendations(prefData, intervalStatus) {
         );
         const results = await response.json();
 
-        console.log(results);
         return results.tracks;
     } catch (err) {
         console.log('Something went wrong fetching recs from Spotify');

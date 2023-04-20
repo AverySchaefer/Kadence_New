@@ -29,7 +29,7 @@ function generateSearchParams(prefData, chosenMood) {
             max_duration_ms: maxSongLength,
             min_valence: 0.65,
             max_valence: 1.0,
-            target_enegry: 0.75,
+            target_energy: 0.75,
             target_danceability: 0.65,
         });
     }
@@ -43,7 +43,7 @@ function generateSearchParams(prefData, chosenMood) {
             max_duration_ms: maxSongLength,
             min_valence: 0.0,
             max_valence: 0.35,
-            target_enegry: 0.25,
+            target_energy: 0.25,
         });
     }
     if (chosenMood === 'angry') {
@@ -86,7 +86,7 @@ function generateSearchParams(prefData, chosenMood) {
             max_valence: 0.75,
             min_danceability: 0.65,
             min_energy: 0.75,
-            target_enegry: 0.8,
+            target_energy: 0.8,
         });
     }
     if (chosenMood === 'romantic') {
@@ -127,10 +127,9 @@ function generateSearchParams(prefData, chosenMood) {
 }
 
 async function getMoodRecommendations(prefData, chosenMood) {
-    const accessToken = getSpotifyAccessToken();
+    const accessToken = await getSpotifyAccessToken();
 
     const searchParameters = await generateSearchParams(prefData, chosenMood);
-
     const RECOMMENDATIONS_ENDPOINT = `https://api.spotify.com/v1/recommendations?`;
 
     try {
@@ -147,6 +146,7 @@ async function getMoodRecommendations(prefData, chosenMood) {
         return results.tracks;
     } catch (err) {
         console.log('Something went wrong fetching recs from Spotify');
+        console.log(err);
         return null;
     }
 }
@@ -181,8 +181,8 @@ handler.get(async (req, res) => {
         const playlistObjs = playlistScreening(songItems, prefData);
         const playlistURIs = playlistObjs.map((obj) => obj.uri);
         const shuffledURIs = shuffleArray(playlistURIs);
-
-        res.status(200).json(shuffledURIs.slice(0, playlistLength));
+        const urisToSend = shuffledURIs.slice(0, playlistLength);
+        res.status(200).json(urisToSend);
     } else {
         res.status(500).send(
             'Something went wrong while connecting to Spotify'

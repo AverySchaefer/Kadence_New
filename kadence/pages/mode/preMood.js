@@ -10,11 +10,15 @@ import {
     faHeart,
     faCloudRain,
 } from '@fortawesome/free-solid-svg-icons';
-import { PageLayout } from '@/components/';
+import { MusicPlayer, PageLayout } from '@/components/';
 import { useState, useEffect } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import NetworkAPI from '@/lib/networkAPI';
+import useMusicKit from '@/lib/useMusicKit';
+import { queueSongs } from '@/lib/apple/AppleAPI';
+import { Dialog } from '@capacitor/dialog';
 
 const theme = createTheme({
     palette: {
@@ -24,364 +28,268 @@ const theme = createTheme({
     },
 });
 
+const selectedColor = '#69e267';
+const unselectedColor = '#ffffff';
+const moods = [
+    { name: 'happy', icon: faFaceSmile },
+    { name: 'sad', icon: faFaceFrown },
+    { name: 'angry', icon: faFaceAngry },
+    { name: 'relaxed', icon: faCouch },
+    { name: 'energetic', icon: faBolt },
+    { name: 'romantic', icon: faHeart },
+    { name: 'melancholy', icon: faCloudRain },
+];
+
+function MakeSong(uri, name, art, key) {
+    this.uri = uri;
+    this.name = name;
+    this.art = art;
+    this.key = key;
+}
+
+function PlaylistView({ songs }) {
+    return (
+        <div className={styles.songDisplay}>
+            <h3>Your Playlist:</h3>
+            <div className={styles.resultsContainer}>
+                <div className={styles.songResults}>
+                    {songs.map((song) => (
+                        <div key={song.key} className={styles.songContainer}>
+                            <div className={styles.albumArtContainer}>
+                                <Image
+                                    src={
+                                        song.art ??
+                                        'https://demofree.sirv.com/nope-not-here.jpg'
+                                    }
+                                    alt="Album Cover"
+                                    width={50}
+                                    height={50}
+                                />
+                            </div>
+                            <div className={styles.songName}>
+                                <p>{song.name}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export default function MoodModePage() {
     const [activeMood, setActiveMood] = useState('');
     const [waitToSave, setWaitToSave] = useState(false);
+    const [platform, setPlatform] = useState(null);
     useEffect(() => {
         setActiveMood(localStorage.getItem('mood').toLowerCase());
-        setWaitToSave(localStorage.getItem('waitSave'));
+        setWaitToSave(localStorage.getItem('waitSave') === 'true');
+        setPlatform(localStorage.getItem('platform'));
     }, []);
-    const selectedColor = '#69e267';
-    const unselectedColor = '#ffffff';
 
-    const [happyIconColor, setHappyIconColor] = useState(unselectedColor);
-    const [sadIconColor, setSadIconColor] = useState(unselectedColor);
-    const [angryIconColor, setAngryIconColor] = useState(unselectedColor);
-    const [RelaxedIconColor, setRelaxedIconColor] = useState(unselectedColor);
-    const [energeticIconColor, setEnergeticIconColor] =
-        useState(unselectedColor);
-    const [romanticIconColor, setRomanticIconColor] = useState(unselectedColor);
-    const [melancholyIconColor, setMelancholyIconColor] =
-        useState(unselectedColor);
     const [numSongs, setNumSongs] = useState(20);
     const [songs, setSongs] = useState(null);
+    const [confirmedPlaylist, setConfirmedPlaylist] = useState(false);
+    const [alreadySavedPlaylist, setAlreadySavedPlaylist] = useState(false);
 
     const router = useRouter();
+    const music = useMusicKit()?.getInstance();
 
-    function MakeSong(name, art, key) {
-        this.name = name;
-        this.art = art;
-        this.key = key;
+    async function getRecommendedSongs() {
+        const { data: playlistURIs } = await NetworkAPI.get(
+            '/api/generation/mood',
+            {
+                chosenMood: activeMood,
+                playlistLength: numSongs,
+                username: localStorage.getItem('username'),
+            }
+        );
+
+        if (platform === 'apple' && music !== undefined) {
+            const { data } = await NetworkAPI.get('/api/apple/conversion', {
+                spotifyURIs: JSON.stringify(playlistURIs),
+                appleUserToken: music.musicUserToken,
+            });
+            return data.appleURIs;
+        }
+        if (platform === 'Spotify') {
+            return playlistURIs;
+        }
+        return null;
     }
 
-    // TODO: Remove this when it gets used
-    // eslint-disable-next-line no-unused-vars
-    const getAndSaveRecommendations = async () => {
-        const moodMode = '/api/generation/mood?';
-        const res = await fetch(
-            moodMode +
-                new URLSearchParams({
-                    chosenMood: activeMood,
-                    playlistLength: numSongs,
-                    username: localStorage.getItem('username'),
-                })
-        );
-        const playlistURIs = await res.json();
-
-        /* NEED TO ADD A SAVE PREFERENCE */
-        const saveRoute = '/api/generation/save';
-        const saveRes = await fetch(saveRoute, {
-            method: 'POST',
-            body: JSON.stringify({
-                playlistName: 'Kadence Mood Mode',
-                playlistArray: playlistURIs,
-            }),
-        });
-        const playlistID = await saveRes.json();
-
-        const dequeueRoute = '/api/spotify/clearQueue';
-        await fetch(dequeueRoute, {
-            method: 'POST',
-        });
-
-        const queueRoute = '/api/spotify/queue';
-        for (let i = 0; i < playlistURIs.length; i++) {
-            fetch(queueRoute, {
+    async function saveToPlaylist(playlistURIs) {
+        if (platform === 'Spotify') {
+            const saveRoute = '/api/generation/save';
+            await fetch(saveRoute, {
                 method: 'POST',
                 body: JSON.stringify({
-                    songURI: playlistURIs[i],
+                    playlistName: `Kadence Mood Mode - ${activeMood.toUpperCase()}`,
+                    playlistArray: playlistURIs,
                 }),
             });
-        }
-
-        const playlistRoute = '/api/spotify/getPlaylist?';
-        const playlistRes = await fetch(
-            playlistRoute +
-                new URLSearchParams({
-                    playlistID,
-                })
-        );
-
-        const songNames = [];
-        const playlistItems = await playlistRes.json();
-        let playlistSongs = playlistItems.items[0].track.name;
-        songNames.push(
-            new MakeSong(
-                playlistItems.items[0].track.name,
-                playlistItems.items[0].track.album.images[0].url,
-                0
-            )
-        );
-        for (let j = 1; j < playlistItems.items.length; j++) {
-            playlistSongs = playlistSongs.concat(', ');
-            const songName = playlistItems.items[j].track.name;
-            playlistSongs = playlistSongs.concat(songName);
-            songNames.push(
-                new MakeSong(
-                    songName,
-                    playlistItems.items[j].track.album.images[0].url,
-                    j
-                )
-            );
-        }
-        setSongs(songNames);
-    };
-
-    const getRecommendations = async (numberOfSongs, currentMood) => {
-        const moodMode = '/api/generation/mood?';
-        console.log(numberOfSongs, currentMood);
-        const res = await fetch(
-            moodMode +
-                new URLSearchParams({
-                    chosenMood: currentMood,
-                    playlistLength: numberOfSongs,
-                    username: localStorage.getItem('username'),
-                })
-        );
-        const playlistURIs = await res.json();
-        localStorage.setItem('playlistURIs', JSON.stringify(playlistURIs));
-
-        const dequeueRoute = '/api/spotify/clearQueue';
-        const dequeueRes = await fetch(dequeueRoute, {
-            method: 'POST',
-        });
-        console.log(dequeueRes);
-
-        const queueRoute = '/api/spotify/queue';
-        for (let i = 0; i < playlistURIs.length; i++) {
-            // TODO: Fix this
-            // eslint-disable-next-line no-await-in-loop
-            fetch(queueRoute, {
-                method: 'POST',
-                body: JSON.stringify({
-                    songURI: playlistURIs[i],
-                }),
+        } else if (platform === 'apple') {
+            const saveRoute = '/api/apple/saveToPlaylist';
+            await NetworkAPI.post(saveRoute, {
+                name: `Kadence Mood Mode - ${activeMood.toUpperCase()}`,
+                appleURIs: playlistURIs,
+                appleUserToken: music.musicUserToken,
             });
         }
+    }
 
-        const songNames = [];
-        const getQueueRoute = '/api/spotify/getQueue';
-        const queueRes = await fetch(getQueueRoute);
-        const queueItems = await queueRes.json();
-        let queueSongs = queueItems.queue[0].name;
-        songNames.push(
-            new MakeSong(
-                queueItems.queue[0].name,
-                queueItems.queue[0].album.images[0].url,
-                0
-            )
-        );
-
-        for (let j = 1; j < numberOfSongs; j++) {
-            queueSongs = queueSongs.concat(', ');
-            const songName = queueItems.queue[j].name;
-            queueSongs = queueSongs.concat(songName);
-            songNames.push(
-                new MakeSong(
-                    songName,
-                    queueItems.queue[j].album.images[0].url,
-                    j
-                )
-            );
+    async function queueURIs(playlistURIs) {
+        if (platform === 'Spotify') {
+            for (let i = 0; i < playlistURIs.length; i++) {
+                // Order matters so playlist that gets saved is same order
+                // eslint-disable-next-line no-await-in-loop
+                await NetworkAPI.post('/api/spotify/queue', {
+                    songURI: [playlistURIs[i]],
+                });
+            }
+        } else if (platform === 'apple') {
+            await queueSongs(music, playlistURIs);
         }
-        setSongs(songNames);
-    };
+    }
 
-    const generateClick = (save) => {
-        if (save === 'true') {
-            getRecommendations(numSongs, activeMood);
-        } else {
-            getAndSaveRecommendations();
-        }
-    };
+    async function handleGenerateClick() {
+        const recommendations = await getRecommendedSongs();
 
-    const initializeMood = (currentMood) => {
-        switch (currentMood) {
-            case 'happy':
-                setHappyIconColor(selectedColor);
-                break;
-            case 'sad':
-                setSadIconColor(selectedColor);
-                break;
-            case 'angry':
-                setAngryIconColor(selectedColor);
-                break;
-            case 'relaxed':
-                setRelaxedIconColor(selectedColor);
-                break;
-            case 'energetic':
-                setEnergeticIconColor(selectedColor);
-                break;
-            case 'romantic':
-                setRomanticIconColor(selectedColor);
-                break;
-            case 'melancholy':
-                setMelancholyIconColor(selectedColor);
-                break;
-            default:
-                break;
+        if (platform === 'Spotify') {
+            await NetworkAPI.put('/api/spotify/pause');
         }
-    };
 
-    const changeMood = (mood) => {
-        switch (activeMood) {
-            case 'happy':
-                setHappyIconColor(unselectedColor);
-                break;
-            case 'sad':
-                setSadIconColor(unselectedColor);
-                break;
-            case 'angry':
-                setAngryIconColor(unselectedColor);
-                break;
-            case 'relaxed':
-                setRelaxedIconColor(unselectedColor);
-                break;
-            case 'energetic':
-                setEnergeticIconColor(unselectedColor);
-                break;
-            case 'romantic':
-                setRomanticIconColor(unselectedColor);
-                break;
-            case 'melancholy':
-                setMelancholyIconColor(unselectedColor);
-                break;
-            default:
-                break;
-        }
-        switch (mood) {
-            case 'happy':
-                setHappyIconColor(selectedColor);
-                break;
-            case 'sad':
-                setSadIconColor(selectedColor);
-                break;
-            case 'angry':
-                setAngryIconColor(selectedColor);
-                break;
-            case 'relaxed':
-                setRelaxedIconColor(selectedColor);
-                break;
-            case 'energetic':
-                setEnergeticIconColor(selectedColor);
-                break;
-            case 'romantic':
-                setRomanticIconColor(selectedColor);
-                break;
-            case 'melancholy':
-                setMelancholyIconColor(selectedColor);
-                break;
-            default:
-                break;
-        }
-        setActiveMood(mood);
-    };
+        await queueURIs(recommendations);
 
-    useEffect(() => {
-        initializeMood(activeMood);
-    }, [activeMood, waitToSave]);
-    return (
+        // Get song info and art for display
+        if (platform === 'apple') {
+            const songInfoObjs = music.player.queue.items.map((item, idx) => {
+                // Not sure why width and height of image would only load in
+                // for first song in queue, but this fixed it
+                const artwork = item.artworkURL
+                    .replace('{w}', 600)
+                    .replace('{h}', 600);
+                return new MakeSong(item.id, item.title, artwork, idx);
+            });
+            setSongs(songInfoObjs);
+        } else if (platform === 'Spotify') {
+            const { data } = await NetworkAPI.get('/api/spotify/getQueue');
+            console.log(data.queue);
+            // TODO: Loop through recommendations and find one in data that matches, grab image
+            const songInfoObjs = recommendations.map((uri, idx) => {
+                console.log(
+                    uri,
+                    data.queue.find((item) => item.uri === uri)
+                );
+                const foundObj = data.queue.find((item) => item.uri === uri);
+                //const artwork = foundObj.album.images[0].url;
+                return new MakeSong(uri, 'foundObj.name', 'artwork', idx);
+            });
+            setSongs(songInfoObjs);
+        }
+
+        if (!waitToSave) {
+            saveToPlaylist(recommendations).then(async () => {
+                Dialog.alert({
+                    title: 'Success',
+                    message: 'Saved playlist successfully.',
+                });
+                setAlreadySavedPlaylist(true);
+                setConfirmedPlaylist(true);
+                if (platform === 'apple') {
+                    await music.play();
+                } else if (platform === 'spotify') {
+                    await NetworkAPI.post('/api/spotify/skip');
+                }
+            });
+        }
+    }
+
+    async function handleConfirmClick() {
+        if (platform === 'apple') {
+            await music.play();
+        } else if (platform === 'Spotify') {
+            await NetworkAPI.post('/api/spotify/skip');
+        }
+        setConfirmedPlaylist(true);
+    }
+
+    return confirmedPlaylist ? (
+        // Confirmed playlist, just show player
+        <PageLayout includeNav={false} title="Mood Player">
+            <MusicPlayer size="large" />
+            <PlaylistView songs={songs} />
+            <Stack
+                alignItems="center"
+                flexDirection={'row'}
+                justifyContent={'space-around'}
+            >
+                {!alreadySavedPlaylist && (
+                    <Button
+                        variant="contained"
+                        type="submit"
+                        sx={{ borderRadius: 3, width: '100%' }}
+                        className={`${styles.generateButton}`}
+                        onClick={() =>
+                            saveToPlaylist(songs.map((song) => song.uri)).then(
+                                () => {
+                                    Dialog.alert({
+                                        title: 'Success',
+                                        message: 'Saved playlist successfully.',
+                                    });
+                                    setAlreadySavedPlaylist(true);
+                                }
+                            )
+                        }
+                    >
+                        Save Playlist
+                    </Button>
+                )}
+                <Button
+                    variant="contained"
+                    sx={{ borderRadius: 3 }}
+                    className={`${styles.generateButton}`}
+                    onClick={async () => {
+                        if (platform === 'Spotify') {
+                            await NetworkAPI.post('/api/spotify/clearQueue');
+                            await NetworkAPI.put('/api/spotify/pause');
+                        } else if (platform === 'apple') {
+                            await queueSongs(music, []);
+                            await music.stop();
+                        }
+                        router.push('/home');
+                    }}
+                >
+                    Exit
+                </Button>
+            </Stack>
+        </PageLayout>
+    ) : (
+        // Haven't confirmed playlist yet
         <PageLayout title="Mood Mode" prevLink="/home">
             <p>What mood should your playlist be?</p>
             <Card className={styles.moodsContainer}>
-                <Button
-                    sx={{ borderRadius: 3, height: 70 }}
-                    startIcon={
-                        <FontAwesomeIcon
-                            icon={faFaceSmile}
-                            color={happyIconColor}
-                            style={{ width: '45px', height: '45px' }}
-                        />
-                    }
-                    className={`${styles.moodButton}`}
-                    onClick={() => changeMood('happy')}
-                >
-                    Happy
-                </Button>
-                <Button
-                    sx={{ borderRadius: 3 }}
-                    startIcon={
-                        <FontAwesomeIcon
-                            icon={faFaceFrown}
-                            color={sadIconColor}
-                            style={{ width: '45px', height: '45px' }}
-                        />
-                    }
-                    className={`${styles.moodButton}`}
-                    onClick={() => changeMood('sad')}
-                >
-                    Sad
-                </Button>
-                <Button
-                    sx={{ borderRadius: 3 }}
-                    startIcon={
-                        <FontAwesomeIcon
-                            icon={faFaceAngry}
-                            color={angryIconColor}
-                            style={{ width: '45px', height: '45px' }}
-                        />
-                    }
-                    className={`${styles.moodButton}`}
-                    onClick={() => changeMood('angry')}
-                >
-                    Angry
-                </Button>
-                <Button
-                    sx={{ borderRadius: 3 }}
-                    startIcon={
-                        <FontAwesomeIcon
-                            icon={faCouch}
-                            color={RelaxedIconColor}
-                            style={{ width: '45px', height: '45px' }}
-                        />
-                    }
-                    className={`${styles.moodButton}`}
-                    onClick={() => changeMood('relaxed')}
-                >
-                    Relaxed
-                </Button>
-                <Button
-                    sx={{ borderRadius: 3 }}
-                    startIcon={
-                        <FontAwesomeIcon
-                            icon={faBolt}
-                            color={energeticIconColor}
-                            style={{ width: '45px', height: '45px' }}
-                        />
-                    }
-                    className={`${styles.moodButton}`}
-                    onClick={() => changeMood('energetic')}
-                >
-                    Energetic
-                </Button>
-                <Button
-                    sx={{ borderRadius: 3 }}
-                    startIcon={
-                        <FontAwesomeIcon
-                            icon={faHeart}
-                            color={romanticIconColor}
-                            style={{ width: '45px', height: '45px' }}
-                        />
-                    }
-                    className={`${styles.moodButton}`}
-                    onClick={() => changeMood('romantic')}
-                >
-                    Romantic
-                </Button>
-                <Button
-                    sx={{ borderRadius: 3 }}
-                    startIcon={
-                        <FontAwesomeIcon
-                            icon={faCloudRain}
-                            color={melancholyIconColor}
-                            style={{ width: '45px', height: '45px' }}
-                        />
-                    }
-                    className={`${styles.moodButton}`}
-                    onClick={() => changeMood('melancholy')}
-                >
-                    Melancholy
-                </Button>
+                {moods.map((mood) => (
+                    <Button
+                        key={mood.name}
+                        sx={{ borderRadius: 3 }}
+                        startIcon={
+                            <FontAwesomeIcon
+                                icon={mood.icon}
+                                color={
+                                    activeMood === mood.name
+                                        ? selectedColor
+                                        : unselectedColor
+                                }
+                                style={{ width: '45px', height: '45px' }}
+                            />
+                        }
+                        className={`${styles.moodButton}`}
+                        onClick={() => setActiveMood(mood.name)}
+                    >
+                        {mood.name}
+                    </Button>
+                ))}
             </Card>
             <ThemeProvider theme={theme}>
                 <div className={styles.sliderContainer}>
@@ -406,60 +314,41 @@ export default function MoodModePage() {
                         </p>
                     </Stack>
                 </div>
-                <Stack alignItems="center" spacing={2}>
-                    <Button
-                        variant="contained"
-                        sx={{ borderRadius: 3, width: '100%' }}
-                        className={`${styles.generateButton}`}
-                        onClick={() => generateClick(waitToSave)}
-                    >
-                        Generate Playlist
-                    </Button>
-                </Stack>
-                <br />
+                {!songs && (
+                    <Stack alignItems="center" spacing={2}>
+                        <Button
+                            variant="contained"
+                            sx={{ borderRadius: 3, width: '100%' }}
+                            className={`${styles.generateButton}`}
+                            onClick={handleGenerateClick}
+                        >
+                            Generate Playlist
+                        </Button>
+                    </Stack>
+                )}
                 {songs && (
                     <>
-                        <div className={styles.songDisplay}>
-                            <h3>Your Playlist:</h3>
-                            <div className={styles.resultsContainer}>
-                                <div className={styles.songResults}>
-                                    {songs.map((song) => (
-                                        <div
-                                            key={song.key}
-                                            className={styles.songContainer}
-                                        >
-                                            <div
-                                                className={
-                                                    styles.albumArtContainer
-                                                }
-                                            >
-                                                <Image
-                                                    src={
-                                                        song.art ??
-                                                        'https://demofree.sirv.com/nope-not-here.jpg'
-                                                    }
-                                                    alt="Album Cover"
-                                                    width={50}
-                                                    height={50}
-                                                />
-                                            </div>
-                                            <div className={styles.songName}>
-                                                <p>{song.name}</p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                        <br />
-                        <Stack alignItems="center" spacing={2}>
+                        <PlaylistView songs={songs} />
+                        <Stack
+                            alignItems="center"
+                            flexDirection={'row'}
+                            justifyContent={'space-around'}
+                        >
                             <Button
                                 variant="contained"
-                                sx={{ borderRadius: 3, width: '100%' }}
+                                sx={{ borderRadius: 3 }}
                                 className={`${styles.generateButton}`}
-                                onClick={() => router.push('/moodPlayer')}
+                                onClick={handleGenerateClick}
                             >
-                                Kadence Player
+                                Regenerate
+                            </Button>
+                            <Button
+                                variant="contained"
+                                sx={{ borderRadius: 3 }}
+                                className={`${styles.generateButton}`}
+                                onClick={handleConfirmClick}
+                            >
+                                Confirm
                             </Button>
                         </Stack>
                     </>
