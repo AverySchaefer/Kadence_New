@@ -28,13 +28,13 @@ handler.post(async (req, res) => {
     const result = await response.json();
 
     //! Why does this default to "Unhandled Status Code" on a 200?
-    if (result.status == 400) {
+    if (result.status === 400) {
         console.log("Bad Request");
         res.status(400).json(result);
-    } else if (result.status == 401) {
+    } else if (result.status === 401) {
         console.log("Authentication Error");
         res.status(401).json(result);
-    } else if (result.status == 200) {
+    } else if (result.status === 200) {
         console.log("Request Successful");
         res.status(200).json(result);
     } else {

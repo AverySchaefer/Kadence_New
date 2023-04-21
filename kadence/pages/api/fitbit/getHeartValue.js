@@ -6,10 +6,10 @@ const GET_VALUE_BASE_URL =
     'https://api.fitbit.com/1/user/-/activities/heart/date/today/1d/1sec/time/';
 
 const handler = nextConnect();
-var currHourString = '';
-var currMinuteString = '';
-var pastHourString = '';
-var pastMinuteString = '';
+let currHourString = '0';
+let currMinuteString = '0';
+let pastHourString = '0';
+let pastMinuteString = '0';
 
 handler.use(middleware);
 
@@ -26,25 +26,25 @@ async function createURL() {
         pastHour -= 1;
     }
    
-    //Make sure that times are in HH:MM format, even if hours or minutes are less than 10
-    //TODO This is still getting a "Failed to parse URL from [object Promise]" error
+    // Make sure that times are in HH:MM format, even if hours or minutes are less than 10
+    // TODO This is still getting a "Failed to parse URL from [object Promise]" error
     if (currHour < 10) {
-        currHourString = '0' + currHour.toString();
+        currHourString = currHourString.concat(currHour.toString());
     } else {
         currHourString = currHour.toString();
     }
     if (currMinute < 10) {
-        currMinuteString = '0' + currMinute.toString();
+        currMinuteString = currMinuteString.concat(currMinute.toString());
     } else {
         currMinuteString = currMinute.toString();
     }
     if (pastHour < 10) {
-        pastHourString = '0' + pastHour.toString();
+        pastHourString = pastHourString.concat(pastHour.toString());
     } else {
         pastHourString = pastHour.toString();
     }
     if (pastMinute < 10) {
-        pastMinuteString = '0' + pastMinute.toString();
+        pastMinuteString = pastMinuteString.concat(pastMinute.toString());
     } else {
         pastMinuteString = pastMinute.toString();
     }
@@ -79,11 +79,11 @@ handler.get(async (req, res) => {
 
     // Handle correct response
     const responseDoc = await response.json();
-    /*const valuesArray =
+    /* const valuesArray =
         responseDoc['activities-heart']['activities-heart-intraday'].dataset;
     const mostRecentVal = valuesArray[0].value;
     console.log(mostRecentVal);
-    res.status(200).json({value: mostRecentVal});*/
+    res.status(200).json({value: mostRecentVal}); */
     res.status(200).json(responseDoc);
 });
 

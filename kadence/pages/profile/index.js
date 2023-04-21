@@ -303,13 +303,13 @@ export default function Profile() {
         }
         async function connectFitbit() {
             const fromFitbit = localStorage.getItem('fromFitbit');
-            if (fromFitbit == 'true') {
+            if (fromFitbit === 'true') {
                 const url = new URLSearchParams(window.location.search);
                 const authorizationCode = url.get('code');
                 const state = url.get('state'); // TODO: We need to verify that this matches what we sent to Fitbit in the authorization step to prevent CSRF
                 const sentState = localStorage.getItem('state');
 
-                if (state == sentState) {
+                if (state === sentState) {
                     const codeVerifier = localStorage.getItem('pkceVerifier');
                     try {
                         const response = await NetworkAPI.post(

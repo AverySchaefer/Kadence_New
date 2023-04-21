@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import Textbox from '@/components/Textbox';
 import NetworkAPI from '@/lib/networkAPI';
 import PageLayout from '@/components/PageLayout';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Inter } from '@next/font/google';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Dialog } from '@capacitor/dialog';
