@@ -309,6 +309,7 @@ export default function Profile() {
                 const state = url.get('state'); // TODO: We need to verify that this matches what we sent to Fitbit in the authorization step to prevent CSRF
                 const sentState = localStorage.getItem('state');
 
+                // Compare state values to protect against CSRF
                 if (state === sentState) {
                     const codeVerifier = localStorage.getItem('pkceVerifier');
                     try {
