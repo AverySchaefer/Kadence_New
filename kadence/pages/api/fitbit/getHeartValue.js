@@ -21,6 +21,7 @@ async function createURL() {
         pastMinute = 59;
         pastHour -= 1;
     }
+    //TODO Add in handling for if hour or minute are only 1 digit (need to add leading zero so its HH:MM)
 
     return `${
         GET_VALUE_BASE_URL + pastHour
@@ -28,7 +29,8 @@ async function createURL() {
 }
 
 async function getValue(token) {
-    const GET_VALUE_URL = createURL();
+    const GET_VALUE_URL = 'https://api.fitbit.com/1/user/-/activities/heart/date/today/today/1sec/time/12:02/12:03.json'//createURL();
+    console.log(GET_VALUE_URL);
     return fetch(GET_VALUE_URL, {
         headers: {
             Authorization: `Bearer ${token}`,
@@ -51,11 +53,12 @@ handler.get(async (req, res) => {
 
     // Handle correct response
     const responseDoc = await response.json();
-    const valuesArray =
+    /*const valuesArray =
         responseDoc['activities-heart']['activities-heart-intraday'].dataset;
     const mostRecentVal = valuesArray[0].value;
     console.log(mostRecentVal);
-    res.status(200).json({value: mostRecentVal});
+    res.status(200).json({value: mostRecentVal});*/
+    res.status(200).json(responseDoc);
 });
 
 export default handler;
