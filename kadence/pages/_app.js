@@ -1,6 +1,6 @@
 import '@/styles/globals.css';
-// import { SessionProvider } from 'next-auth/react';
-import { UseSession } from '@/lib/session';
+import { SessionProvider } from 'next-auth/react';
+// import { UseSession } from '@/lib/session';
 import { StyledEngineProvider } from '@mui/material/styles';
 
 export default function App({
@@ -8,10 +8,12 @@ export default function App({
     pageProps: { session, ...pageProps },
 }) {
     return (
-        <UseSession>
+        // <UseSession>
+        <SessionProvider session={session}>
             <StyledEngineProvider injectFirst>
                 <Component {...pageProps} />
             </StyledEngineProvider>
-        </UseSession>
+        </SessionProvider>
+        // </UseSession>
     );
 }

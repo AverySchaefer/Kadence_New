@@ -36,18 +36,18 @@ export default NextAuth({
             return session;
         },
     },
-    cookies: {
-        sessionToken: {
-            name: `${
-                useSecureCookies ? '__Secure-' : ''
-            }next-auth.session-token`,
-            options: {
-                httpOnly: true,
-                sameSite: 'none',
-                path: '/',
-                domain: `.kadenceapp.com`,
-                secure: useSecureCookies,
-            },
-        },
-    },
+    // cookies: {
+    //     sessionToken: {
+    //         name: `${
+    //             useSecureCookies ? '__Secure-' : ''
+    //         }next-auth.session-token`,
+    //         options: {
+    //             httpOnly: true,
+    //             sameSite: 'none',
+    //             path: '/',
+    //             domain: `.kadenceapp.com`,
+    //             secure: useSecureCookies,
+    //         },
+    //     },
+    // },
 });
