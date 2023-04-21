@@ -226,6 +226,9 @@ function BasicTabs({
                                                             'button.primary',
                                                     },
                                                 }}
+                                                onClick={() =>
+                                                    router.push('/fitbit')
+                                                }
                                             >
                                                 Disconnect
                                             </Button>
