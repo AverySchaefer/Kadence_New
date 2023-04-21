@@ -304,14 +304,10 @@ export default function Profile() {
         async function connectFitbit() {
             const fromFitbit = localStorage.getItem('fromFitbit');
             if (fromFitbit == 'true') {
-                //console.log(window.location.search);
                 const url = new URLSearchParams(window.location.search);
                 const authorizationCode = url.get('code');
                 const state = url.get('state'); // TODO: We need to verify that this matches what we sent to Fitbit in the authorization step to prevent CSRF
                 const sentState = localStorage.getItem('state');
-                //console.log('authorizationCode: ', authorizationCode);
-                //console.log('state: ', state);
-                //console.log('sentState: ', sentState);
 
                 if (state == sentState) {
                     const codeVerifier = localStorage.getItem('pkceVerifier');
@@ -323,8 +319,6 @@ export default function Profile() {
                                 codeVerifier,
                             }
                         );
-                        //console.log('getTokens response in frontend:', response);
-                        // TODO Make sure that these items set are correct!
                         localStorage.setItem(
                             'authorization_code',
                             authorizationCode

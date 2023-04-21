@@ -27,11 +27,11 @@ export default function Display() {
     async function connectDevice(e) {
         e.preventDefault();
         try {
-            /*const userData = {
+            const userData = {
                 username: localStorage.getItem('username'),
                 deviceName,
             };
-            await NetworkAPI.patch('/api/users/update', userData);*/ //TODO Add this back in after testing
+            await NetworkAPI.patch('/api/users/update', userData);
 
             // Generate 128 character long code_verifier and corresponding challenge needed for PKCE auth flow
             // https://dev.fitbit.com/build/reference/web-api/developer-guide/authorization/#Authorization-Code-Grant-Flow-with-PKCE
@@ -40,7 +40,7 @@ export default function Display() {
                     // Make code_verifier and challenge available to profile page later
                     localStorage.setItem('pkceVerifier', verifier);
                     localStorage.setItem('pkceChallenge', challenge);
-                    localStorage.setItem('state', '3j3k386j3x606u7000324b4x4n0b0o06');
+                    localStorage.setItem('state', '3j3k386j3x606u7000324b4x4n0b0o06'); // TODO make this randomly generated
                 }
 
                 const redirectUri =
@@ -54,7 +54,6 @@ export default function Display() {
                     scope: 'activity cardio_fitness electrocardiogram heartrate profile settings',
                     code_challenge: localStorage.getItem('pkceChallenge'),
                     code_challenge_method: 'S256',
-                    // TODO: Randomly generate this state random, it's to prevent CSRF
                     state: localStorage.getItem('state'),
                     redirect_uri: redirectUri,
                 };
