@@ -1,13 +1,24 @@
+import { hash } from 'bcryptjs';
 import nextConnect from 'next-connect';
 import getConfig from 'next/config';
-import { serverSideHash } from '@/lib/passwordUtils';
-import middleware from '@/middleware/database';
+import Password from '../../../lib/passwordStrength';
+import middleware from '../../../middleware/database';
 
 const jwt = require('jsonwebtoken');
 
 const { serverRuntimeConfig } = getConfig();
 const handler = nextConnect();
 handler.use(middleware);
+
+async function hashPassword(password) {
+    const hashedPassword = await hash(password, 10);
+    return hashedPassword;
+}
+
+/* Add password strength algorithm here */
+async function verifyPasswordStrength(password) {
+    return Password.isStrong(password);
+}
 
 handler.post(async (req, res) => {
     console.log('Now, signing the user up!');
@@ -19,6 +30,8 @@ handler.post(async (req, res) => {
         password: req.body.password,
         confirmedPassword: req.body.confirmedPassword,
     };
+
+    console.log(credentials);
 
     /* Checking the validity of credentials */
     if (!credentials.email || !credentials.password) {
@@ -34,6 +47,12 @@ handler.post(async (req, res) => {
     }
     if (!credentials.email.includes('@')) {
         res.status(400).send('Invalid input - the email is not valid.');
+        return;
+    }
+    if (!verifyPasswordStrength(credentials.password)) {
+        res.status(400).send(
+            'Invalid input - please enter a stronger password.'
+        );
         return;
     }
 
@@ -59,8 +78,7 @@ handler.post(async (req, res) => {
     } else {
         const enteredUsername = credentials.username;
         const enteredEmail = credentials.email;
-        const hashedPassword = await serverSideHash(credentials.password);
-        console.log('Password saved:', hashedPassword);
+        const hashedPassword = await hashPassword(credentials.password);
 
         /* INSERT NEW USER WITH HASHED PASSWORD HERE */
         const doc = {
@@ -85,7 +103,10 @@ handler.post(async (req, res) => {
             actions: [],
         };
 
+        console.log(doc);
+
         const result = await req.db.collection('Users').insertOne(doc);
+        // res.json(doc);
         if (result.acknowledged === false) {
             console.log('Request not acknowledged by database');
             res.status(500).send('Request not acknowledged by database');

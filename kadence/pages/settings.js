@@ -114,7 +114,7 @@ export default function Settings() {
                 const { data: prefData } = await NetworkAPI.get(
                     '/api/preferences/getPreferences',
                     {
-                        _id: userData.musicPrefs,
+                        uid: userData.musicPrefs,
                     }
                 );
                 setAllowExplicit(prefData.allowExplicit ?? false);
@@ -182,7 +182,7 @@ export default function Settings() {
 
     async function submitData() {
         const musicPrefData = {
-            _id: musicPrefId,
+            uid: musicPrefId,
             allowExplicit,
             lyricalInstrumental,
             lyricalLanguage,
@@ -577,7 +577,7 @@ export default function Settings() {
                                 {!hideBlacklistedSongs && (
                                     <SubList
                                         addNew={async () => {
-                                            const { value, cancelled } =
+                                            let { value, cancelled } =
                                                 await Dialog.prompt({
                                                     title: 'Blacklist New Song',
                                                     message:
@@ -587,12 +587,26 @@ export default function Settings() {
                                                 !cancelled &&
                                                 value.trim() !== ''
                                             ) {
-                                                setBlacklistedSongs(
-                                                    appendToArray(
-                                                        blacklistedSongs,
-                                                        value.trim()
-                                                    )
-                                                );
+                                                const songName = value;
+                                                ({ value, cancelled } =
+                                                    await Dialog.prompt({
+                                                        title: 'Blacklist New Song',
+                                                        message: `What is the name of the artist who wrote "${songName}"?`,
+                                                    }));
+                                                if (
+                                                    !cancelled &&
+                                                    value.trim() !== ''
+                                                ) {
+                                                    setBlacklistedSongs(
+                                                        appendToArray(
+                                                            blacklistedSongs,
+                                                            {
+                                                                name: songName.trim(),
+                                                                artist: value.trim(),
+                                                            }
+                                                        )
+                                                    );
+                                                }
                                             }
                                         }}
                                         remove={(idx) =>
@@ -603,7 +617,10 @@ export default function Settings() {
                                                 )
                                             )
                                         }
-                                        items={blacklistedSongs}
+                                        items={blacklistedSongs.map(
+                                            ({ name, artist }) =>
+                                                `"${name}" by ${artist}`
+                                        )}
                                     />
                                 )}
                             </div>

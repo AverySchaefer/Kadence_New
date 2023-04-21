@@ -5,6 +5,7 @@ import { Dialog } from '@capacitor/dialog';
 import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import SkipNextIcon from '@mui/icons-material/SkipNext';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 
 import { useCallback, useEffect, useState } from 'react';
@@ -19,9 +20,9 @@ import useMusicKit from '@/lib/useMusicKit';
 const inter = Inter({ subsets: ['latin'] });
 
 const appleRefreshRateSeconds = 1;
-const spotifyRefreshRateSeconds = 1;
+const spotifyRefreshRateSeconds = 10;
 
-const fetchAfterSkipDelayMs = 750;
+const fetchAfterSkipDelayMs = 250;
 
 function convertSecondsToTimeString(s) {
     const minutes = Math.floor(s / 60);
@@ -116,7 +117,6 @@ function LargePlayer({
     playerData,
     songProgress,
     handleSkip,
-    handleDislike,
     togglePlayState,
 }) {
     const progress = convertSecondsToTimeString(songProgress);
@@ -161,10 +161,9 @@ function LargePlayer({
             <div className={largeStyles.controlButtons}>
                 <button
                     disabled={playerData.artistName === 'N/A'}
-                    className={largeStyles.dislikeButton}
-                    onClick={handleDislike}
+                    className={largeStyles.likeButton}
                 >
-                    <ThumbDownIcon sx={{ width: '100%', height: '100%' }} />
+                    <ThumbUpIcon sx={{ width: '100%', height: '100%' }} />
                 </button>
                 <button
                     disabled={playerData.artistName === 'N/A'}
@@ -184,18 +183,18 @@ function LargePlayer({
                 >
                     <SkipNextIcon sx={{ width: '100%', height: '100%' }} />
                 </button>
+                <button
+                    disabled={playerData.artistName === 'N/A'}
+                    className={largeStyles.dislikeButton}
+                >
+                    <ThumbDownIcon sx={{ width: '100%', height: '100%' }} />
+                </button>
             </div>
         </div>
     );
 }
 
-export default function MusicPlayer({
-    size = 'small',
-    onSkip = undefined,
-    onPlay = undefined,
-    onPause = undefined,
-    onDislike = undefined,
-}) {
+export default function MusicPlayer({ size = 'small' }) {
     const [playerData, setPlayerData] = useState(Default.playerData);
     const [timer, setTimer] = useState(0);
     const [pausedTimer, setPausedTimer] = useState(0);
@@ -259,11 +258,6 @@ export default function MusicPlayer({
                     isPlaying: !old.isPlaying,
                 }));
                 setTimeout(fetchPlayerDataSpotify, fetchAfterSkipDelayMs);
-                if (onPlay && !playerData.isPlaying) {
-                    onPlay(playerData);
-                } else if (onPause && playerData.isPlaying) {
-                    onPause(playerData);
-                }
             })
             .catch(handleError);
     }
@@ -280,9 +274,6 @@ export default function MusicPlayer({
                         isPlaying: !old.isPlaying,
                     }));
                     setTimeout(fetchPlayerDataApple, fetchAfterSkipDelayMs);
-                    if (onPause) {
-                        onPause(playerData);
-                    }
                 })
                 .catch(handleError);
         } else {
@@ -300,9 +291,6 @@ export default function MusicPlayer({
                                 fetchPlayerDataApple,
                                 fetchAfterSkipDelayMs
                             );
-                            if (onPlay) {
-                                onPlay(playerData);
-                            }
                         })
                         .catch(handleError);
                 })
@@ -312,56 +300,18 @@ export default function MusicPlayer({
 
     function handleSkipSpotify() {
         NetworkAPI.post('/api/spotify/skip')
-            .then(() => {
-                setTimeout(fetchPlayerDataSpotify, fetchAfterSkipDelayMs);
-                if (onSkip) {
-                    onSkip(playerData);
-                }
-            })
+            .then(() =>
+                setTimeout(fetchPlayerDataSpotify, fetchAfterSkipDelayMs)
+            )
             .catch(handleError);
     }
 
     function handleSkipApple() {
         const music = MusicKit.getInstance();
-        if (music.player.queue.nextPlayableItem === undefined) {
-            music.player
-                .seekToTime(music.player.currentPlaybackDuration)
-                .then(() => {
-                    setTimeout(fetchPlayerDataApple, fetchAfterSkipDelayMs);
-                    if (onSkip) {
-                        onSkip(playerData);
-                    }
-                })
-                .catch(handleError);
-        } else {
-            music
-                .skipToNextItem()
-                .then(() => {
-                    setTimeout(fetchPlayerDataApple, fetchAfterSkipDelayMs);
-                    if (onSkip) {
-                        onSkip(playerData);
-                    }
-                })
-                .catch(handleError);
-        }
-    }
-
-    const handleSkip = type === 'Spotify' ? handleSkipSpotify : handleSkipApple;
-
-    function handleDislike() {
-        // Blacklist current song
-        NetworkAPI.post('/api/preferences/dislike', {
-            username: localStorage.getItem('username'),
-            songName: playerData.songName,
-        }).catch(handleError);
-
-        // Run onDislike function if provided
-        if (onDislike) {
-            onDislike(playerData);
-        }
-
-        // Automatically skip to next song
-        handleSkip();
+        music
+            .skipToNextItem()
+            .then(() => setTimeout(fetchPlayerDataApple, fetchAfterSkipDelayMs))
+            .catch(handleError);
     }
 
     const fetchPlayerData =
@@ -406,7 +356,9 @@ export default function MusicPlayer({
             <SmallPlayer
                 playerData={playerData}
                 songProgress={playerData.progressSeconds + timer}
-                handleSkip={handleSkip}
+                handleSkip={
+                    type === 'Spotify' ? handleSkipSpotify : handleSkipApple
+                }
                 togglePlayState={
                     type === 'Spotify'
                         ? togglePlayStateSpotify
@@ -420,8 +372,9 @@ export default function MusicPlayer({
             <LargePlayer
                 playerData={playerData}
                 songProgress={playerData.progressSeconds + timer}
-                handleSkip={handleSkip}
-                handleDislike={handleDislike}
+                handleSkip={
+                    type === 'Spotify' ? handleSkipSpotify : handleSkipApple
+                }
                 togglePlayState={
                     type === 'Spotify'
                         ? togglePlayStateSpotify

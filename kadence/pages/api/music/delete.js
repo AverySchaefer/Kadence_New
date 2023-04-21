@@ -7,12 +7,12 @@ const handler = nextConnect();
 handler.use(middleware);
 
 handler.delete(async (req, res) => {
-    if (!req.body._id) {
-        console.log('No _id sent in request');
-        res.status(400).send('No _id sent in request');
+    if (!req.body.uid) {
+        console.log('No UID sent in request');
+        res.status(400).send('No UID sent in request');
         return;
     }
-    const query = { _id: new ObjectId(req.body._id) };
+    const query = { _id: new ObjectId(req.body.uid) };
     const result = await req.db.collection('Music').deleteOne(query);
 
     if (result.deletedCount === 1) {

@@ -6,58 +6,41 @@ const handler = nextConnect();
 handler.use(middleware);
 
 handler.get(async (req, res) => {
-    const { viewerUsername, vieweeUsername } = req.query;
-
-    if (!viewerUsername) {
-        res.status(400).send('No username sent in request');
+    if (!req.query.username) {
+        console.log('No Username sent in request');
+        res.status(400).send('No Username sent in request');
         return;
     }
 
-    if (!vieweeUsername) {
-        res.status(400).send('No profile owner username sent in request');
-        return;
-    }
-
-    const viewer = await req.db
+    const user = await req.db
         .collection('Users')
-        .findOne({ username: viewerUsername });
+        .findOne({ username: req.query.username });
 
-    const viewee = await req.db
-        .collection('Users')
-        .findOne({ username: vieweeUsername });
-
-    if (!viewer || !viewee) {
-        res.status(400).send('Users not found');
+    if (!user) {
+        console.log('No User found');
+        res.status(400).send('No User found');
         return;
     }
-
-    const isFriend = viewer.friends.includes(vieweeUsername);
-    const isPendingFriend = viewee.friendRequests.includes(viewerUsername);
-    const sentMeRequest = viewer.friendRequests.includes(vieweeUsername);
 
     const alwaysAvailableData = {
-        username: viewee.username,
-        bio: viewee.bio,
-        profilePic: viewee.profilePic,
-        private: viewee.private,
-        favoriteAlbum: viewee.favoriteAlbum,
-        favoriteArtist: viewee.favoriteArtist,
-        favoriteSong: viewee.favoriteSong,
-        isFriend,
-        isPendingFriend,
-        sentMeRequest,
+        username: user.username,
+        bio: user.bio,
+        profilePic: user.profilePic,
+        private: user.private,
+        favoriteAlbum: user.favoriteAlbum,
+        favoriteArtist: user.favoriteArtist,
+        favoriteSong: user.favoriteSong,
     };
 
-    if (viewee.private && !isFriend) {
-        // Send private user
+    if (user.private) {
+        console.log('Sending private user');
         res.status(200).json(alwaysAvailableData);
     } else {
-        // Send public user or friend
+        console.log('Sending public user');
         res.status(200).json({
             ...alwaysAvailableData,
-            musicPlatform: viewee.musicPlatform,
-            actions: viewee.actions,
-            // TODO: Add other private information (device?)
+            musicPlatform: user.musicPlatform,
+            // Other private information (device?)
         });
     }
 });

@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { RiHomeSmile2Line, RiUser3Fill } from 'react-icons/ri';
 import { BiSearchAlt } from 'react-icons/bi';
-import NotificationsIcon from '@mui/icons-material/Notifications';
 
 export default function BottomNav(props) {
     const router = useRouter();
@@ -27,9 +26,6 @@ export default function BottomNav(props) {
             case 'profile':
                 router.push('/profile');
                 break;
-            case 'social':
-                router.push('/social');
-                break;
             default:
                 break;
         }
@@ -43,9 +39,11 @@ export default function BottomNav(props) {
                     styles.bnTab,
                     activeTabs === 'home' ? styles.active : '',
                 ].join(' ')}
-                onClick={() => changeActiveTab('home')}
             >
-                <RiHomeSmile2Line size="35" />
+                <RiHomeSmile2Line
+                    size="35"
+                    onClick={() => changeActiveTab('home')}
+                />
                 Home
             </div>
             <div
@@ -53,9 +51,11 @@ export default function BottomNav(props) {
                     styles.bnTab,
                     activeTabs === 'search' ? styles.active : '',
                 ].join(' ')}
-                onClick={() => changeActiveTab('search')}
             >
-                <BiSearchAlt size="35" />
+                <BiSearchAlt
+                    size="35"
+                    onClick={() => changeActiveTab('search')}
+                />
                 Search
             </div>
             <div
@@ -63,20 +63,12 @@ export default function BottomNav(props) {
                     styles.bnTab,
                     activeTabs === 'profile' ? styles.active : '',
                 ].join(' ')}
-                onClick={() => changeActiveTab('profile')}
             >
-                <RiUser3Fill size="35" />
+                <RiUser3Fill
+                    size="35"
+                    onClick={() => changeActiveTab('profile')}
+                />
                 Profile
-            </div>
-            <div
-                className={[
-                    styles.bnTab,
-                    activeTabs === 'social' ? styles.active : '',
-                ].join(' ')}
-                onClick={() => changeActiveTab('social')}
-            >
-                <NotificationsIcon sx={{ width: 35, height: 35 }} />
-                Social
             </div>
         </div>
     );
