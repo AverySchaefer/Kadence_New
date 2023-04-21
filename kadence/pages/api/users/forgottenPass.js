@@ -25,23 +25,23 @@ handler.post(async (req, res) => {
         });
         return;
     }
-    const { username } = findExistingUser;
+    const {username} = findExistingUser;
+    const userHexString = findExistingUser._id.toHexString();
     const resetLink =
         process.env.NODE_ENV === 'development'
-            ? 'http://localhost:3000/resetPass'
-            : 'http://kadenceapp.com/resetPass';
-    console.log(username);
+            ? 'http://localhost:3000/resetPass?id='.concat(userHexString)
+            : 'http://kadenceapp.com/resetPass?id='.concat(userHexString);
 
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: 'jackrosenberg17@gmail.com',
-            pass: 'kzakelglsvhsijik',
+            user: 'kadence.app.cs407@gmail.com',
+            pass: 'fksjwtywuqlwttif',
         },
     });
 
     const mailOptions = {
-        from: 'jackrosenberg17@gmail.com',
+        from: 'kadence.app.cs407@gmail.com',
         to: credentials.email,
         subject: `Password Recovery Link for ${username}`,
         text: `Reset your Kadence password here: ${resetLink}`,

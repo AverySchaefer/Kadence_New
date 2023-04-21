@@ -41,6 +41,14 @@ export default function Social() {
         return () => clearInterval(transparentLoop);
     }, []);
 
+    function handleActivity() {
+        NetworkAPI.get('/api/activity/gatherLogs', {
+            username: localStorage.getItem('username')
+        }).then((result) => {
+            console.log(result);
+        });
+    }
+
     function handleFriendRequest(isAcceptingRequest, senderUsername) {
         if (isAcceptingRequest) {
             // Accept pending friend request
@@ -48,6 +56,24 @@ export default function Social() {
                 senderUsername,
                 recipientUsername: localStorage.getItem('username'),
             }).then(() => {
+                NetworkAPI.post('/api/activity/insert', {
+                    username: senderUsername,
+                    timestamp: new Date().toLocaleString(),
+                    actionType: 'friend',
+                    friend: localStorage.getItem('username'),
+                    genMode: null,
+                    saved: null,
+                });
+
+                NetworkAPI.post('/api/activity/insert', {
+                    username: localStorage.getItem('username'),
+                    timestamp: new Date().toLocaleString(),
+                    actionType: 'friend',
+                    friend: senderUsername,
+                    genMode: null,
+                    saved: null,
+                });
+
                 setFriendRequests((prev) =>
                     prev.map((req) =>
                         req.username === senderUsername
@@ -160,6 +186,11 @@ export default function Social() {
                 <div className={styles.section}>
                     <h3>Friend Activity</h3>
                     <div>Friend Activity Box</div>
+                    <button
+                        className={styles.denyRequestButton}
+                        onClick={handleActivity}
+                    >  Get Friend Activity
+                    </button>
                 </div>
             </main>
         </PageLayout>

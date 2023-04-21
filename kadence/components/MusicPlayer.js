@@ -19,9 +19,9 @@ import useMusicKit from '@/lib/useMusicKit';
 const inter = Inter({ subsets: ['latin'] });
 
 const appleRefreshRateSeconds = 1;
-const spotifyRefreshRateSeconds = 10;
+const spotifyRefreshRateSeconds = 1;
 
-const fetchAfterSkipDelayMs = 250;
+const fetchAfterSkipDelayMs = 750;
 
 function convertSecondsToTimeString(s) {
     const minutes = Math.floor(s / 60);
@@ -323,21 +323,37 @@ export default function MusicPlayer({
 
     function handleSkipApple() {
         const music = MusicKit.getInstance();
-        music
-            .skipToNextItem()
-            .then(() => {
-                setTimeout(fetchPlayerDataApple, fetchAfterSkipDelayMs);
-                if (onSkip) {
-                    onSkip(playerData);
-                }
-            })
-            .catch(handleError);
+        if (music.player.queue.nextPlayableItem === undefined) {
+            music.player
+                .seekToTime(music.player.currentPlaybackDuration)
+                .then(() => {
+                    setTimeout(fetchPlayerDataApple, fetchAfterSkipDelayMs);
+                    if (onSkip) {
+                        onSkip(playerData);
+                    }
+                })
+                .catch(handleError);
+        } else {
+            music
+                .skipToNextItem()
+                .then(() => {
+                    setTimeout(fetchPlayerDataApple, fetchAfterSkipDelayMs);
+                    if (onSkip) {
+                        onSkip(playerData);
+                    }
+                })
+                .catch(handleError);
+        }
     }
 
     const handleSkip = type === 'Spotify' ? handleSkipSpotify : handleSkipApple;
 
     function handleDislike() {
-        // TODO: blacklist current song
+        // Blacklist current song
+        NetworkAPI.post('/api/preferences/dislike', {
+            username: localStorage.getItem('username'),
+            songName: playerData.songName,
+        }).catch(handleError);
 
         // Run onDislike function if provided
         if (onDislike) {
