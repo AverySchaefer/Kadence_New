@@ -10,29 +10,26 @@ handler.use(middleware);
 
 async function addToQueue(token, songURI) {
     const { access_token: accessToken } = await refreshToken(token);
-    const ADD_TO_PLAYBACK_QUEUE_ENDPOINT = `https://api.spotify.com/v1/me/player/queue?`;
+    const ADD_TO_PLAYBACK_QUEUE_ENDPOINT = `https://api.spotify.com/v1/me/player/queue?`
 
-    return fetch(
-        ADD_TO_PLAYBACK_QUEUE_ENDPOINT +
-            new URLSearchParams({
-                uri: songURI,
-            }),
-        {
-            method: 'POST',
-            headers: {
-                Authorization: `Bearer ${accessToken}`,
-                'Content-Type': 'application/json',
-            },
-        }
-    );
+    return fetch(ADD_TO_PLAYBACK_QUEUE_ENDPOINT + new URLSearchParams({
+        uri: songURI,
+    }), {
+        method: 'POST',
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+        },
+    });
 }
 
 handler.post(async (req, res) => {
     const {
         token: { accessToken },
     } = await getSession({ req });
-
-    const { songURI: uri } = req.body;
+    
+    const reqBody = await JSON.parse(req.body);
+    const uri = reqBody.songURI;
 
     const response = await addToQueue(accessToken, uri);
     if (response.ok) {

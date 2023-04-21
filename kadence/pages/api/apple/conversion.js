@@ -1,78 +1,115 @@
+import { getSession } from 'next-auth/react';
 import nextConnect from 'next-connect';
 
-import getSpotifyAccessToken from '@/lib/spotify/getSpotifyAccessToken';
-import { AppleMusicConfiguration } from '@/lib/apple/AppleAPI';
-import middleware from '@/middleware/database';
+import refreshToken from '@/lib/spotify/refreshToken';
+import middleware from '../../../middleware/database';
 
 const handler = nextConnect();
 handler.use(middleware);
 
-async function getAppleURIFromSpotifyURI(
-    spotifyURI,
-    accessToken,
-    appleUserToken
-) {
-    // Extract song information
-    const songID = spotifyURI.split(':')[2];
-    const SPOTIFY_SEARCH_SONG_ENDPOINT = `https://api.spotify.com/v1/tracks/${songID}`;
+// stub to fix lint errs
+function getMusicInstance() {
+    return null;
+}
 
-    const foundSongResp = await fetch(SPOTIFY_SEARCH_SONG_ENDPOINT, {
+/* FIX */
+function getAppleHeader() {
+    const header = {
+        Authorization: `Bearer ${getMusicInstance().developerToken}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'Music-User-Token': getMusicInstance().musicUserToken,
+    };
+    return header;
+}
+
+async function saveApplePlaylist(playlistObjects, playlistName) {
+    const data = {
+        attributes: {
+            name: playlistName,
+            description: 'Created by Kadence (2023)',
+        },
+        relationships: {
+            tracks: {
+                data: playlistObjects,
+            },
+        },
+    };
+
+    fetch('https://api.music.apple.com/v1/me/library/playlists', {
+        headers: getAppleHeader(),
+        method: 'POST',
+        body: JSON.stringify(data),
+        mode: 'cors',
+    })
+        .then((response) => {
+            const res = response.json();
+            const { status } = response;
+
+            res.then((response2) => {
+                if (status !== 201) {
+                    console.log(status);
+                    console.log(response2.error);
+                    console.log(
+                        'There was an error creating the playlis with the songs'
+                    );
+                }
+            });
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+}
+
+/* TO DO */
+function appleSearch(songName, songArtists) {
+    const searchParameter = songArtists[0] + songName;
+    // Remove this when the function is finished:
+    // eslint-disable-next-line no-unused-vars
+    const APPLE_SEARCH_SONG_ENDPOINT = `https://api.music.apple.com/v1/catalog/us/search?term=${searchParameter}&limit=25&types=songs`;
+}
+
+async function extractSongInformation(token, songURI) {
+    const { access_token: accessToken } = await refreshToken(token);
+    const songID = songURI.split(':')[2];
+    const SPOTIFY_SEARCH_SONG_ENDPOINT = `https://api.spotify.com/v1/tracks/${songID}`;
+    const foundSong = fetch(SPOTIFY_SEARCH_SONG_ENDPOINT, {
         method: 'GET',
         headers: {
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
         },
     });
-    const foundSong = await foundSongResp.json();
 
-    // Build search query for Apple Music
-    const searchParams = new URLSearchParams({
-        limit: 1,
-        types: 'songs',
-        term: `${foundSong.name} ${
-            foundSong.artists
-                ? foundSong.artists.map((artist) => artist.name).join(' ')
-                : ''
-        }`,
-    });
-    const APPLE_SEARCH_SONG_ENDPOINT = `https://api.music.apple.com/v1/catalog/us/search?${searchParams}`;
+    const songName = foundSong.name;
+    const songArtists = [];
+    for (let i = 0; i < foundSong.artists.length; i++) {
+        songArtists.push(foundSong.artists[i].name);
+    }
 
-    // Get first matching song on Apple Music
-    const response = await fetch(APPLE_SEARCH_SONG_ENDPOINT, {
-        headers: {
-            Authorization: `Bearer ${AppleMusicConfiguration.developerToken}`,
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            'Music-User-Token': appleUserToken,
-        },
-        method: 'GET',
-    });
-    const json = await response.json();
-
-    // Return that song's Apple Music id, or null if no results
-    return json.results?.songs?.data[0]?.id ?? null;
+    return appleSearch(songName, songArtists);
 }
 
-// Converts an array of Spotify URIs to an array of Apple Music URIs
-handler.get(async (req, res) => {
-    const accessToken = await getSpotifyAccessToken();
-    const spotifyURIs = JSON.parse(req.query.spotifyURIs) || [];
-    const { appleUserToken } = req.query;
+// Remove when function is finished
+// eslint-disable-next-line no-unused-vars
+handler.post(async (req, res) => {
+    const {
+        token: { accessToken },
+    } = await getSession({ req });
 
-    try {
-        const appleMusicURIs = await Promise.all(
-            spotifyURIs.map((uri) =>
-                getAppleURIFromSpotifyURI(uri, accessToken, appleUserToken)
-            )
-        );
-        const filteredURIs = appleMusicURIs.filter((uri) => uri !== null);
-        res.status(200).json({
-            appleURIs: filteredURIs,
-        });
-    } catch (err) {
-        console.log(err);
-        res.status(400).send('Error occurred while converting to Apple URI');
-    }
+    const reqBody = await JSON.parse(req.body);
+    const name = reqBody.playlistName;
+    const { playlistArray } = reqBody;
+    const appleMusicObjects = await Promise.all(
+        playlistArray.map((songURI) =>
+            extractSongInformation(accessToken, songURI)
+        )
+    );
+
+    const createResponse = await saveApplePlaylist(name, appleMusicObjects);
+    // Remove when function is finished
+    // eslint-disable-next-line no-unused-vars
+    const created = await createResponse.json();
 });
 
 export default handler;

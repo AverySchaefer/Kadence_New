@@ -3,10 +3,18 @@ import styles from '@/styles/Spotify.module.css';
 import Button from '@mui/material/Button';
 import { PageLayout } from '@/components';
 import { useState, useEffect } from 'react';
-import { queueSongs } from '@/lib/apple/AppleAPI';
+import { getMatchingSongs, queueSongs } from '@/lib/apple/AppleAPI';
 import useMusicKit from '@/lib/useMusicKit';
 import NetworkAPI from '@/lib/networkAPI';
 import { useRouter } from 'next/router';
+
+const songsToQueue = [
+    'Let Down',
+    'Mr. Saturday Night',
+    'Weird Fishes',
+    'Creep',
+    'Careless Whisper',
+];
 
 export default function Display() {
     const [loggedIn, setLoggedIn] = useState(false);
@@ -22,19 +30,13 @@ export default function Display() {
         async function startTestPlayback() {
             if (MusicKit) {
                 const music = MusicKit.getInstance();
+                const songs = await getMatchingSongs(music, songsToQueue);
 
-                // Test conversion
-                const { data } = await NetworkAPI.get('/api/apple/conversion', {
-                    appleUserToken: music.musicUserToken,
-                    spotifyURIs: JSON.stringify([
-                        'spotify:track:15irEKZ9D6FQqLoZ1qJ1Cx',
-                        'spotify:track:2fuYa3Lx06QQJAm0MjztKr',
-                    ]),
-                });
-
-                await queueSongs(music, data.appleURIs);
+                await queueSongs(
+                    music,
+                    songs.map((song) => song.id)
+                );
                 await music.play();
-                await music.pause();
             }
         }
         startTestPlayback();

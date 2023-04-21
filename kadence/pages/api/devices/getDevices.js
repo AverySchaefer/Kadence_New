@@ -7,15 +7,15 @@ const handler = nextConnect();
 handler.use(middleware);
 
 handler.get(async (req, res) => {
-    if (!req.query._id) {
-        console.log('No _id sent in request');
-        res.status(400).send('No _id sent in request');
+    if (!req.query.uid) {
+        console.log('No UID sent in request');
+        res.status(400).send('No UID sent in request');
         return;
     }
 
     const result = await req.db
         .collection('Devices')
-        .findOne({ _id: new ObjectId(req.query._id) });
+        .findOne({ _id: new ObjectId(req.query.uid) });
 
     if (!result) {
         console.log('Database item could not be found');

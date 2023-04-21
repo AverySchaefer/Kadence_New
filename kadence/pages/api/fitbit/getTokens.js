@@ -1,3 +1,4 @@
+import { encodeBase64 } from 'bcryptjs';
 import nextConnect from 'next-connect';
 
 import middleware from '../../../middleware/database';
@@ -9,38 +10,29 @@ const handler = nextConnect();
 handler.use(middleware);
 
 handler.post(async (req, res) => {
+    const basicToken = encodeBase64(
+        `${process.env.FITBIT_CLIENT_ID}:${process.env.FITBIT_CLIENT_SECRET}`
+    );
     const doc = {
         client_id: process.env.FITBIT_CLIENT_ID,
         grant_type: 'authorization_code',
-        redirect_uri: 'http://localhost:3000/profile',
+        redirect_uri: 'http://localhost:3000/fitbit', // CHANGE THIS TO A NEW URL
         code: req.body.authorizationCode,
-        code_verifier: req.body.codeVerifier,
+        // code_verifier: "3q4u0f3f2830404x2j5d70483n6f200n593s2h261c0401076e0r6a5x0a6u3e313c516p55500u4162541b0t0f735u5d5b263k6n1w0e24504n6s15060e5i0w356n",
     };
 
-    const response = await fetch(GET_TOKEN_URL, {
+    const response = fetch(GET_TOKEN_URL, {
         headers: {
+            Authorization: `Basic ${basicToken}`,
             'Content-Type': 'application/x-www-form-urlencoded',
         },
         method: 'POST',
-        body: new URLSearchParams(doc),
+        body: JSON.stringify(doc),
     });
 
-    const result = await response.json();
-
-    //! Why does this default to "Unhandled Status Code" on a 200?
-    if (result.status === 400) {
-        console.log("Bad Request");
-        res.status(400).json(result);
-    } else if (result.status === 401) {
-        console.log("Authentication Error");
-        res.status(401).json(result);
-    } else if (result.status === 200) {
-        console.log("Request Successful");
-        res.status(200).json(result);
-    } else {
-        console.log("Unhandled Status Code, Check Response");
-        res.status(200).json(result);
-    }
+    console.log(response);
+    // TODO ADD ERROR HANDLING
+    res.statusCode(response.status).json(response.json());
 });
 
 export default handler;
