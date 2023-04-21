@@ -21,7 +21,7 @@ export default function Home() {
         if (localStorage.getItem('username') == null) {
             router.push('/login');
         }
-    }, []);
+    }, [router]);
 
     async function handleFitness() {
         const fitnessModeRoute = '/mode/preFitness';
@@ -50,7 +50,7 @@ export default function Home() {
     }
 
     async function handleMood() {
-        const moodModeRoute = '/mode/preMood';
+        const moodModeRoute = '/mode/mood';
         await NetworkAPI.post('/api/activity/insert', {
             username: localStorage.getItem('username'),
             timestamp: new Date().toLocaleString(),

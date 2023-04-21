@@ -3,18 +3,41 @@ export const languages = ['No Preference', 'English', 'Spanish', 'French'];
 
 // Options for favorite genres
 export const genres = [
-    'No Preference',
-    'Rock',
-    'Jazz',
-    'Country',
-    'Pop',
-    'Hip Hop',
-    'Electronic',
-    'Blues',
-    'Classical',
-    'World Music',
-    'Lo-fi',
+    'alternative',
+    'ambient',
+    'anime',
+    'blues',
+    'bossanova',
+    'chill',
+    'classical',
+    'country',
+    'dubstep',
+    'electronic',
+    'folk',
+    'guitar',
+    'heavy-metal',
+    'hip-hop',
+    'indie',
+    'jazz',
+    'piano',
+    'pop',
+    'r-n-b',
+    'rainy-day',
+    'rock',
+    'sleep',
+    'soundtracks',
+    'study',
+    'work-out',
+    'world-music',
 ];
 
 // Options for current mood (for mood mode)
-export const moods = ['Happy', 'Sad', 'Angry', 'Relaxed', 'Energetic', 'Romantic', 'Melancholy'];
+export const moods = [
+    'Happy',
+    'Sad',
+    'Angry',
+    'Relaxed',
+    'Energetic',
+    'Romantic',
+    'Melancholy',
+];
