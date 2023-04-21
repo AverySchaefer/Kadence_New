@@ -65,7 +65,7 @@ function BasicTabs({
     if (musicPlatform === 'Spotify') {
         platform = '/Spotify.jpg';
         alt = 'Spotify Logo';
-        useLink = '/moodPlayer';
+        useLink = '/spotify/display';
         accountLink = 'https://open.spotify.com/';
     } else if (musicPlatform === 'Apple Music') {
         platform = '/apple-music.jpg';
@@ -166,7 +166,7 @@ function BasicTabs({
                                                     router.push(useLink)
                                                 }
                                             >
-                                                Kadence Player
+                                                Manage Platform
                                             </Button>
                                             <Button
                                                 variant="contained"
