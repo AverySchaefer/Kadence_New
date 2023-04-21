@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { Inter } from '@next/font/google';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Dialog } from '@capacitor/dialog';
+import getPkce from 'oauth-pkce';
 
 const theme = createTheme({
     palette: {
@@ -31,30 +32,41 @@ export default function Display() {
                 deviceName,
             };
             await NetworkAPI.patch('/api/users/update', userData);
-            const redirectUri =
-                process.env.NODE_ENV === 'development'
-                    ? 'http://localhost:3000/profile'
-                    : 'http://kadenceapp.com/profile';
-            console.log(redirectUri);
-            window.location.assign(
-                `https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=23QTD8&scope=activity+cardio_fitness+electrocardiogram+heartrate+location+nutrition+oxygen_saturation+profile+respiratory_rate+settings+sleep+social+temperature+weight&code_challenge=vaC5salqWAhM5k50MMvXGPxkTQGyQeLa0NpP_K3689Y&code_challenge_method=S256&state=3j3k386j3x606u7000324b4x4n0b0o06&redirect_uri=${encodeURI(
-                    redirectUri
-                )}`
-            );
-            console.log(window.location.search);
-            const url = new URLSearchParams(window.location.search);
-            const authorizationCode = url.get('code');
 
-            const response = NetworkAPI.post('/api/fitbit/getTokens', {
-                authorizationCode,
+            // Generate 128 character long code_verifier and corresponding challenge needed for PKCE auth flow
+            // https://dev.fitbit.com/build/reference/web-api/developer-guide/authorization/#Authorization-Code-Grant-Flow-with-PKCE
+            getPkce(128, (error, { verifier, challenge }) => {
+                if (!error) {
+                    // Make code_verifier and challenge available to profile page later
+                    localStorage.setItem('pkceVerifier', verifier);
+                    localStorage.setItem('pkceChallenge', challenge);
+                    localStorage.setItem('state', '3j3k386j3x606u7000324b4x4n0b0o06'); // TODO make this randomly generated
+                }
+
+                const redirectUri =
+                    process.env.NODE_ENV === 'development'
+                        ? 'http://localhost:3000/profile'
+                        : 'http://kadenceapp.com/profile';
+
+                const urlParams = {
+                    response_type: 'code',
+                    client_id: '23QTD8',
+                    scope: 'activity cardio_fitness electrocardiogram heartrate profile settings',
+                    code_challenge: localStorage.getItem('pkceChallenge'),
+                    code_challenge_method: 'S256',
+                    state: localStorage.getItem('state'),
+                    redirect_uri: redirectUri,
+                };
+
+                console.table(urlParams);
+
+                const fitbitAuthURL = `https://www.fitbit.com/oauth2/authorize?${new URLSearchParams(
+                    urlParams
+                ).toString()}`;
+
+                localStorage.setItem('fromFitbit', 'true');
+                window.location.assign(fitbitAuthURL);
             });
-
-            localStorage.setItem('authorization_code', authorizationCode);
-            localStorage.setItem('access_token', response.json().access_token);
-            localStorage.setItem(
-                'refresh_token',
-                response.json().refresh_token
-            );
         } catch (err) {
             Dialog.alert({
                 title: 'Error Occurred',
