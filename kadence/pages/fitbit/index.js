@@ -21,6 +21,19 @@ const theme = createTheme({
 
 const inter = Inter({ subsets: ['latin'] });
 
+// Generate a random 36-character string to use as the anti-CSRF state value
+async function generateState() {
+    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    let stateString = '';
+    const charsLength = chars.length;
+
+    for (let i = 0; i < 36; i++) {
+        stateString += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+
+    return stateString;
+}
+
 export default function Display() {
     const [deviceName, setDeviceName] = useState('');
 
@@ -40,7 +53,8 @@ export default function Display() {
                     // Make code_verifier and challenge available to profile page later
                     localStorage.setItem('pkceVerifier', verifier);
                     localStorage.setItem('pkceChallenge', challenge);
-                    localStorage.setItem('state', '3j3k386j3x606u7000324b4x4n0b0o06'); // TODO make this randomly generated
+                    let state = generateState();
+                    localStorage.setItem('state', state);
                 }
 
                 const redirectUri =
