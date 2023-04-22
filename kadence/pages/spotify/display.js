@@ -69,7 +69,14 @@ export default function Display() {
                                 variant="contained"
                                 size="large"
                                 className={styles.button}
-                                onClick={() => signIn('spotify')}
+                                onClick={() =>
+                                    signIn('spotify').then(() =>
+                                        localStorage.setItem(
+                                            'platform',
+                                            'Spotify'
+                                        )
+                                    )
+                                }
                             >
                                 Sign In!
                             </Button>

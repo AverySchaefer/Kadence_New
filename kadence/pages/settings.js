@@ -145,6 +145,7 @@ export default function Settings() {
     async function logout() {
         localStorage.removeItem('jwt');
         localStorage.removeItem('username');
+        localStorage.removeItem('platform');
         try {
             const data = await NetworkAPI.get('/api/users/logout');
             if (data) {
@@ -163,7 +164,7 @@ export default function Settings() {
             });
 
             if (data) {
-                Dialog.alert({
+                await Dialog.alert({
                     title: 'Success',
                     message: `Account successfully deleted.`,
                 });
@@ -177,6 +178,7 @@ export default function Settings() {
         } finally {
             localStorage.removeItem('jwt');
             localStorage.removeItem('username');
+            localStorage.removeItem('platform');
         }
     }
 
