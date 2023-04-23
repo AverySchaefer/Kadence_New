@@ -3,9 +3,13 @@ import nextConnect from 'next-connect';
 import middleware from '../../../middleware/database';
 
 const GET_VALUE_BASE_URL =
-    'https://api.fitbit.com/1/user/-/activities/heart/date/today/today/1sec/time/';
+    'https://api.fitbit.com/1/user/-/activities/heart/date/today/1d/1sec/time/';
 
 const handler = nextConnect();
+let currHourString = '0';
+let currMinuteString = '0';
+let pastHourString = '0';
+let pastMinuteString = '0';
 
 handler.use(middleware);
 
@@ -21,14 +25,38 @@ async function createURL() {
         pastMinute = 59;
         pastHour -= 1;
     }
+   
+    // Make sure that times are in HH:MM format, even if hours or minutes are less than 10
+    // TODO This is still getting a "Failed to parse URL from [object Promise]" error
+    if (currHour < 10) {
+        currHourString = currHourString.concat(currHour.toString());
+    } else {
+        currHourString = currHour.toString();
+    }
+    if (currMinute < 10) {
+        currMinuteString = currMinuteString.concat(currMinute.toString());
+    } else {
+        currMinuteString = currMinute.toString();
+    }
+    if (pastHour < 10) {
+        pastHourString = pastHourString.concat(pastHour.toString());
+    } else {
+        pastHourString = pastHour.toString();
+    }
+    if (pastMinute < 10) {
+        pastMinuteString = pastMinuteString.concat(pastMinute.toString());
+    } else {
+        pastMinuteString = pastMinute.toString();
+    }
 
     return `${
-        GET_VALUE_BASE_URL + pastHour
-    }:${pastMinute}/${currHour}:${currMinute}.json`;
+        GET_VALUE_BASE_URL + pastHourString
+    }:${pastMinuteString}/${currHourString}:${currMinuteString}.json`;
 }
 
 async function getValue(token) {
     const GET_VALUE_URL = createURL();
+    console.log(GET_VALUE_URL);
     return fetch(GET_VALUE_URL, {
         headers: {
             Authorization: `Bearer ${token}`,
@@ -38,7 +66,7 @@ async function getValue(token) {
 }
 
 handler.get(async (req, res) => {
-    const accessToken = req.body.access_token;
+    const accessToken = req.query.access_token;
     const response = await getValue(accessToken);
 
     // Check response
@@ -51,11 +79,12 @@ handler.get(async (req, res) => {
 
     // Handle correct response
     const responseDoc = await response.json();
-    const valuesArray =
+    /* const valuesArray =
         responseDoc['activities-heart']['activities-heart-intraday'].dataset;
     const mostRecentVal = valuesArray[0].value;
     console.log(mostRecentVal);
-    res.status(200).json({value: mostRecentVal});
+    res.status(200).json({value: mostRecentVal}); */
+    res.status(200).json(responseDoc);
 });
 
 export default handler;

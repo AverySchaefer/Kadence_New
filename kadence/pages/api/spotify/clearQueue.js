@@ -21,7 +21,6 @@ async function getQueue(token) {
 }
 
 async function skip(token) {
-    console.log("skipping");
     const { access_token: accessToken } = await refreshToken(token);
     return fetch(SKIP_ENDPOINT, {
         method: 'POST',
@@ -51,11 +50,10 @@ handler.post(async (req, res) => {
     const songItems = await response.json();
     console.log(songItems);
     for (let i = 0; i < songItems.queue.length; i++) {
-        console.log(i);
-        // TODO: Fix this
         // eslint-disable-next-line no-await-in-loop
         await skip(accessToken);
     }
+    console.log(`Skipped ${songItems.queue.length} songs`);
     res.status(200).json(songItems);
 });
 

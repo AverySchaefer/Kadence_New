@@ -126,7 +126,7 @@ export default function PreIntervalScreen() {
                             });
                         }}
                     >
-                        Generate Playlist
+                        Begin Generation
                     </Button>
                 </div>
             </ThemeProvider>

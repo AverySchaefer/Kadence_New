@@ -39,7 +39,7 @@ describe('Home', () => {
         const moodButton = getByText('Mood');
         expect(moodButton).toBeInTheDocument();
         fireEvent.click(moodButton);
-        expect(mockRouter).toMatchObject({ asPath: '/mode/preMood' });
+        expect(mockRouter).toMatchObject({ asPath: '/mode/mood' });
 
         const localArtistButton = getByText('Local Artist');
         expect(localArtistButton).toBeInTheDocument();

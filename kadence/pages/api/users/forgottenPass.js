@@ -35,13 +35,13 @@ handler.post(async (req, res) => {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: 'jackrosenberg17@gmail.com',
-            pass: 'deqahjpnbogfklcw',
+            user: 'kadence.app.cs407@gmail.com',
+            pass: 'fksjwtywuqlwttif',
         },
     });
 
     const mailOptions = {
-        from: 'jackrosenberg17@gmail.com',
+        from: 'kadence.app.cs407@gmail.com',
         to: credentials.email,
         subject: `Password Recovery Link for ${username}`,
         text: `Reset your Kadence password here: ${resetLink}`,

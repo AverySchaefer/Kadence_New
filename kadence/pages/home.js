@@ -5,6 +5,7 @@ import { Logout } from '@mui/icons-material';
 import { useState, useEffect } from 'react';
 import NetworkAPI from '@/lib/networkAPI';
 import styles from '@/styles/Home.module.css';
+import { Dialog } from '@capacitor/dialog';
 
 export default function Home() {
     const router = useRouter();
@@ -21,11 +22,96 @@ export default function Home() {
         if (localStorage.getItem('username') == null) {
             router.push('/login');
         }
-    }, []);
+    }, [router]);
+
+    async function handleFitness() {
+        if (localStorage.getItem('platform')) {
+            const fitnessModeRoute = '/mode/preFitness';
+            await NetworkAPI.post('/api/activity/insert', {
+                username: localStorage.getItem('username'),
+                timestamp: new Date().toLocaleString(),
+                actionType: 'gen',
+                friend: null,
+                genMode: 'fitness',
+                saved: null,
+            });
+            router.push(fitnessModeRoute);
+        } else {
+            await Dialog.alert({
+                title: 'Music Platform Error',
+                message: 'You need to connect a music platform first!',
+            });
+            router.push('/platform');
+        }
+    }
+
+    async function handleInterval() {
+        if (localStorage.getItem('platform')) {
+            const intervalModeRoute = '/mode/preInterval';
+            await NetworkAPI.post('/api/activity/insert', {
+                username: localStorage.getItem('username'),
+                timestamp: new Date().toLocaleString(),
+                actionType: 'gen',
+                friend: null,
+                genMode: 'interval',
+                saved: null,
+            });
+            router.push(intervalModeRoute);
+        } else {
+            await Dialog.alert({
+                title: 'Music Platform Error',
+                message: 'You need to connect a music platform first!',
+            });
+            router.push('/platform');
+        }
+    }
+
+    async function handleMood() {
+        if (localStorage.getItem('platform')) {
+            const moodModeRoute = '/mode/mood';
+            await NetworkAPI.post('/api/activity/insert', {
+                username: localStorage.getItem('username'),
+                timestamp: new Date().toLocaleString(),
+                actionType: 'gen',
+                friend: null,
+                genMode: 'mood',
+                saved: null,
+            });
+            router.push(moodModeRoute);
+        } else {
+            await Dialog.alert({
+                title: 'Music Platform Error',
+                message: 'You need to connect a music platform first!',
+            });
+            router.push('/platform');
+        }
+    }
+
+    async function handleLocal() {
+        if (localStorage.getItem('platform')) {
+            const localModeRoute = '/mode/preLocal';
+            await NetworkAPI.post('/api/activity/insert', {
+                username: localStorage.getItem('username'),
+                timestamp: new Date().toLocaleString(),
+                actionType: 'gen',
+                friend: null,
+                genMode: 'local',
+                saved: null,
+            });
+            router.push(localModeRoute);
+        } else {
+            await Dialog.alert({
+                title: 'Music Platform Error',
+                message: 'You need to connect a music platform first!',
+            });
+            router.push('/platform');
+        }
+    }
 
     async function handleLogout() {
         localStorage.removeItem('jwt');
         localStorage.removeItem('username');
+        localStorage.removeItem('platform');
         // Send Request
         try {
             const data = await NetworkAPI.get('/api/users/logout', {});
@@ -37,10 +123,6 @@ export default function Home() {
         }
     }
 
-    const fitnessModeRoute = '/mode/preFitness';
-    const intervalModeRoute = '/mode/preInterval';
-    const moodModeRoute = '/mode/preMood';
-    const localModeRoute = '/mode/preLocal';
     return (
         isLoggedIn && (
             <PageLayout
@@ -65,25 +147,25 @@ export default function Home() {
                     <Card className={styles.moodContainer}>
                         <Button
                             className={`${styles.modeBtn} ${styles.heartRateBtn}`}
-                            onClick={() => router.push(fitnessModeRoute)}
+                            onClick={handleFitness}
                         >
                             Heart Rate
                         </Button>
                         <Button
                             className={`${styles.modeBtn} ${styles.intervalBtn}`}
-                            onClick={() => router.push(intervalModeRoute)}
+                            onClick={handleInterval}
                         >
                             Interval
                         </Button>
                         <Button
                             className={`${styles.modeBtn} ${styles.moodBtn}`}
-                            onClick={() => router.push(moodModeRoute)}
+                            onClick={handleMood}
                         >
                             Mood
                         </Button>
                         <Button
                             className={`${styles.modeBtn} ${styles.localArtistBtn}`}
-                            onClick={() => router.push(localModeRoute)}
+                            onClick={handleLocal}
                         >
                             Local Artist
                         </Button>

@@ -3,18 +3,10 @@ import styles from '@/styles/Spotify.module.css';
 import Button from '@mui/material/Button';
 import { PageLayout } from '@/components';
 import { useState, useEffect } from 'react';
-import { getMatchingSongs, queueSongs } from '@/lib/apple/AppleAPI';
+import { queueSongs } from '@/lib/apple/AppleAPI';
 import useMusicKit from '@/lib/useMusicKit';
 import NetworkAPI from '@/lib/networkAPI';
 import { useRouter } from 'next/router';
-
-const songsToQueue = [
-    'Let Down',
-    'Mr. Saturday Night',
-    'Weird Fishes',
-    'Creep',
-    'Careless Whisper',
-];
 
 export default function Display() {
     const [loggedIn, setLoggedIn] = useState(false);
@@ -30,13 +22,19 @@ export default function Display() {
         async function startTestPlayback() {
             if (MusicKit) {
                 const music = MusicKit.getInstance();
-                const songs = await getMatchingSongs(music, songsToQueue);
 
-                await queueSongs(
-                    music,
-                    songs.map((song) => song.id)
-                );
+                // Test conversion
+                const { data } = await NetworkAPI.get('/api/apple/conversion', {
+                    appleUserToken: music.musicUserToken,
+                    spotifyURIs: JSON.stringify([
+                        'spotify:track:15irEKZ9D6FQqLoZ1qJ1Cx',
+                        'spotify:track:2fuYa3Lx06QQJAm0MjztKr',
+                    ]),
+                });
+
+                await queueSongs(music, data.appleURIs);
                 await music.play();
+                await music.pause();
             }
         }
         startTestPlayback();
@@ -71,7 +69,6 @@ export default function Display() {
         const music = MusicKit.getInstance();
         music.unauthorize();
         localStorage.removeItem('appleMusicUserToken');
-        localStorage.removeItem('platform');
         setLoggedIn(false);
         NetworkAPI.post('/api/apple/signOut', {
             username: localStorage.getItem('username'),
@@ -82,7 +79,8 @@ export default function Display() {
         } catch (err) {
             console.log(err);
         } finally {
-            router.push('/profile');
+            localStorage.removeItem('platform');
+            router.replace('/profile');
         }
     }
 
