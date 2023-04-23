@@ -349,7 +349,11 @@ export default function MusicPlayer({
     const handleSkip = type === 'Spotify' ? handleSkipSpotify : handleSkipApple;
 
     function handleDislike() {
-        // TODO: blacklist current song
+        // Blacklist current song
+        NetworkAPI.post('/api/preferences/dislike', {
+            username: localStorage.getItem('username'),
+            songName: playerData.songName,
+        }).catch(handleError);
 
         // Run onDislike function if provided
         if (onDislike) {

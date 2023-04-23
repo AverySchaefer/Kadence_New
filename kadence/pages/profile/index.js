@@ -301,7 +301,46 @@ export default function Profile() {
                 setLoaded(true);
             }
         }
+        async function connectFitbit() {
+            const fromFitbit = localStorage.getItem('fromFitbit');
+            if (fromFitbit === 'true') {
+                const url = new URLSearchParams(window.location.search);
+                const authorizationCode = url.get('code');
+                const state = url.get('state'); // TODO: We need to verify that this matches what we sent to Fitbit in the authorization step to prevent CSRF
+                const sentState = localStorage.getItem('state');
+
+                // Compare state values to protect against CSRF
+                if (state === sentState) {
+                    const codeVerifier = localStorage.getItem('pkceVerifier');
+                    try {
+                        const response = await NetworkAPI.post(
+                            '/api/fitbit/getTokens',
+                            {
+                                authorizationCode,
+                                codeVerifier,
+                            }
+                        );
+                        localStorage.setItem(
+                            'authorization_code',
+                            authorizationCode
+                        );
+                        localStorage.setItem('access_token', response.access_token);
+                        localStorage.setItem(
+                            'refresh_token',
+                            response.refresh_token
+                        );
+                    } catch (err) {
+                        Dialog.alert({
+                            title: 'Error',
+                            message: `An error occurred while authorizing to Fitbit: ${err.message}.`,
+                        });
+                    }
+                }
+                localStorage.setItem('fromFitbit', 'false');
+            }
+        }
         fetchData();
+        connectFitbit();
     }, []);
 
     // References an HTML element (used for file input that is invisible)

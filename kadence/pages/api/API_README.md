@@ -520,14 +520,14 @@
 
 ### GET `/api/fitbit/getHeartValue`
 
--   Request Body Elements
-    -   access_token: STRING
--   Return Body:
-    -   value: int
--   Response Status Codes
-    -   200: Request Successful
-    -   401: Authorization token expired
-    -   400: Bad request
+- Request Query Elements
+    - access_token: STRING
+- Return Body:
+    - value: int
+- Response Status Codes
+    - 200: Request Successful
+    - 401: Authorization token expired
+    - 400: Bad request
 
 ### POST `/api/fitbit/getTokens`
 

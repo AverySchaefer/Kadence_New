@@ -69,7 +69,6 @@ export default function Display() {
         const music = MusicKit.getInstance();
         music.unauthorize();
         localStorage.removeItem('appleMusicUserToken');
-        localStorage.removeItem('platform');
         setLoggedIn(false);
         NetworkAPI.post('/api/apple/signOut', {
             username: localStorage.getItem('username'),
@@ -80,7 +79,8 @@ export default function Display() {
         } catch (err) {
             console.log(err);
         } finally {
-            router.push('/profile');
+            localStorage.removeItem('platform');
+            router.replace('/profile');
         }
     }
 

@@ -5,6 +5,7 @@ import { Logout } from '@mui/icons-material';
 import { useState, useEffect } from 'react';
 import NetworkAPI from '@/lib/networkAPI';
 import styles from '@/styles/Home.module.css';
+import { Dialog } from '@capacitor/dialog';
 
 export default function Home() {
     const router = useRouter();
@@ -24,60 +25,93 @@ export default function Home() {
     }, [router]);
 
     async function handleFitness() {
-        const fitnessModeRoute = '/mode/preFitness';
-        await NetworkAPI.post('/api/activity/insert', {
-            username: localStorage.getItem('username'),
-            timestamp: new Date().toLocaleString(),
-            actionType: 'gen',
-            friend: null,
-            genMode: 'fitness',
-            saved: null,
-        });
-        router.push(fitnessModeRoute);
+        if (localStorage.getItem('platform')) {
+            const fitnessModeRoute = '/mode/preFitness';
+            await NetworkAPI.post('/api/activity/insert', {
+                username: localStorage.getItem('username'),
+                timestamp: new Date().toLocaleString(),
+                actionType: 'gen',
+                friend: null,
+                genMode: 'fitness',
+                saved: null,
+            });
+            router.push(fitnessModeRoute);
+        } else {
+            await Dialog.alert({
+                title: 'Music Platform Error',
+                message: 'You need to connect a music platform first!',
+            });
+            router.push('/platform');
+        }
     }
 
     async function handleInterval() {
-        const intervalModeRoute = '/mode/preInterval';
-        await NetworkAPI.post('/api/activity/insert', {
-            username: localStorage.getItem('username'),
-            timestamp: new Date().toLocaleString(),
-            actionType: 'gen',
-            friend: null,
-            genMode: 'interval',
-            saved: null,
-        });
-        router.push(intervalModeRoute);
+        if (localStorage.getItem('platform')) {
+            const intervalModeRoute = '/mode/preInterval';
+            await NetworkAPI.post('/api/activity/insert', {
+                username: localStorage.getItem('username'),
+                timestamp: new Date().toLocaleString(),
+                actionType: 'gen',
+                friend: null,
+                genMode: 'interval',
+                saved: null,
+            });
+            router.push(intervalModeRoute);
+        } else {
+            await Dialog.alert({
+                title: 'Music Platform Error',
+                message: 'You need to connect a music platform first!',
+            });
+            router.push('/platform');
+        }
     }
 
     async function handleMood() {
-        const moodModeRoute = '/mode/mood';
-        await NetworkAPI.post('/api/activity/insert', {
-            username: localStorage.getItem('username'),
-            timestamp: new Date().toLocaleString(),
-            actionType: 'gen',
-            friend: null,
-            genMode: 'mood',
-            saved: null,
-        });
-        router.push(moodModeRoute);
+        if (localStorage.getItem('platform')) {
+            const moodModeRoute = '/mode/mood';
+            await NetworkAPI.post('/api/activity/insert', {
+                username: localStorage.getItem('username'),
+                timestamp: new Date().toLocaleString(),
+                actionType: 'gen',
+                friend: null,
+                genMode: 'mood',
+                saved: null,
+            });
+            router.push(moodModeRoute);
+        } else {
+            await Dialog.alert({
+                title: 'Music Platform Error',
+                message: 'You need to connect a music platform first!',
+            });
+            router.push('/platform');
+        }
     }
 
     async function handleLocal() {
-        const localModeRoute = '/mode/preLocal';
-        await NetworkAPI.post('/api/activity/insert', {
-            username: localStorage.getItem('username'),
-            timestamp: new Date().toLocaleString(),
-            actionType: 'gen',
-            friend: null,
-            genMode: 'local',
-            saved: null,
-        });
-        router.push(localModeRoute);
+        if (localStorage.getItem('platform')) {
+            const localModeRoute = '/mode/preLocal';
+            await NetworkAPI.post('/api/activity/insert', {
+                username: localStorage.getItem('username'),
+                timestamp: new Date().toLocaleString(),
+                actionType: 'gen',
+                friend: null,
+                genMode: 'local',
+                saved: null,
+            });
+            router.push(localModeRoute);
+        } else {
+            await Dialog.alert({
+                title: 'Music Platform Error',
+                message: 'You need to connect a music platform first!',
+            });
+            router.push('/platform');
+        }
     }
 
     async function handleLogout() {
         localStorage.removeItem('jwt');
         localStorage.removeItem('username');
+        localStorage.removeItem('platform');
         // Send Request
         try {
             const data = await NetworkAPI.get('/api/users/logout', {});

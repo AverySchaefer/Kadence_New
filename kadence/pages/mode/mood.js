@@ -119,40 +119,66 @@ export default function MoodModePage() {
     }
 
     async function saveToPlaylist(playlistURIs) {
+        const { value, cancelled } = await Dialog.prompt({
+            title: 'Playlist Name',
+            message: 'What would you like to name your playlist?',
+        });
+
+        if (cancelled) return false;
+
+        const playlistName =
+            value.trim() || `Kadence Mood Mode - ${activeMood.toUpperCase()}`;
+
         if (platform === 'Spotify') {
             const saveRoute = '/api/generation/save';
             await fetch(saveRoute, {
                 method: 'POST',
                 body: JSON.stringify({
-                    playlistName: `Kadence Mood Mode - ${activeMood.toUpperCase()}`,
+                    playlistName,
                     playlistArray: playlistURIs,
                 }),
             });
         } else if (platform === 'apple') {
             const saveRoute = '/api/apple/saveToPlaylist';
             await NetworkAPI.post(saveRoute, {
-                name: `Kadence Mood Mode - ${activeMood.toUpperCase()}`,
+                name: playlistName,
                 appleURIs: playlistURIs,
                 appleUserToken: music.musicUserToken,
             });
         }
+        return true;
     }
 
     async function queueURIs(playlistURIs) {
         if (platform === 'Spotify') {
-            await NetworkAPI.put('/api/spotify/play', {
-                uris: playlistURIs,
-            });
-            await NetworkAPI.put('/api/spotify/pause');
+            try {
+                await NetworkAPI.put('/api/spotify/play', {
+                    uris: playlistURIs,
+                });
+                await NetworkAPI.put('/api/spotify/pause');
+                return true;
+            } catch (err) {
+                await Dialog.alert({
+                    title: 'Spotify Error',
+                    message:
+                        'Error occurred. Make sure Spotify is open before generating!',
+                });
+                return false;
+            }
         } else if (platform === 'apple') {
             await queueSongs(music, playlistURIs);
+            return true;
         }
+        return false;
     }
 
     async function handleGenerateClick() {
         const recommendations = await getRecommendedSongs();
 
-        await queueURIs(recommendations.map((rec) => rec.uri));
+        const successfullyQueued = await queueURIs(
+            recommendations.map((rec) => rec.uri)
+        );
+        if (!successfullyQueued) return;
 
         // Get song info and art for display
         if (platform === 'apple') {
@@ -174,16 +200,18 @@ export default function MoodModePage() {
 
         if (!waitToSave) {
             saveToPlaylist(recommendations.map((rec) => rec.uri)).then(
-                async () => {
-                    Dialog.alert({
-                        title: 'Success',
-                        message: 'Saved playlist successfully.',
-                    });
-                    setAlreadySavedPlaylist(true);
+                async (saved) => {
+                    if (saved) {
+                        Dialog.alert({
+                            title: 'Success',
+                            message: 'Saved playlist successfully.',
+                        });
+                        setAlreadySavedPlaylist(true);
+                    }
                     setConfirmedPlaylist(true);
                     if (platform === 'apple') {
                         await music.play();
-                    } else if (platform === 'spotify') {
+                    } else if (platform === 'Spotify') {
                         await NetworkAPI.put('/api/spotify/play');
                     }
                 }
@@ -218,12 +246,15 @@ export default function MoodModePage() {
                         className={`${styles.generateButton}`}
                         onClick={() =>
                             saveToPlaylist(songs.map((song) => song.uri)).then(
-                                () => {
-                                    Dialog.alert({
-                                        title: 'Success',
-                                        message: 'Saved playlist successfully.',
-                                    });
-                                    setAlreadySavedPlaylist(true);
+                                (saved) => {
+                                    if (saved) {
+                                        Dialog.alert({
+                                            title: 'Success',
+                                            message:
+                                                'Saved playlist successfully.',
+                                        });
+                                        setAlreadySavedPlaylist(true);
+                                    }
                                 }
                             )
                         }
@@ -237,7 +268,11 @@ export default function MoodModePage() {
                     className={`${styles.generateButton}`}
                     onClick={async () => {
                         if (platform === 'Spotify') {
-                            await NetworkAPI.put('/api/spotify/pause');
+                            try {
+                                await NetworkAPI.put('/api/spotify/pause');
+                            } catch (err) {
+                                console.log('Pausing with no device active');
+                            }
                         } else if (platform === 'apple') {
                             await queueSongs(music, []);
                             await music.stop();
