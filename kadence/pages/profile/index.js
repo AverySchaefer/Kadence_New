@@ -127,11 +127,7 @@ function BasicTabs({
                                     <br />
                                     <Button
                                         variant="contained"
-                                        sx={{
-                                            width: '25ch',
-                                            backgroundColor: 'button.primary',
-                                            color: '#242b2e',
-                                        }}
+                                        className={styles.button}
                                         onClick={() =>
                                             router.push('/changeProfile')
                                         }
@@ -156,12 +152,7 @@ function BasicTabs({
                                             />
                                             <Button
                                                 variant="contained"
-                                                sx={{
-                                                    width: '25ch',
-                                                    backgroundColor:
-                                                        'button.primary',
-                                                    color: '#242b2e',
-                                                }}
+                                                className={styles.button}
                                                 onClick={() =>
                                                     router.push(useLink)
                                                 }
@@ -170,14 +161,7 @@ function BasicTabs({
                                             </Button>
                                             <Button
                                                 variant="contained"
-                                                sx={{
-                                                    width: '25ch',
-                                                    backgroundColor:
-                                                        'button.primary',
-                                                    color: '#242b2e',
-                                                    textTransform:
-                                                        'none !important',
-                                                }}
+                                                className={styles.button}
                                                 href={accountLink}
                                                 target="_blank"
                                             >
@@ -187,11 +171,7 @@ function BasicTabs({
                                     )}
                                     <Button
                                         variant="contained"
-                                        sx={{
-                                            width: '25ch',
-                                            backgroundColor: 'button.primary',
-                                            color: '#242b2e',
-                                        }}
+                                        className={styles.button}
                                         onClick={handleClick}
                                     >
                                         {platform ? 'Change' : 'Choose'}{' '}
@@ -216,16 +196,7 @@ function BasicTabs({
                                             <p>{deviceName} is connected!</p>
                                             <Button
                                                 variant="contained"
-                                                sx={{
-                                                    width: '25ch',
-                                                    backgroundColor:
-                                                        'button.primary',
-                                                    color: '#242b2e',
-                                                    '&:active': {
-                                                        backgroundColor:
-                                                            'button.primary',
-                                                    },
-                                                }}
+                                                className={styles.button}
                                             >
                                                 Disconnect
                                             </Button>
@@ -235,16 +206,7 @@ function BasicTabs({
                                         <>
                                             <Button
                                                 variant="contained"
-                                                sx={{
-                                                    width: '25ch',
-                                                    color: '#242b2e',
-                                                    backgroundColor:
-                                                        'button.primary',
-                                                    '&:active': {
-                                                        backgroundColor:
-                                                            'button.primary',
-                                                    },
-                                                }}
+                                                className={styles.button}
                                                 onClick={() =>
                                                     router.push('/fitbit')
                                                 }
@@ -324,7 +286,10 @@ export default function Profile() {
                             'authorization_code',
                             authorizationCode
                         );
-                        localStorage.setItem('access_token', response.access_token);
+                        localStorage.setItem(
+                            'access_token',
+                            response.access_token
+                        );
                         localStorage.setItem(
                             'refresh_token',
                             response.refresh_token

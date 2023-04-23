@@ -118,3 +118,12 @@
     --text-color: #e4dfe3;
     --supporting-text-color: #cac4d0;
 }
+
+.button {
+    background-color: #69e267;
+    color: #242b2e;
+    width: 25ch;
+    display: flex;
+    justify-content: center;
+    border-radius: 20px;
+}
