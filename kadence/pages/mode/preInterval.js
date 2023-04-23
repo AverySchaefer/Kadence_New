@@ -136,7 +136,7 @@ export default function PreIntervalScreen() {
                         className={styles.generateButton}
                         onClick={() => handleClick()}
                     >
-                        Generate Playlist
+                        Begin Generation
                     </Button>
                 </div>
             </ThemeProvider>
