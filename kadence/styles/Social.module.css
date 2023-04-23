@@ -75,7 +75,7 @@
 }
 
 .activityContainer {
-    height: 80vh;
+    max-height: 60vh;
     background-color: #222222;
     border-radius: 25px 25px 25px 25px;
     overflow: scroll;
@@ -101,4 +101,13 @@
     overflow-x: auto;
     padding-bottom: 2%;
     border-bottom: 2px solid black;
+}
+
+.button {
+    background-color: #69e267;
+    color: #242b2e;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    border-radius: 20px;
 }

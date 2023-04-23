@@ -49,7 +49,7 @@ handler.get(async (req, res) => {
         .collection('Activities')
         .find({
             username: { $in: friendList },
-            actionType: { $in: ['gen', 'save'] },
+            actionType: { $in: ['gen', 'friend'] },
         })
         .limit(50)
         .project({ _id: 0 });
