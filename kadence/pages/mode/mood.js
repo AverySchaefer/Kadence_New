@@ -129,6 +129,15 @@ export default function MoodModePage() {
         const playlistName =
             value.trim() || `Kadence Mood Mode - ${activeMood.toUpperCase()}`;
 
+        await NetworkAPI.post('/api/activity/insert', {
+            username: localStorage.getItem('username'),
+            timestamp: new Date().toLocaleString(),
+            actionType: 'save',
+            friend: null,
+            genMode: 'mood',
+            saved: playlistName,
+        });  
+
         if (platform === 'Spotify') {
             const saveRoute = '/api/generation/save';
             await fetch(saveRoute, {

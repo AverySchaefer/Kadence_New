@@ -105,6 +105,15 @@ export default function LocalModeSetup() {
         const playlistName =
             value.trim() || `Kadence Local Mode`;
 
+        await NetworkAPI.post('/api/activity/insert', {
+            username: localStorage.getItem('username'),
+            timestamp: new Date().toLocaleString(),
+            actionType: 'save',
+            friend: null,
+            genMode: 'local',
+            saved: playlistName,
+        });    
+
         if (platform === 'Spotify') {
             const saveRoute = '/api/generation/save';
             await fetch(saveRoute, {
@@ -154,7 +163,7 @@ export default function LocalModeSetup() {
             timestamp: new Date().toLocaleString(),
             actionType: 'gen',
             friend: null,
-            genMode: 'mood',
+            genMode: 'local',
             saved: null,
         }); 
 
