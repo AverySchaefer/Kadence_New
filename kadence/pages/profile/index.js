@@ -38,6 +38,26 @@ function BasicTabs({ musicPlatform, deviceName, activityLog }) {
         setValue(newValue);
     };
 
+    const handleDisconnect = () => {
+        console.log('hi');
+        try {
+            const userData = {
+                username: localStorage.getItem('username'),
+                deviceName: '',
+            };
+            NetworkAPI.patch('/api/users/update', userData);
+            localStorage.setItem('authorization_code', '');
+            localStorage.setItem('access_token', '');
+            localStorage.setItem('refresh_token', '');
+            router.reload();
+        } catch (err) {
+            Dialog.alert({
+                title: 'Error Occurred',
+                message: `Error occurred while saving: ${err.message}`,
+            });
+        }
+    }
+
     const handleClick = () => {
         const newPlatformData = {
             username: localStorage.getItem('username'),
@@ -186,6 +206,7 @@ function BasicTabs({ musicPlatform, deviceName, activityLog }) {
                                             <p>{deviceName} is connected!</p>
                                             <Button
                                                 variant="contained"
+                                                onClick={handleDisconnect}
                                                 className={styles.button}
                                             >
                                                 Disconnect

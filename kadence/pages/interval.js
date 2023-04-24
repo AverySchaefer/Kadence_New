@@ -117,6 +117,15 @@ export default function IntervalPage() {
 
             const playlistName = value.trim() || `Kadence Interval Mode`;
 
+            await NetworkAPI.post('/api/activity/insert', {
+                username: localStorage.getItem('username'),
+                timestamp: new Date().toLocaleString(),
+                actionType: 'save',
+                friend: null,
+                genMode: 'interval',
+                saved: playlistName,
+            });  
+
             if (platform === 'Spotify') {
                 const saveRoute = '/api/generation/save';
                 await fetch(saveRoute, {
