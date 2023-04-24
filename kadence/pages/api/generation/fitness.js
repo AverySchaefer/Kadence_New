@@ -7,7 +7,6 @@ import middleware from '../../../middleware/database';
 const handler = nextConnect();
 handler.use(middleware);
 
-
 async function generateSearchParams(prefData, heartrate) {
     /* Generate the general search parameters */
     const minSongLength = prefData.minSongLength * 1000; // convert to ms
@@ -31,10 +30,7 @@ async function generateSearchParams(prefData, heartrate) {
 
 async function getFitnessRecommendations(prefData, heartrate) {
     const accessToken = await getSpotifyAccessToken();
-    const searchParameters = await generateSearchParams(
-        prefData,
-        heartrate
-    );
+    const searchParameters = await generateSearchParams(prefData, heartrate);
 
     const RECOMMENDATIONS_ENDPOINT = `https://api.spotify.com/v1/recommendations?`;
     try {
@@ -50,10 +46,9 @@ async function getFitnessRecommendations(prefData, heartrate) {
         console.log(err);
         return null;
     }
-    
 }
 
-async function playlistScreening(songItems, userData) {
+function playlistScreening(songItems, userData) {
     const { allowExplicit, blacklistedArtists, blacklistedSongs } = userData;
 
     return songItems.filter((song) => {
@@ -78,7 +73,7 @@ handler.get(async (req, res) => {
 
     const songItems = await getFitnessRecommendations(
         prefData,
-        currentHeartRate,
+        currentHeartRate
     );
 
     if (songItems.status === 204 && songItems.statusText === 'No Content') {
