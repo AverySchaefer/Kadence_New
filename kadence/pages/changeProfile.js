@@ -85,7 +85,11 @@ export default function ChangeProfile() {
                 />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <PageLayout title="Edit Profile" footer="" prevLink="/profile">
+            <PageLayout
+                title="Edit About Me"
+                includeNav={false}
+                prevLink="/settings"
+            >
                 <main className={[inter.className, styles.main].join(' ')}>
                     <Box>
                         <Stack spacing={2} alignItems="center">
@@ -130,11 +134,7 @@ export default function ChangeProfile() {
                             <br />
                             <Button
                                 variant="contained"
-                                sx={{
-                                    width: '25ch',
-                                    backgroundColor: '#69e267',
-                                    '&:active': { backgroundColor: '#69e267' },
-                                }}
+                                className={styles.button}
                                 onClick={submitData}
                             >
                                 Save
