@@ -24,24 +24,6 @@ const inter = Inter({ subsets: ['latin'] });
 export default function Display() {
     const [deviceName, setDeviceName] = useState('');
 
-    async function disconnectDevice() {
-        try {
-            const userData = {
-                username: localStorage.getItem('username'),
-                deviceName: '',
-            };
-            await NetworkAPI.patch('/api/users/update', userData);
-            localStorage.setItem('authorization_code', '');
-            localStorage.setItem('access_token', '');
-            localStorage.setItem('refresh_token', '');
-        } catch (err) {
-            Dialog.alert({
-                title: 'Error Occurred',
-                message: `Error occurred while saving: ${err.message}`,
-            });
-        }
-    }
-
     async function connectDevice(e) {
         e.preventDefault();
         try {
@@ -148,13 +130,6 @@ export default function Display() {
                             </Button>
                         </ThemeProvider>
                     </form>
-                    <Button
-                        variant="contained"
-                        className={`${styles.connectButton}`}
-                        onClick={() => disconnectDevice()}
-                    >
-                        Disconnect
-                    </Button>
                 </main>
             </PageLayout>
         </>
