@@ -109,12 +109,7 @@ function BasicTabs({ userData, activityLog }) {
                                                 />
                                                 <Button
                                                     variant="contained"
-                                                    sx={{
-                                                        width: '25ch',
-                                                        backgroundColor:
-                                                            'button.primary',
-                                                        color: '#242b2e',
-                                                    }}
+                                                    className={styles.button}
                                                     href={accountLink}
                                                 >
                                                     View Account

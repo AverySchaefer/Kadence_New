@@ -41,3 +41,12 @@
     border-radius: 10px;
     transition: color 0.15s ease, border-color 0.15s ease;
 }
+
+.button {
+    background-color: #69e267;
+    color: #242b2e;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    border-radius: 20px;
+}

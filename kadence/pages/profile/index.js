@@ -20,13 +20,7 @@ function a11yProps(index) {
     };
 }
 
-function BasicTabs({
-    favArtist,
-    favSong,
-    favAlbum,
-    musicPlatform,
-    deviceName,
-}) {
+function BasicTabs({ musicPlatform, deviceName, activityLog }) {
     const [value, setValue] = useState(0);
     const router = useRouter();
     const theme = createTheme({
@@ -100,7 +94,7 @@ function BasicTabs({
                                 style: { backgroundColor: '#69E267' },
                             }}
                         >
-                            <Tab label="About Me" {...a11yProps(0)} />
+                            <Tab label="Activity" {...a11yProps(0)} />
                             <Tab label="Platform" {...a11yProps(1)} />
                             <Tab label="Devices" {...a11yProps(2)} />
                         </Tabs>
@@ -108,33 +102,29 @@ function BasicTabs({
                     <Box sx={{ padding: 2 }}>
                         {value === 0 && (
                             <Box>
-                                <Stack spacing={2} alignItems="center">
-                                    <h4 className={styles.tabTitle}>
-                                        Favorite Artist
-                                    </h4>
-                                    <p>{favArtist}</p>
-                                    <br />
-                                    <h4 className={styles.tabTitle}>
-                                        Favorite Song
-                                    </h4>
-                                    <p>{favSong}</p>
-                                    <br />
-                                    <h4 className={styles.tabTitle}>
-                                        Favorite Album
-                                    </h4>
-                                    <p>{favAlbum}</p>
-                                    <br />
-                                    <br />
-                                    <Button
-                                        variant="contained"
-                                        className={styles.button}
-                                        onClick={() =>
-                                            router.push('/changeProfile')
-                                        }
-                                    >
-                                        Edit
-                                    </Button>
-                                </Stack>
+                                {activityLog.length > 0 && (
+                                    <div className={styles.activityContainer}>
+                                        <div className={styles.activities}>
+                                            {activityLog.map((activity) => (
+                                                <div
+                                                    key={activity.timestamp}
+                                                    className={styles.activity}
+                                                >
+                                                    <p>
+                                                        {`You`}
+                                                        {activity.actionType ===
+                                                        'gen'
+                                                            ? ` generated a playlist in ${activity.genMode} mode. ${activity.timestamp}`
+                                                            : ` became friends with ${activity.friend}. ${activity.timestamp}`}
+                                                    </p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                                {activityLog.length === 0 && (
+                                    <p>No activity to display</p>
+                                )}
                             </Box>
                         )}
                         {value === 1 && (
@@ -226,13 +216,11 @@ function BasicTabs({
 }
 
 export default function Profile() {
-    const [faveArtist, setFaveArtist] = useState('Snarky Puppy');
-    const [faveAlbum, setFaveAlbum] = useState('Lingus');
-    const [faveSong, setFaveSong] = useState('What About Me?');
     const [bio, setBio] = useState('Something about me...');
     const [musicPlatform, setMusicPlatform] = useState('Spotify');
     const [profilePic, setProfilePic] = useState('');
     const [deviceName, setDeviceName] = useState('');
+    const [activity, setActivity] = useState([]);
 
     const [loaded, setLoaded] = useState(false);
 
@@ -247,9 +235,6 @@ export default function Profile() {
                         username: localStorage.getItem('username'),
                     }
                 );
-                setFaveArtist(userData.favoriteArtist);
-                setFaveAlbum(userData.favoriteAlbum);
-                setFaveSong(userData.favoriteSong);
                 setBio(userData.bio);
                 setMusicPlatform(userData.musicPlatform);
                 setProfilePic(userData.profilePic ?? '');
@@ -258,6 +243,19 @@ export default function Profile() {
                 Dialog.alert({
                     title: 'Error',
                     message: `An error occurred while fetching your data: ${err.message}. Some defaults have been set in their place.`,
+                });
+            }
+            try {
+                // Get activity data
+                NetworkAPI.get('/api/activity/getLogs', {
+                    username: localStorage.getItem('username'),
+                }).then((res) => {
+                    setActivity(res.data);
+                });
+            } catch (err) {
+                Dialog.alert({
+                    title: 'Error',
+                    message: `An error occurred while fetching activity data: ${err.message}.`,
                 });
             } finally {
                 setLoaded(true);
@@ -356,7 +354,7 @@ export default function Profile() {
                         >
                             <Avatar
                                 src={profilePic}
-                                alt="NS"
+                                alt="profile picture"
                                 sx={{ width: 150, height: 150 }}
                                 style={{ objectFit: 'cover' }}
                             >
@@ -380,11 +378,9 @@ export default function Profile() {
                     </div>
                     <div className={styles.cardText}>{bio}</div>
                     <BasicTabs
-                        favArtist={faveArtist}
-                        favAlbum={faveAlbum}
-                        favSong={faveSong}
                         musicPlatform={musicPlatform}
                         deviceName={deviceName}
+                        activityLog={activity}
                     />
                 </main>
             )}
