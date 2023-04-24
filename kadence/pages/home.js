@@ -5,7 +5,6 @@ import { Logout } from '@mui/icons-material';
 import { useState, useEffect } from 'react';
 import NetworkAPI from '@/lib/networkAPI';
 import styles from '@/styles/Home.module.css';
-import { Dialog } from '@capacitor/dialog';
 
 export default function Home() {
     const router = useRouter();
