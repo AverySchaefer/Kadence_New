@@ -13,7 +13,7 @@ let pastMinuteString = '0';
 
 handler.use(middleware);
 
-async function createURL() {
+function createURL() {
     const timeObj = new Date();
 
     const currHour = timeObj.getHours();
@@ -49,9 +49,12 @@ async function createURL() {
         pastMinuteString = pastMinute.toString();
     }
 
-    return `${
+    let url = `${
         GET_VALUE_BASE_URL + pastHourString
     }:${pastMinuteString}/${currHourString}:${currMinuteString}.json`;
+    //console.log(url);
+    //console.log(encodeURI(url));
+    return encodeURI(url);
 }
 
 async function getValue(token) {
