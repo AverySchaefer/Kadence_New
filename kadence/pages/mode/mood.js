@@ -99,6 +99,7 @@ export default function MoodModePage() {
         const { data: playlistObjs } = await NetworkAPI.get(
             '/api/generation/mood',
             {
+                platform,
                 chosenMood: activeMood,
                 playlistLength: numSongs,
                 username: localStorage.getItem('username'),
