@@ -15,7 +15,7 @@ function a11yProps(index) {
     };
 }
 
-function BasicTabs({ userData }) {
+function BasicTabs({ userData, activityLog }) {
     const [value, setValue] = useState(0);
 
     const handleChange = (event, newValue) => {
@@ -63,7 +63,7 @@ function BasicTabs({ userData }) {
                     >
                         <Tab label="About Me" {...a11yProps(0)} />
                         <Tab label="Platform" {...a11yProps(1)} />
-                        <Tab label="Devices" {...a11yProps(2)} />
+                        <Tab label="Activity" {...a11yProps(2)} />
                     </Tabs>
                 </Box>
                 <Box sx={{ padding: 2 }}>
@@ -109,12 +109,7 @@ function BasicTabs({ userData }) {
                                                 />
                                                 <Button
                                                     variant="contained"
-                                                    sx={{
-                                                        width: '25ch',
-                                                        backgroundColor:
-                                                            'button.primary',
-                                                        color: '#242b2e',
-                                                    }}
+                                                    className={styles.button}
                                                     href={accountLink}
                                                 >
                                                     View Account
@@ -137,11 +132,49 @@ function BasicTabs({ userData }) {
                                 {hidePrivateInfo ? (
                                     <p>
                                         This user is private, so you cannot see
-                                        their music platform information.
+                                        their activity.
                                     </p>
                                 ) : (
                                     <>
-                                        <p>Insert Device Information?</p>
+                                        {activityLog.length > 0 && (
+                                            <div
+                                                className={
+                                                    styles.activityContainer
+                                                }
+                                            >
+                                                <div
+                                                    className={
+                                                        styles.activities
+                                                    }
+                                                >
+                                                    {activityLog.map(
+                                                        (activity) => (
+                                                            <div
+                                                                key={
+                                                                    activity.timestamp
+                                                                }
+                                                                className={
+                                                                    styles.activity
+                                                                }
+                                                            >
+                                                                <p>
+                                                                    {
+                                                                        activity.username
+                                                                    }
+                                                                    {activity.actionType ===
+                                                                    'gen'
+                                                                        ? ` generated a playlist in ${activity.genMode} mode. ${activity.timestamp}`
+                                                                        : ` became friends with ${activity.friend}. ${activity.timestamp}`}
+                                                                </p>
+                                                            </div>
+                                                        )
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
+                                        {activityLog.length === 0 && (
+                                            <p>No activity to display</p>
+                                        )}
                                     </>
                                 )}
                             </Stack>
@@ -155,6 +188,7 @@ function BasicTabs({ userData }) {
 
 export default function OtherProfile() {
     const [userData, setUserData] = useState(null);
+    const [activity, setActivity] = useState([]);
 
     const router = useRouter();
     const { username } = router.query;
@@ -185,6 +219,19 @@ export default function OtherProfile() {
                 Dialog.alert({
                     title: 'Error',
                     message: `An error occurred while fetching profile data: ${err.message}.`,
+                }).then(router.replace('/search'));
+            }
+            try {
+                // Get activity data
+                NetworkAPI.get('/api/activity/getLogs', {
+                    username,
+                }).then((res) => {
+                    setActivity(res.data);
+                });
+            } catch (err) {
+                Dialog.alert({
+                    title: 'Error',
+                    message: `An error occurred while fetching activity data: ${err.message}.`,
                 }).then(router.replace('/search'));
             }
         }
@@ -322,7 +369,7 @@ export default function OtherProfile() {
                                 )}
                             </Stack>
                         )}
-                        <BasicTabs userData={userData} />
+                        <BasicTabs userData={userData} activityLog={activity} />
                     </main>
                 )}
             </ThemeProvider>

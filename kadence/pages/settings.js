@@ -300,6 +300,24 @@ export default function Settings() {
                                     ></Switch>
                                 </Box>
                             </div>
+                            <div>
+                                <Box className={styles.flexWrapper}>
+                                    Edit your About Me
+                                    <Tooltip title="What people can see about you when they view your profile.">
+                                        <InfoIcon
+                                            className={styles.tooltip}
+                                        ></InfoIcon>
+                                    </Tooltip>
+                                    <Button
+                                        className={styles.sublistShowButton}
+                                        onClick={() =>
+                                            router.push('/changeProfile')
+                                        }
+                                    >
+                                        Edit
+                                    </Button>
+                                </Box>
+                            </div>
                         </div>
                     </section>
                     <section>
