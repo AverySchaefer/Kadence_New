@@ -37,6 +37,26 @@ export default function PreIntervalScreen() {
         fetchData();
     }, []);
 
+    async function handleClick() {
+        await NetworkAPI.post('/api/activity/insert', {
+            username: localStorage.getItem('username'),
+            timestamp: new Date().toLocaleString(),
+            actionType: 'gen',
+            friend: null,
+            genMode: 'interval',
+            saved: null,
+        }); 
+        // TODO: Generate playlist using specified
+        // intervalLow and intervalHigh values
+        router.push({
+            pathname: '/interval',
+            query: {
+                intervalLow,
+                intervalHigh,
+            },
+        });
+    }
+
     const theme = createTheme({
         palette: {
             primary: {
@@ -114,19 +134,9 @@ export default function PreIntervalScreen() {
                     <Button
                         variant="contained"
                         className={styles.generateButton}
-                        onClick={() => {
-                            // TODO: Generate playlist using specified
-                            // intervalLow and intervalHigh values
-                            router.push({
-                                pathname: '/interval',
-                                query: {
-                                    intervalLow,
-                                    intervalHigh,
-                                },
-                            });
-                        }}
+                        onClick={() => handleClick()}
                     >
-                        Generate Playlist
+                        Begin Generation
                     </Button>
                 </div>
             </ThemeProvider>

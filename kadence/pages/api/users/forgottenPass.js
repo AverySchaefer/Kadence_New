@@ -6,18 +6,10 @@ const handler = nextConnect();
 handler.use(middleware);
 
 handler.post(async (req, res) => {
-    console.log('Sending an email to change the password.');
-    /* Ensuring the request is of type POST */
-    if (req.method !== 'POST') {
-        return;
-    }
-
     /* Pulling information from register form as credentials */
     const credentials = {
         email: req.body.email,
     };
-
-    console.log(credentials);
 
     /* Checking if a user exists in the database with provided username */
     /* If one exists, respond with an error message */
@@ -33,23 +25,23 @@ handler.post(async (req, res) => {
         });
         return;
     }
-    const { username } = findExistingUser;
+    const {username} = findExistingUser;
+    const userHexString = findExistingUser._id.toHexString();
     const resetLink =
         process.env.NODE_ENV === 'development'
-            ? 'http://localhost:3000/resetPass'
-            : 'http://kadenceapp.com/resetPass';
-    console.log(username);
+            ? 'http://localhost:3000/resetPass?id='.concat(userHexString)
+            : 'http://kadenceapp.com/resetPass?id='.concat(userHexString);
 
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: 'jackrosenberg17@gmail.com',
-            pass: 'kzakelglsvhsijik',
+            user: 'kadence.app.cs407@gmail.com',
+            pass: 'fksjwtywuqlwttif',
         },
     });
 
     const mailOptions = {
-        from: 'jackrosenberg17@gmail.com',
+        from: 'kadence.app.cs407@gmail.com',
         to: credentials.email,
         subject: `Password Recovery Link for ${username}`,
         text: `Reset your Kadence password here: ${resetLink}`,
@@ -58,8 +50,10 @@ handler.post(async (req, res) => {
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
             console.log(error);
+            res.status(500).send();
         } else {
             console.log(`Email sent: ${info.response}`);
+            res.status(200).send();
         }
     });
 });

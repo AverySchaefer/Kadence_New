@@ -1,17 +1,42 @@
 import '@/styles/globals.css';
-// import { SessionProvider } from 'next-auth/react';
-import { UseSession } from '@/lib/session';
+import { SessionProvider } from 'next-auth/react';
+import Script from 'next/script';
+
+import { useState } from 'react';
+import { MusicKitContext } from '@/lib/useMusicKit';
 import { StyledEngineProvider } from '@mui/material/styles';
+
+import { AppleMusicConfiguration } from '@/lib/apple/AppleAPI';
 
 export default function App({
     Component,
     pageProps: { session, ...pageProps },
 }) {
+    const [musicKit, setMusicKit] = useState(null);
+
+    function configureAppleMusic() {
+        document.addEventListener('musickitloaded', () => {
+            // MusicKit global is now defined
+
+            // eslint-disable-next-line no-undef
+            MusicKit.configure(AppleMusicConfiguration);
+            // eslint-disable-next-line no-undef
+            setMusicKit(MusicKit);
+        });
+    }
+
     return (
-        <UseSession>
-            <StyledEngineProvider injectFirst>
-                <Component {...pageProps} />
-            </StyledEngineProvider>
-        </UseSession>
+        <MusicKitContext.Provider value={musicKit}>
+            <SessionProvider session={session}>
+                <Script
+                    src="https://js-cdn.music.apple.com/musickit/v1/musickit.js"
+                    onLoad={configureAppleMusic}
+                    strategy="afterInteractive"
+                />
+                <StyledEngineProvider injectFirst>
+                    <Component {...pageProps} />
+                </StyledEngineProvider>
+            </SessionProvider>
+        </MusicKitContext.Provider>
     );
 }

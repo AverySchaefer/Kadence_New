@@ -5,6 +5,17 @@ const nextConfig = {
     images: {
         unoptimized: true,
     },
+    eslint: {
+        dirs: [
+            'pages',
+            'components',
+            'lib',
+            'src',
+            'styles',
+            'middleware',
+            'test',
+        ],
+    },
     serverRuntimeConfig: {
         secret: 'd76800b5-229b-45e9-b923-3c873e3ead3e',
     },
