@@ -5,7 +5,13 @@ const handler = nextConnect();
 handler.use(middleware);
 
 function compareLogs(a, b) {
-    return Date.parse(a.timestamp) > Date.parse(b.timestamp);
+    if (Date.parse(a.timestamp) === Date.parse(b.timestamp)) {
+        return 0;
+    }
+    if (Date.parse(a.timestamp) > Date.parse(b.timestamp)) {
+        return -1;
+    }
+    return 1;
 }
 
 handler.get(async (req, res) => {
