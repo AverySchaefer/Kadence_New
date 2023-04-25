@@ -19,7 +19,7 @@ function createURL() {
     const currHour = timeObj.getHours();
     let pastHour = currHour;
 
-    const currMinute = timeObj.getMinutes();
+    const currMinute = timeObj.getMinutes() - 5;
     let pastMinute = currMinute - 1;
     if (currMinute === 0) {
         pastMinute = 59;
@@ -79,13 +79,11 @@ handler.get(async (req, res) => {
 
     // Handle correct response
     const responseDoc = await response.json();
-    // TODO figure out why dataset is an empty array
-    /* const valuesArray =
-        responseDoc['activities-heart']['activities-heart-intraday'].dataset;
-    const mostRecentVal = valuesArray[0].value;
-    console.log(mostRecentVal);
-    res.status(200).json({value: mostRecentVal}); */
-    res.status(200).json(responseDoc);
+    const values = responseDoc['activities-heart-intraday'].dataset;
+    const mostRecentVal = values[values.length - 1].value;
+    // console.log(mostRecentVal);
+    res.status(200).json({value: mostRecentVal});
+    // res.status(200).json(values);
 });
 
 export default handler;
