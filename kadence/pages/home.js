@@ -38,7 +38,7 @@ export default function Home() {
         }
     }
 
-    const fitnessModeRoute = '/mode/preFitness';
+    const fitnessModeRoute = '/mode/fitness';
     const intervalModeRoute = '/mode/preInterval';
     const moodModeRoute = '/mode/mood';
     const localModeRoute = '/mode/preLocal';

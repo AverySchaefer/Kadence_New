@@ -124,7 +124,7 @@ export default function IntervalPage() {
                 friend: null,
                 genMode: 'interval',
                 saved: playlistName,
-            });  
+            });
 
             if (platform === 'Spotify') {
                 const saveRoute = '/api/generation/save';
@@ -166,7 +166,7 @@ export default function IntervalPage() {
         }
         if (platform === 'apple' && music) {
             // Clear queue
-            await music.queueSongs([]);
+            await queueSongs(music, []);
         }
         router.push('/home');
     }
