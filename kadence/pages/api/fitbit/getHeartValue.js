@@ -13,13 +13,15 @@ let pastMinuteString = '0';
 
 handler.use(middleware);
 
-async function createURL() {
+// Create the URL that this endpoint will request data from
+function createURL() {
     const timeObj = new Date();
 
     const currHour = timeObj.getHours();
     let pastHour = currHour;
 
-    const currMinute = timeObj.getMinutes();
+    // *There is a 1-minute delay just to make sure that the app is using sync'd data
+    const currMinute = timeObj.getMinutes() - 1;
     let pastMinute = currMinute - 1;
     if (currMinute === 0) {
         pastMinute = 59;
@@ -27,7 +29,6 @@ async function createURL() {
     }
    
     // Make sure that times are in HH:MM format, even if hours or minutes are less than 10
-    // TODO This is still getting a "Failed to parse URL from [object Promise]" error
     if (currHour < 10) {
         currHourString = currHourString.concat(currHour.toString());
     } else {
@@ -49,11 +50,13 @@ async function createURL() {
         pastMinuteString = pastMinute.toString();
     }
 
-    return `${
+    const url = `${
         GET_VALUE_BASE_URL + pastHourString
     }:${pastMinuteString}/${currHourString}:${currMinuteString}.json`;
+    return encodeURI(url);
 }
 
+// Send the request to the endpoint and return the result
 async function getValue(token) {
     const GET_VALUE_URL = createURL();
     console.log(GET_VALUE_URL);
@@ -79,12 +82,9 @@ handler.get(async (req, res) => {
 
     // Handle correct response
     const responseDoc = await response.json();
-    /* const valuesArray =
-        responseDoc['activities-heart']['activities-heart-intraday'].dataset;
-    const mostRecentVal = valuesArray[0].value;
-    console.log(mostRecentVal);
-    res.status(200).json({value: mostRecentVal}); */
-    res.status(200).json(responseDoc);
+    const values = responseDoc['activities-heart-intraday'].dataset;
+    const mostRecentVal = values[values.length - 1].value;
+    res.status(200).json({value: mostRecentVal});
 });
 
 export default handler;

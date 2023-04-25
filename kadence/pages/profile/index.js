@@ -287,7 +287,7 @@ export default function Profile() {
             if (fromFitbit === 'true') {
                 const url = new URLSearchParams(window.location.search);
                 const authorizationCode = url.get('code');
-                const state = url.get('state'); // TODO: We need to verify that this matches what we sent to Fitbit in the authorization step to prevent CSRF
+                const state = url.get('state');
                 const sentState = localStorage.getItem('state');
 
                 // Compare state values to protect against CSRF

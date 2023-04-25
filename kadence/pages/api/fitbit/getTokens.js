@@ -9,8 +9,10 @@ const handler = nextConnect();
 handler.use(middleware);
 
 handler.post(async (req, res) => {
+    const string = `${process.env.FITBIT_PERSONAL_CLIENT_ID}:${process.env.FITBIT_PERSONAL_CLIENT_SECRET}`;
+    const base64Token = Buffer.from(string, 'utf8').toString('base64');
     const doc = {
-        client_id: process.env.FITBIT_CLIENT_ID,
+        client_id: process.env.FITBIT_PERSONAL_CLIENT_ID,
         grant_type: 'authorization_code',
         redirect_uri: 'http://localhost:3000/profile',
         code: req.body.authorizationCode,
@@ -19,6 +21,7 @@ handler.post(async (req, res) => {
 
     const response = await fetch(GET_TOKEN_URL, {
         headers: {
+            Authorization: `Basic ${base64Token}`,
             'Content-Type': 'application/x-www-form-urlencoded',
         },
         method: 'POST',

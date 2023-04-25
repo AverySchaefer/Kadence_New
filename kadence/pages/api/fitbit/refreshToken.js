@@ -11,7 +11,7 @@ handler.use(middleware);
 
 handler.post(async (req, res) => {
     const basicToken = encodeBase64(
-        `${process.env.FITBIT_CLIENT_ID}:${process.env.FITBIT_CLIENT_SECRET}`
+        `${process.env.FITBIT_PERSONAL_CLIENT_ID}:${process.env.FITBIT_PERSONAL_CLIENT_SECRET}`
     );
     const doc = {
         grant_type: 'refresh_token',
