@@ -34,8 +34,15 @@ export default function IntervalPage() {
     const [lowSongsToQueue, setLowSongsToQueue] = useState([]);
     const [highSongsToQueue, setHighSongsToQueue] = useState([]);
 
+    const [dislikedSongs, setDislikedSongs] = useState([]);
+
     const router = useRouter();
     const music = useMusicKit()?.getInstance();
+
+    const filterSongs = useCallback(
+        (songs) => songs.filter((uri) => !dislikedSongs.includes(uri)),
+        [dislikedSongs]
+    );
 
     // Initialize platform on page load
     useEffect(() => {
@@ -152,7 +159,9 @@ export default function IntervalPage() {
     );
 
     async function handleEndSession() {
-        if (songCache.length > 1) {
+        // Last song is in queue, hasn't been played
+        const validSongsToSave = filterSongs(songCache.slice(0, -1));
+        if (validSongsToSave.length >= 1) {
             const { value: saveToPlaylist } = await Dialog.confirm({
                 title: 'What did you think?',
                 message: 'Would you like to save these songs to a playlist?',
@@ -160,8 +169,7 @@ export default function IntervalPage() {
                 cancelButtonTitle: 'No',
             });
             if (saveToPlaylist) {
-                // Last song is in queue, hasn't been played
-                await saveToProfile(songCache.slice(0, -1));
+                await saveToProfile(validSongsToSave);
             }
         }
         if (platform === 'apple' && music) {
@@ -206,7 +214,11 @@ export default function IntervalPage() {
                             message:
                                 'Error occurred. Please make sure to leave Spotify open during the entirety of interval mode!',
                         });
-                        if (songCache.length > 1) {
+                        // Last song is in queue, hasn't been played
+                        const validSongsToSave = filterSongs(
+                            songCache.slice(0, -1)
+                        );
+                        if (validSongsToSave.length >= 1) {
                             const { value: saveToPlaylist } =
                                 await Dialog.confirm({
                                     title: 'What did you think?',
@@ -216,8 +228,7 @@ export default function IntervalPage() {
                                     cancelButtonTitle: 'No',
                                 });
                             if (saveToPlaylist) {
-                                // Last song is in queue, hasn't been played
-                                await saveToProfile(songCache.slice(0, -1));
+                                await saveToProfile(validSongsToSave);
                             }
                             router.push('/home');
                         } else {
@@ -287,6 +298,7 @@ export default function IntervalPage() {
         router,
         songCache,
         saveToProfile,
+        filterSongs,
     ]);
 
     return (
@@ -303,7 +315,17 @@ export default function IntervalPage() {
                         ? `${currentMode} Energy: ${secondsToTime(timer)}`
                         : `Fetching songs...`}
                 </p>
-                {ready && <MusicPlayer size="large" type="spotify" />}
+                {ready && (
+                    <MusicPlayer
+                        size="large"
+                        onDislike={(playerData) =>
+                            setDislikedSongs((prev) => [
+                                ...prev,
+                                playerData.songURI,
+                            ])
+                        }
+                    />
+                )}
                 <Button
                     variant="contained"
                     sx={{

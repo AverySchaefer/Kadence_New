@@ -33,6 +33,8 @@ export default function FitnessPage() {
 
     const [, setTimer] = useState(0);
 
+    const [dislikedSongs, setDislikedSongs] = useState([]);
+
     const router = useRouter();
     const music = useMusicKit()?.getInstance();
 
@@ -40,6 +42,11 @@ export default function FitnessPage() {
     useEffect(() => {
         setPlatform(localStorage.getItem('platform'));
     }, []);
+
+    const filterSongs = useCallback(
+        (songs) => songs.filter((uri) => !dislikedSongs.includes(uri)),
+        [dislikedSongs]
+    );
 
     // Save uris to profile with specified name
     const saveToProfile = useCallback(
@@ -89,7 +96,8 @@ export default function FitnessPage() {
     );
 
     const handleEndSession = useCallback(async () => {
-        if (songCache.length >= 1) {
+        const validSongsToSave = filterSongs(songCache);
+        if (validSongsToSave.length >= 1) {
             const { value: saveToPlaylist } = await Dialog.confirm({
                 title: 'What did you think?',
                 message: 'Would you like to save these songs to a playlist?',
@@ -98,7 +106,7 @@ export default function FitnessPage() {
             });
             if (saveToPlaylist) {
                 // Last song is in queue, hasn't been played
-                await saveToProfile(songCache);
+                await saveToProfile(validSongsToSave);
             }
         }
         if (platform === 'apple' && music) {
@@ -106,7 +114,7 @@ export default function FitnessPage() {
             await queueSongs(music, []);
         }
         router.push('/home');
-    }, [songCache, music, platform, router, saveToProfile]);
+    }, [songCache, music, platform, router, saveToProfile, filterSongs]);
 
     const getHeartRate = useCallback(async () => {
         try {
@@ -180,7 +188,8 @@ export default function FitnessPage() {
                     message:
                         'Error occurred. Please make sure to leave Spotify open during the entirety of interval mode!',
                 });
-                if (songCache.length >= 1) {
+                const validSongsToSave = filterSongs(songCache);
+                if (validSongsToSave.length >= 1) {
                     const { value: saveToPlaylist } = await Dialog.confirm({
                         title: 'What did you think?',
                         message:
@@ -189,7 +198,7 @@ export default function FitnessPage() {
                         cancelButtonTitle: 'No',
                     });
                     if (saveToPlaylist) {
-                        await saveToProfile(songCache);
+                        await saveToProfile(validSongsToSave);
                     }
                     router.push('/home');
                 } else {
@@ -211,6 +220,7 @@ export default function FitnessPage() {
         router,
         saveToProfile,
         songCache,
+        filterSongs,
     ]);
 
     useEffect(() => {
@@ -286,7 +296,15 @@ export default function FitnessPage() {
                 >
                     Current Heart Rate: {heartRate ?? '?'}
                 </p>
-                <MusicPlayer size="large" />
+                <MusicPlayer
+                    size="large"
+                    onDislike={(playerData) =>
+                        setDislikedSongs((prev) => [
+                            ...prev,
+                            playerData.songURI,
+                        ])
+                    }
+                />
                 <Button
                     variant="contained"
                     sx={{
