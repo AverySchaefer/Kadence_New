@@ -1,5 +1,4 @@
 import nextConnect from 'next-connect';
-import { encodeBase64 } from 'bcryptjs';
 
 import middleware from '../../../middleware/database';
 

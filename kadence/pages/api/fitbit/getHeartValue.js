@@ -50,7 +50,7 @@ function createURL() {
         pastMinuteString = pastMinute.toString();
     }
 
-    let url = `${
+    const url = `${
         GET_VALUE_BASE_URL + pastHourString
     }:${pastMinuteString}/${currHourString}:${currMinuteString}.json`;
     return encodeURI(url);

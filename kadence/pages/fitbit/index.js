@@ -53,7 +53,7 @@ export default function Display() {
                     // Make code_verifier and challenge available to profile page later
                     localStorage.setItem('pkceVerifier', verifier);
                     localStorage.setItem('pkceChallenge', challenge);
-                    let state = generateState();
+                    const state = generateState();
                     localStorage.setItem('state', state);
                 }
 
