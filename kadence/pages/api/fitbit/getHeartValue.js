@@ -27,7 +27,6 @@ function createURL() {
     }
    
     // Make sure that times are in HH:MM format, even if hours or minutes are less than 10
-    // TODO This is still getting a "Failed to parse URL from [object Promise]" error
     if (currHour < 10) {
         currHourString = currHourString.concat(currHour.toString());
     } else {
@@ -52,8 +51,6 @@ function createURL() {
     let url = `${
         GET_VALUE_BASE_URL + pastHourString
     }:${pastMinuteString}/${currHourString}:${currMinuteString}.json`;
-    //console.log(url);
-    //console.log(encodeURI(url));
     return encodeURI(url);
 }
 

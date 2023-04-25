@@ -305,8 +305,10 @@ export default function Profile() {
             const fromFitbit = localStorage.getItem('fromFitbit');
             if (fromFitbit === 'true') {
                 const url = new URLSearchParams(window.location.search);
+                console.log(url);
                 const authorizationCode = url.get('code');
-                const state = url.get('state'); // TODO: We need to verify that this matches what we sent to Fitbit in the authorization step to prevent CSRF
+                console.log(authorizationCode);
+                const state = url.get('state');
                 const sentState = localStorage.getItem('state');
 
                 // Compare state values to protect against CSRF
@@ -320,6 +322,7 @@ export default function Profile() {
                                 codeVerifier,
                             }
                         );
+                        console.log(response);
                         localStorage.setItem(
                             'authorization_code',
                             authorizationCode

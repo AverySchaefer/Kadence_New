@@ -64,7 +64,7 @@ export default function Display() {
 
                 const urlParams = {
                     response_type: 'code',
-                    client_id: '23QTD8',
+                    client_id: '23QSGJ',
                     scope: 'activity cardio_fitness electrocardiogram heartrate profile settings',
                     code_challenge: localStorage.getItem('pkceChallenge'),
                     code_challenge_method: 'S256',
