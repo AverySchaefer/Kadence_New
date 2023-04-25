@@ -2,8 +2,8 @@ import nextConnect from 'next-connect';
 import { ObjectId } from 'mongodb';
 
 import getSpotifyAccessToken from '@/lib/spotify/getSpotifyAccessToken';
-import middleware from '../../../middleware/database';
 import { shuffleArray } from '@/lib/arrayUtil';
+import middleware from '@/middleware/database';
 
 const handler = nextConnect();
 handler.use(middleware);
