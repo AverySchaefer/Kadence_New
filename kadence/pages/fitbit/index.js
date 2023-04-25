@@ -28,7 +28,7 @@ async function generateState() {
     const charsLength = chars.length;
 
     for (let i = 0; i < 36; i++) {
-        stateString += characters.charAt(Math.floor(Math.random() * charactersLength));
+        stateString += chars.charAt(Math.floor(Math.random() * charsLength));
     }
 
     return stateString;

@@ -20,7 +20,6 @@ handler.post(async (req, res) => {
         code_verifier: req.body.codeVerifier,
     };
 
-    // !Line 28 should have ${basicToken} set to the value in the comment, but it shows as null right now. Works with hardcoded value
     const response = await fetch(GET_TOKEN_URL, {
         headers: {
             Authorization: `Basic ${base64Token}`,

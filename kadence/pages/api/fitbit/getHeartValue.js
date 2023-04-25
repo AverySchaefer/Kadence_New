@@ -79,6 +79,7 @@ handler.get(async (req, res) => {
 
     // Handle correct response
     const responseDoc = await response.json();
+    // TODO figure out why dataset is an empty array
     /* const valuesArray =
         responseDoc['activities-heart']['activities-heart-intraday'].dataset;
     const mostRecentVal = valuesArray[0].value;

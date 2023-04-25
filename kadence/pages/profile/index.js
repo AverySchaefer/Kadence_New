@@ -305,9 +305,7 @@ export default function Profile() {
             const fromFitbit = localStorage.getItem('fromFitbit');
             if (fromFitbit === 'true') {
                 const url = new URLSearchParams(window.location.search);
-                console.log(url);
                 const authorizationCode = url.get('code');
-                console.log(authorizationCode);
                 const state = url.get('state');
                 const sentState = localStorage.getItem('state');
 
@@ -322,7 +320,6 @@ export default function Profile() {
                                 codeVerifier,
                             }
                         );
-                        console.log(response);
                         localStorage.setItem(
                             'authorization_code',
                             authorizationCode
