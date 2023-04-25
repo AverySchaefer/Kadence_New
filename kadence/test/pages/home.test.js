@@ -29,7 +29,7 @@ describe('Home', () => {
         const heartRateButton = getByText('Heart Rate');
         expect(heartRateButton).toBeInTheDocument();
         fireEvent.click(heartRateButton);
-        expect(mockRouter).toMatchObject({ asPath: '/mode/preFitness' });
+        expect(mockRouter).toMatchObject({ asPath: '/mode/fitness' });
 
         const intervalButton = getByText('Interval');
         expect(intervalButton).toBeInTheDocument();
