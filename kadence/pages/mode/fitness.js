@@ -272,6 +272,16 @@ export default function FitnessPage() {
     useEffect(() => {
         async function onLoad() {
             if (!didInitialLoad && platform && music) {
+                // Add activity log record
+                await NetworkAPI.post('/api/activity/insert', {
+                    username: localStorage.getItem('username'),
+                    timestamp: new Date().toLocaleString(),
+                    actionType: 'gen',
+                    friend: null,
+                    genMode: 'fitness',
+                    saved: null,
+                });
+
                 // Get heart rate
                 const currentHeartRate = await getHeartRate();
                 setHeartRate(currentHeartRate);
