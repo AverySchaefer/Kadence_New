@@ -13,13 +13,15 @@ let pastMinuteString = '0';
 
 handler.use(middleware);
 
+// Create the URL that this endpoint will request data from
 function createURL() {
     const timeObj = new Date();
 
     const currHour = timeObj.getHours();
     let pastHour = currHour;
 
-    const currMinute = timeObj.getMinutes() - 5;
+    // *There is a 1-minute delay just to make sure that the app is using sync'd data
+    const currMinute = timeObj.getMinutes() - 1;
     let pastMinute = currMinute - 1;
     if (currMinute === 0) {
         pastMinute = 59;
@@ -54,6 +56,7 @@ function createURL() {
     return encodeURI(url);
 }
 
+// Send the request to the endpoint and return the result
 async function getValue(token) {
     const GET_VALUE_URL = createURL();
     console.log(GET_VALUE_URL);
@@ -81,9 +84,7 @@ handler.get(async (req, res) => {
     const responseDoc = await response.json();
     const values = responseDoc['activities-heart-intraday'].dataset;
     const mostRecentVal = values[values.length - 1].value;
-    // console.log(mostRecentVal);
     res.status(200).json({value: mostRecentVal});
-    // res.status(200).json(values);
 });
 
 export default handler;
