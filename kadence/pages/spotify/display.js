@@ -1,6 +1,6 @@
 import Button from '@mui/material/Button';
 
-import { signIn, signOut } from 'next-auth/react';
+import { useSession, signIn, signOut } from 'next-auth/react';
 import Image from 'next/image';
 import { Stack } from '@mui/material';
 import MusicPlayer from '@/components/MusicPlayer';
