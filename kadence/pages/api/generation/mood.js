@@ -142,7 +142,7 @@ function generateSearchParamsSpotifyOnly(prefData, songSeedID, chosenMood) {
         // Using this as a method for randomization
         target_popularity: Math.floor(Math.random() * 101),
     });
-} 
+}
 
 // Stats for every mood: happy, sad, angry, relaxed, energetic, romantic, melancholy
 function generateSearchParams(prefData, chosenMood) {
@@ -300,33 +300,36 @@ async function getMoodRecommendations(prefData, chosenMood) {
 
 async function getMoodRecommendationsSpotifyOnly(token, chosenMood, prefData) {
     const { access_token: accessToken } = await refreshToken(token);
-    const response = await getCurrentSong(token);
-    const songItem = await response.json();
-    const songSeedID = songItem.item.id;
-    console.log(songSeedID);
-    const searchParameters = await generateSearchParamsSpotifyOnly(
-        prefData,
-        songSeedID,
-        chosenMood
-    );
-
-    const RECOMMENDATIONS_ENDPOINT = `https://api.spotify.com/v1/recommendations?`;
     try {
-        const recs = await fetch(
-            RECOMMENDATIONS_ENDPOINT + searchParameters,
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            }
+        const response = await getCurrentSong(token);
+        const songItem = await response.json();
+        const songSeedID = songItem.item.id;
+        const searchParameters = await generateSearchParamsSpotifyOnly(
+            prefData,
+            songSeedID,
+            chosenMood
         );
-        const results = await recs.json();
 
-        return results.tracks;
+        const RECOMMENDATIONS_ENDPOINT = `https://api.spotify.com/v1/recommendations?`;
+        try {
+            const recs = await fetch(
+                RECOMMENDATIONS_ENDPOINT + searchParameters,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
+            const results = await recs.json();
+
+            return results.tracks;
+        } catch (err) {
+            console.log('Something went wrong fetching recs from Spotify');
+            console.log(err);
+            return null;
+        }
     } catch (err) {
-        console.log('Something went wrong fetching recs from Spotify');
-        console.log(err);
-        return null;
+        return getMoodRecommendations(prefData, chosenMood);
     }
 }
 
@@ -350,7 +353,6 @@ handler.get(async (req, res) => {
     const username = queryURL.get('username');
 
     if (platform === 'Spotify') {
-        console.log('swag');
         const {
             token: { accessToken },
         } = await getSession({ req });
@@ -360,7 +362,11 @@ handler.get(async (req, res) => {
             .collection('Preferences')
             .findOne({ _id: new ObjectId(userData.musicPrefs) });
 
-        const songItems = await getMoodRecommendationsSpotifyOnly(accessToken, chosenMood, prefData);
+        const songItems = await getMoodRecommendationsSpotifyOnly(
+            accessToken,
+            chosenMood,
+            prefData
+        );
         if (songItems) {
             const playlistObjs = playlistScreening(songItems, prefData);
             const playlistURIs = playlistObjs.map((obj) => ({
@@ -375,11 +381,12 @@ handler.get(async (req, res) => {
             const filteredURIs = shuffledURIs.filter((obj) => obj.name !== '');
             const urisToSend = filteredURIs.slice(0, playlistLength);
             res.status(200).json(urisToSend);
-        } else {
-            res.status(500).send(
-                'Something went wrong while connecting to Spotify'
-            );
+            return;
         }
+        res.status(500).send(
+            'Something went wrong while connecting to Spotify'
+        );
+        return;
     }
 
     const userData = await req.db.collection('Users').findOne({ username });
