@@ -1,5 +1,5 @@
 const appConfig = {
-    apiHost: 'http://kadenceapp.com', // Set the domain where your API is hosted on
+    apiHost: 'https://kadenceapp.com', // Set the domain where your API is hosted on
 };
 
 export default appConfig;

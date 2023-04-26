@@ -21,12 +21,12 @@ export default function Home() {
         if (localStorage.getItem('username') == null) {
             router.push('/login');
         }
-    });
+    }, [router]);
 
     async function handleLogout() {
-        console.log('Clicking the logout button!');
         localStorage.removeItem('jwt');
         localStorage.removeItem('username');
+        localStorage.removeItem('platform');
         // Send Request
         try {
             const data = await NetworkAPI.get('/api/users/logout', {});
@@ -38,9 +38,9 @@ export default function Home() {
         }
     }
 
-    const fitnessModeRoute = '/mode/preFitness';
+    const fitnessModeRoute = '/mode/fitness';
     const intervalModeRoute = '/mode/preInterval';
-    const moodModeRoute = '/mode/preMood';
+    const moodModeRoute = '/mode/mood';
     const localModeRoute = '/mode/preLocal';
     return (
         isLoggedIn && (
@@ -52,6 +52,7 @@ export default function Home() {
                     <IconButton
                         className={styles.logoutBtn}
                         onClick={handleLogout}
+                        aria-label="logout"
                     >
                         <Logout />
                     </IconButton>

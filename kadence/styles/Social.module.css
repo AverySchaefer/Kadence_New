@@ -1,0 +1,113 @@
+.main {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.friendRequests {
+    background-color: #222222;
+    border-radius: 25px 25px 25px 25px;
+    overflow: scroll;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    color: var(--text-color);
+    gap: 1rem;
+    overflow-y: scroll;
+
+    --text-color: #e4dfe3;
+    --supporting-text-color: #cac4d0;
+}
+
+.friendRequest {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    overflow-x: hidden;
+}
+
+.friendRequestInfo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    overflow-x: hidden;
+    flex-grow: 1;
+}
+
+.profilePic {
+    border-radius: 50%;
+    aspect-ratio: 1/1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.username {
+    overflow-x: scroll;
+}
+
+.friendRequestButtons {
+    flex-grow: 1;
+    display: flex;
+    gap: 1rem;
+    justify-content: right;
+    align-items: center;
+}
+
+.friendRequestButtons button {
+    padding: 0.1rem 0.5rem;
+    border-radius: 5px;
+    border: none;
+}
+
+.acceptRequestButton {
+    background-color: #69e267;
+}
+
+.denyRequestButton {
+    background-color: rgb(245, 86, 86);
+}
+
+.activityContainer {
+    max-height: 60vh;
+    background-color: #222222;
+    border-radius: 25px 25px 25px 25px;
+    overflow: scroll;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    color: var(--text-color);
+
+    --text-color: #e4dfe3;
+    --supporting-text-color: #cac4d0;
+}
+
+.activities {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex-grow: 1;
+}
+
+.activity {
+    display: flex;
+    align-items: center;
+    overflow-x: auto;
+    padding-bottom: 2%;
+    border-bottom: 2px solid black;
+}
+
+.button {
+    background-color: #69e267;
+    color: #242b2e;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    border-radius: 20px;
+}

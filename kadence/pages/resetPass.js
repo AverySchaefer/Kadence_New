@@ -5,7 +5,13 @@ import styles from '@/styles/Register.module.css';
 import { Button, Textbox } from '@/components/';
 import { Inter } from '@next/font/google';
 import { useRouter } from 'next/router';
+import { Dialog } from '@capacitor/dialog';
 
+import {
+    passwordIsStrong,
+    clientSideHash,
+    weakPasswordMessage,
+} from '@/lib/passwordUtils';
 import NetworkAPI from '@/lib/networkAPI';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -18,19 +24,44 @@ export default function Login() {
         const { username, newPassword, newConfirmedPassword } = form;
         e.preventDefault();
 
-        // Send Request
-        try {
-            const data = await NetworkAPI.post('/api/users/resetPass', {
-                username: username.value,
-                newPassword: newPassword.value,
-                newConfirmedPassword: newConfirmedPassword.value,
+        // Getting ID from the URL parameters
+        const id = new URLSearchParams(window.location.search).get('id');
+        console.log(id);
+
+        // Validate Fields
+        if (newPassword.value !== newConfirmedPassword.value) {
+            Dialog.alert({
+                title: 'Error',
+                message: 'Passwords do not match!',
             });
-            if (data) {
-                router.push('/login');
-            }
-        } catch (err) {
-            console.log('Error: ', err.status, err);
+            return;
         }
+        if (!passwordIsStrong(newPassword.value)) {
+            Dialog.alert({
+                title: 'Weak Password',
+                message: weakPasswordMessage,
+            });
+        }
+
+        const hashedPassword = clientSideHash(
+            username.value,
+            newPassword.value
+        );
+
+        // Send Request
+        NetworkAPI.post('/api/users/resetPass', {
+            id,
+            username: username.value,
+            newPassword: hashedPassword,
+            newConfirmedPassword: hashedPassword,
+        })
+            .then(() => router.push('/login'))
+            .catch((err) =>
+                Dialog.alert({
+                    title: 'Error Occurred',
+                    message: `${err.status} ${err}`,
+                })
+            );
     }
 
     return (

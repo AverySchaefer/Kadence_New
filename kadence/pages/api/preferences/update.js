@@ -7,13 +7,13 @@ const handler = nextConnect();
 handler.use(middleware);
 
 handler.patch(async (req, res) => {
-    if (!req.body.uid) {
-        console.log('No UID sent in request');
-        res.status(400).send('No UID sent in request');
+    if (!req.body._id) {
+        console.log('No _id sent in request');
+        res.status(400).send('No _id sent in request');
         return;
     }
 
-    const filter = { _id: new ObjectId(req.body.uid) };
+    const filter = { _id: new ObjectId(req.body._id) };
     const options = { upsert: true };
     const doc = {
         allowExplicit: req.body.allowExplicit,

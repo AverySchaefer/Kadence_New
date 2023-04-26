@@ -13,7 +13,7 @@ const SpotifyScopeString = [
     'playlist-modify-public',
 ].join(',');
 
-const useSecureCookies = true;
+// const useSecureCookies = true;
 
 export default NextAuth({
     providers: [

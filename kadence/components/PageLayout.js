@@ -1,8 +1,5 @@
 import Head from 'next/head';
 import Link from 'next/link';
-// import { SessionContext } from '@/lib/session';
-// import { useContext } from 'react';
-import { useSession } from 'next-auth/react';
 
 import SettingsIcon from '@mui/icons-material/Settings';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -18,6 +15,7 @@ const inter = Inter({ subsets: ['latin'] });
 export default function PageLayout({
     includeNav = true,
     includeUpperRightIcon = false,
+    includeTitle = true,
     upperRightIcon = (
         <Link href="/settings">
             <SettingsIcon />
@@ -29,12 +27,8 @@ export default function PageLayout({
     prevLink = '',
     children,
 }) {
-    const { data: session } = useSession();
-    // const session = useContext(SessionContext);
-
     const playerName = player.toLowerCase().trim();
-    const showPlayer =
-        !!session && (playerName === 'spotify' || playerName === 'apple');
+    const showPlayer = playerName === 'spotify' || playerName === 'apple';
 
     return (
         <>
@@ -48,26 +42,28 @@ export default function PageLayout({
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <div className={[styles.pageContainer, inter.className].join(' ')}>
-                <div className={styles.headerContainer}>
-                    <div className={styles.title}>
-                        {prevLink && (
-                            <Link href={prevLink}>
-                                <ArrowBackIcon />
-                            </Link>
-                        )}
-                        {title}
-                    </div>
-
-                    {includeUpperRightIcon && (
-                        <div className={styles.upperRightIcon}>
-                            {upperRightIcon}
+                {includeTitle && (
+                    <div className={styles.headerContainer}>
+                        <div className={styles.title}>
+                            {prevLink && (
+                                <Link href={prevLink}>
+                                    <ArrowBackIcon />
+                                </Link>
+                            )}
+                            {title}
                         </div>
-                    )}
-                </div>
+
+                        {includeUpperRightIcon && (
+                            <div className={styles.upperRightIcon}>
+                                {upperRightIcon}
+                            </div>
+                        )}
+                    </div>
+                )}
                 <main className={styles.mainContainer}>{children}</main>
                 {showPlayer && (
                     <div className={styles.playerContainer}>
-                        <MusicPlayer type={playerName} size="small" />
+                        <MusicPlayer size="small" />
                     </div>
                 )}
                 {includeNav && (
