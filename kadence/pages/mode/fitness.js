@@ -186,7 +186,7 @@ export default function FitnessPage() {
                 await Dialog.alert({
                     title: 'Spotify Error',
                     message:
-                        'Error occurred. Please make sure to leave Spotify open during the entirety of interval mode!',
+                        'Error occurred. Please make sure to leave Spotify open and active during the entirety of interval mode!',
                 });
                 const validSongsToSave = filterSongs(songCache);
                 if (validSongsToSave.length >= 1) {

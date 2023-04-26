@@ -212,7 +212,7 @@ export default function IntervalPage() {
                         await Dialog.alert({
                             title: 'Spotify Error',
                             message:
-                                'Error occurred. Please make sure to leave Spotify open during the entirety of interval mode!',
+                                'Error occurred. Please make sure to leave Spotify open and active during the entirety of interval mode!',
                         });
                         // Last song is in queue, hasn't been played
                         const validSongsToSave = filterSongs(
