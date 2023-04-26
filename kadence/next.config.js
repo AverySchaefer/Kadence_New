@@ -23,7 +23,7 @@ const nextConfig = {
         apiUrl:
             process.env.NODE_ENV === 'development'
                 ? 'http://localhost:3000/api' // development api
-                : 'http://kadenceapp.com/api', // production api
+                : 'https://kadenceapp.com/api', // production api
     },
     async headers() {
         return [

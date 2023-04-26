@@ -14,7 +14,10 @@ handler.post(async (req, res) => {
     const doc = {
         client_id: process.env.FITBIT_PERSONAL_CLIENT_ID,
         grant_type: 'authorization_code',
-        redirect_uri: 'http://localhost:3000/profile',
+        redirect_uri:
+            process.env.NODE_ENV === 'production'
+                ? 'https://kadenceapp.com/profile'
+                : 'http://localhost:3000/profile',
         code: req.body.authorizationCode,
         code_verifier: req.body.codeVerifier,
     };
@@ -32,16 +35,16 @@ handler.post(async (req, res) => {
 
     //! Why does this default to "Unhandled Status Code" on a 200?
     if (result.status === 400) {
-        console.log("Bad Request");
+        console.log('Bad Request');
         res.status(400).json(result);
     } else if (result.status === 401) {
-        console.log("Authentication Error");
+        console.log('Authentication Error');
         res.status(401).json(result);
     } else if (result.status === 200) {
-        console.log("Request Successful");
+        console.log('Request Successful');
         res.status(200).json(result);
     } else {
-        console.log("Unhandled Status Code, Check Response");
+        console.log('Unhandled Status Code, Check Response');
         res.status(200).json(result);
     }
 });

@@ -39,9 +39,11 @@ If you see this for a package that you added as a dev-dependency, and you're sur
 ### Building On Web
 
 NPM allows for testing on the web using a live build of the project. To build and use this feature, run the following command:
+
 ```bash
 npm run dev
 ```
+
 Then, navigate to the url shown (http://localhost:3000) and you will be taken to the libe build of the project in the repository you ran the project in.
 Note that if you make any changes to the code while the live build is running, then save them, reloading the live web build will update the page to contain the changes you made.
 
@@ -96,19 +98,8 @@ Note that live reload has been turned on
 
 Jest test cases have been built for this project. To run test cases, do the following:
 
-1. In a terminal window, run
-
-```bash
-  npm run dev
 ```
-
-2. In a second terminal window, run
-
-```bash
   npm run test
 ```
 
 This will run the test suites. The output of the test suites will say what (if any) test cases have failed.
-
-NOTE: You will get an error when running the test suite about an incorrect version number, you can safely ignore this error.
-It will not impact the result of the test suites.
