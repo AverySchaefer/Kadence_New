@@ -68,8 +68,13 @@ export default function FitnessPage() {
         }
 
         const counter = setInterval(() => {
-            // TODO: query heart rate
-            setHeartRate(Math.floor(Math.random() * 41) + 60);
+            // !query heart rate
+            const heartValue = NetworkAPI.get(
+                '/api/fitbit/getHeartValue' + new URLSearchParams({
+                    access_token: localStorage.getItem('access_token'),
+                })
+            );
+            setHeartRate(heartValue.value);
             checkCurrentSong();
         }, 1000);
         return () => clearInterval(counter);
