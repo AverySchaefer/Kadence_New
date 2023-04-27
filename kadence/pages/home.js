@@ -1,7 +1,10 @@
 import { useRouter } from 'next/router';
 import { PageLayout } from '@/components/';
-import { Button, Card, IconButton } from '@mui/material';
-import { Logout } from '@mui/icons-material';
+// We have to use this import style, otherwise the Home test tries to import the entire mui library
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import IconButton from '@mui/material/IconButton';
+import Logout from '@mui/icons-material/Logout';
 import { useState, useEffect } from 'react';
 import NetworkAPI from '@/lib/networkAPI';
 import styles from '@/styles/Home.module.css';
@@ -18,10 +21,13 @@ export default function Home() {
     }, []);
 
     useEffect(() => {
-        if (localStorage.getItem('username') == null) {
+        if (username === null) {
             router.push('/login');
         }
-    }, [router]);
+        // TODO: Fix this by implementing a route guard instead
+        // https://jasonwatmore.com/post/2021/08/30/next-js-redirect-to-login-page-if-unauthenticated
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [username]);
 
     async function handleLogout() {
         localStorage.removeItem('jwt');

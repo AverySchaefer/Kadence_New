@@ -60,7 +60,7 @@ export default function Display() {
                 const redirectUri =
                     process.env.NODE_ENV === 'development'
                         ? 'http://localhost:3000/profile'
-                        : 'http://kadenceapp.com/profile';
+                        : 'https://kadenceapp.com/profile';
 
                 const urlParams = {
                     response_type: 'code',

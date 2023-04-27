@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import * as React from 'react';
 import Image from 'next/image';
 import styles from '@/styles/Profile.module.css';
@@ -38,14 +39,13 @@ function BasicTabs({ musicPlatform, deviceName, activityLog }) {
         setValue(newValue);
     };
 
-    const handleDisconnect = () => {
-        console.log('hi');
+    const handleDisconnect = async () => {
         try {
             const userData = {
                 username: localStorage.getItem('username'),
                 deviceName: '',
             };
-            NetworkAPI.patch('/api/users/update', userData);
+            await NetworkAPI.patch('/api/users/update', userData);
             localStorage.setItem('authorization_code', '');
             localStorage.setItem('access_token', '');
             localStorage.setItem('refresh_token', '');
@@ -56,7 +56,7 @@ function BasicTabs({ musicPlatform, deviceName, activityLog }) {
                 message: `Error occurred while saving: ${err.message}`,
             });
         }
-    }
+    };
 
     const handleClick = () => {
         const newPlatformData = {
@@ -132,10 +132,10 @@ function BasicTabs({ musicPlatform, deviceName, activityLog }) {
                                                 >
                                                     <p>
                                                         {`You`}
-                                                        {activity.actionType ===
-                                                        'gen'
+                                                        {activity.actionType === 'gen'
                                                             ? ` generated a playlist in ${activity.genMode} mode. ${activity.timestamp}`
-                                                            : ` became friends with ${activity.friend}. ${activity.timestamp}`}
+                                                            : activity.actionType === 'save' ? ` saved a playlist in ${activity.genMode} mode called ${activity.saved}. ${activity.timestamp}` :
+                                                                ` became friends with ${activity.friend}. ${activity.timestamp}`}
                                                     </p>
                                                 </div>
                                             ))}
@@ -294,13 +294,14 @@ export default function Profile() {
                 if (state === sentState) {
                     const codeVerifier = localStorage.getItem('pkceVerifier');
                     try {
-                        const response = await NetworkAPI.post(
+                        const { data: response } = await NetworkAPI.post(
                             '/api/fitbit/getTokens',
                             {
                                 authorizationCode,
                                 codeVerifier,
                             }
                         );
+
                         localStorage.setItem(
                             'authorization_code',
                             authorizationCode
