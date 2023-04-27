@@ -6,7 +6,7 @@ Developers: Raymond Xie, Colston Streit, Avery Schaefer, Jackson Rosenberg, Nath
 
 ### Production Build
 
-The current production build of the project resides at http://kadenceapp.com. Visit to see the current build of the project, which will be up to date with the "main" branch.
+The current production build of the project resides at https://kadenceapp.com. Visit to see the current build of the project, which will be up to date with the "main" branch.
 
 ### ESLint and Prettier
 
