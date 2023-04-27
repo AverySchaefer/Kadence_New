@@ -118,10 +118,15 @@ export default function FitnessPage() {
 
     const getHeartRate = useCallback(async () => {
         try {
-            // TODO: update this to use endpoint
-            const newHeartRate = Math.floor(Math.random() * 41 + 60);
-            setHeartRate(newHeartRate);
-            return newHeartRate;
+            // console.log("token: " + localStorage.getItem('access_token'));
+            const heartValue = await NetworkAPI.get(
+                '/api/fitbit/getHeartValue?' + new URLSearchParams({
+                    access_token: localStorage.getItem('access_token'),
+                })
+            );
+            // console.log(heartValue.data.value);
+            setHeartRate(heartValue.data.value);
+            return heartValue.data.value;
         } catch (err) {
             console.log('Fitbit Heart Rate Fetch Error', err);
             await Dialog.alert({
