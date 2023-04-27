@@ -39,14 +39,13 @@ function BasicTabs({ musicPlatform, deviceName, activityLog }) {
         setValue(newValue);
     };
 
-    const handleDisconnect = () => {
-        console.log('hi');
+    const handleDisconnect = async () => {
         try {
             const userData = {
                 username: localStorage.getItem('username'),
                 deviceName: '',
             };
-            NetworkAPI.patch('/api/users/update', userData);
+            await NetworkAPI.patch('/api/users/update', userData);
             localStorage.setItem('authorization_code', '');
             localStorage.setItem('access_token', '');
             localStorage.setItem('refresh_token', '');
@@ -57,7 +56,7 @@ function BasicTabs({ musicPlatform, deviceName, activityLog }) {
                 message: `Error occurred while saving: ${err.message}`,
             });
         }
-    }
+    };
 
     const handleClick = () => {
         const newPlatformData = {
@@ -295,13 +294,14 @@ export default function Profile() {
                 if (state === sentState) {
                     const codeVerifier = localStorage.getItem('pkceVerifier');
                     try {
-                        const response = await NetworkAPI.post(
+                        const { data: response } = await NetworkAPI.post(
                             '/api/fitbit/getTokens',
                             {
                                 authorizationCode,
                                 codeVerifier,
                             }
                         );
+
                         localStorage.setItem(
                             'authorization_code',
                             authorizationCode

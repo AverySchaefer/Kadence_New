@@ -1,0 +1,12 @@
+[
+    {
+        "relation": ["delegate_permission/common.handle_all_urls"],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "com.kadenceapp",
+            "sha256_cert_fingerprints": [
+                "3F:F2:37:C3:5A:7D:EB:05:B8:49:A4:E0:7B:94:B5:77:E2:64:C3:CB:D6:4F:C7:25:32:CC:8A:32:A9:8B:19:A3"
+            ]
+        }
+    }
+]

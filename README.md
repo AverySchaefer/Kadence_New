@@ -6,7 +6,23 @@ Developers: Raymond Xie, Colston Streit, Avery Schaefer, Jackson Rosenberg, Nath
 
 ### Production Build
 
-The current production build of the project resides at http://kadenceapp.com. Visit to see the current build of the project, which will be up to date with the "main" branch.
+The current production build of the project resides at https://kadenceapp.com, which will be up to date with the "main" branch.
+
+## Setting up the Development Environment
+
+### Example .env File
+
+```
+# Create an application in Spotify to get these
+SPOTIFY_CLIENT_ID=
+SPOTIFY_CLIENT_SECRET=
+KADENCE_SPOTIFY_REFRESH_TOKEN=
+# Generate a random using: openssl rand -base64 32
+NEXTAUTH_SECRET=
+# Create an application in Fitbit that has type "Personal" to get these
+FITBIT_PERSONAL_CLIENT_ID=
+FITBIT_PERSONAL_CLIENT_SECRET=
+```
 
 ### ESLint and Prettier
 
@@ -36,40 +52,40 @@ If you opened the `Kadence_New` root directory as your workspace instead of the 
 `{package} should be listed in the project's dependencies. Run 'npm i -S {package}' to add it`
 If you see this for a package that you added as a dev-dependency, and you're sure that it should be a dev-dependency, then just make sure everything has been installed properly with `npm ci`, and then restart VSCode. The error should go away.
 
-### Building On Web
+### Running the App
 
-NPM allows for testing on the web using a live build of the project. To build and use this feature, run the following command:
+To run the app in development mode with live reloading, run the following command:
+
 ```bash
 npm run dev
 ```
-Then, navigate to the url shown (http://localhost:3000) and you will be taken to the libe build of the project in the repository you ran the project in.
-Note that if you make any changes to the code while the live build is running, then save them, reloading the live web build will update the page to contain the changes you made.
+
+Then, navigate to the url shown (http://localhost:3000).
+
+### Running Test Cases
+
+To run the Jest tests, do the following:
+
+```
+  npm run test
+```
+
+The output of the test suites will say what (if any) test cases have failed.
 
 ### Building With Capacitor
 
 Capacitor is a framework used to compile and export Next.js projects into cross-platform mobile applications. To build the project, use the following steps:
 
-1. Within `"capacitor.config.ts"`, on line 9, modify the IP address listed to the IP address of your local machine
-   a. This can be found by running
-
-```bash
-  ipconfig
-```
-
-on Windows or
-
-```bash
-  ipconfig getifaddr en0
-```
-
-on Mac. Do not modify the port number, as it is set to the default Node.js port. 2. run the following commands:
+1. Run the following commands to build the static files for the app, and then copy them over to the native platform project.
 
 ```bash
   npm run static
   npx cap copy
 ```
 
-3. If you want to open an android emulator:
+NOTE: If you don't have an `android/` folder under `kadence/`, run `npx cap add android`
+
+2. If you want to open an android emulator:
    a. Make sure the project folder is open in Android Studio
    b. Ensure you are within the directory `Kadence_New/kadence`
    c. Run the following command:
@@ -78,10 +94,12 @@ on Mac. Do not modify the port number, as it is set to the default Node.js port.
   npx cap open android
 ```
 
-d. Once the command has finished, select the device you want to emulate and click the play button on the top menu 4. If you want to open an iOS emulator:
-a. Make sure the project folder is open in XCode
-b. Ensure you are within the directory `Kadence_New/kadence`
-c. Run the following command:
+d. Once the command has finished, select the device you want to emulate and click the play button on the top menu
+
+4. If you want to open an iOS emulator:
+   a. Make sure the project folder is open in XCode
+   b. Ensure you are within the directory `Kadence_New/kadence`
+   c. Run the following command:
 
 ```bash
   npx cap open ios
@@ -92,23 +110,19 @@ e. Make sure your connected device is listed at the top of the window and click 
 
 Note that live reload has been turned on
 
-### RUNNING TEST CASES
+### Deeplinking On Mobile
 
-Jest test cases have been built for this project. To run test cases, do the following:
+Mobile deeplinking is when you click a URL on mobile and are redirected into a mobile app. We have set this up for the https://kadenceapp.com domain. To make this work in your Capacitor build, you must build a _signed_ APK.
 
-1. In a terminal window, run
+1. In Android Studio, go to Build > Generate Signed Bundle or APK
+2. Pick the path to your keystore OR generate a new one. Enter the alias and password.
+3. Generate the APK. It should appear under android/app/release/app-release.apk
+4. While an emulator is open, run `adb install ./app-release.apk` in the Terminal of Android Studio
+5. Send yourself a text with a link like `https://kadenceapp.com/profile`. It should redirect you to the right place in the app.
 
-```bash
-  npm run dev
-```
+If you get an error like `[INSTALL_FAILED_UPDATE_INCOMPATIBLE: Package com.kadenceapp signatures do not match previously installed version; ignoring!]`, then you need to uninstall any previously installed "Kadence" apps on your Android emulator.
 
-2. In a second terminal window, run
+If you get `Failure [INSTALL_PARSE_FAILED_NO_CERTIFICATES: Scanning Failed.: No signature found in package of version 2 or newer for package com.kadenceapp]`, you need to make sure you're signing using the [V2 signature scheme](https://stackoverflow.com/a/43097991).
 
-```bash
-  npm run test
-```
-
-This will run the test suites. The output of the test suites will say what (if any) test cases have failed.
-
-NOTE: You will get an error when running the test suite about an incorrect version number, you can safely ignore this error.
-It will not impact the result of the test suites.
+If all else fails, try a "Clean Project" followed by a "Rebuild Project" under Build in Android Studio.
+For more info on setting up deeplinks, check out this [video](https://www.youtube.com/watch?v=tAQwllZSQD8).

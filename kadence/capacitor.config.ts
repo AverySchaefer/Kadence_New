@@ -1,16 +1,14 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-    appId: 'com.example.app',
+    appId: 'com.kadenceapp',
     appName: 'kadence',
     webDir: 'out',
     bundledWebRuntime: false,
     server: {
-        // Make a copy of this file called
-        // capacitor.config.ts and
-        // insert your IP address here
-        url: 'http://###.###.###.###:3000',
+        url: 'https://kadenceapp.com',
         cleartext: true,
+        hostname: 'kadenceapp.com',
     },
 };
 

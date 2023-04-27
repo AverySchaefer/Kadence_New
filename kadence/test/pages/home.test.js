@@ -1,4 +1,3 @@
-/*
 import { act, render, fireEvent, screen } from '@testing-library/react';
 import mockRouter from 'next-router-mock';
 import { useSession } from 'next-auth/react';
@@ -13,7 +12,7 @@ describe('Home', () => {
         window.localStorage.clear();
     });
 
-    test('renders welcome message and mode buttons when logged in', () => {
+    it('renders welcome message and mode buttons when logged in', async () => {
         mockRouter.push('/home');
         useSession.mockReturnValue([{ user: { name: 'John Doe' } }, false]);
 
@@ -48,13 +47,13 @@ describe('Home', () => {
         expect(mockRouter).toMatchObject({ asPath: '/mode/preLocal' });
     });
 
-    test('redirects to login page when not logged in', () => {
+    it('redirects to login page when not logged in', async () => {
         mockRouter.push('/home');
         render(<Home />);
         expect(mockRouter).toMatchObject({ asPath: '/login' });
     });
 
-    test('handles logout', async () => {
+    it('handles logout', async () => {
         mockRouter.push('/home');
         window.localStorage.setItem('jwt', 'testJWT');
         window.localStorage.setItem('username', 'Test User');
@@ -78,4 +77,3 @@ describe('Home', () => {
         expect(mockRouter).toMatchObject({ asPath: '/login' });
     });
 });
-*/
