@@ -29,22 +29,22 @@ function createURL() {
     }
 
     // Make sure that times are in HH:MM format, even if hours or minutes are less than 10
-    if (currHour < 10) {
+    if ((currHour < 10) && (currHour > 0)) {
         currHourString = currHourString.concat(currHour.toString());
     } else {
         currHourString = currHour.toString();
     }
-    if (currMinute < 10) {
+    if ((currMinute < 10) && (currMinute > 0)) {
         currMinuteString = currMinuteString.concat(currMinute.toString());
     } else {
         currMinuteString = currMinute.toString();
     }
-    if (pastHour < 10) {
+    if ((pastHour < 10) && (pastHour > 0)) {
         pastHourString = pastHourString.concat(pastHour.toString());
     } else {
         pastHourString = pastHour.toString();
     }
-    if (pastMinute < 10) {
+    if ((pastMinute < 10) && (pastMinute > 0)) {
         pastMinuteString = pastMinuteString.concat(pastMinute.toString());
     } else {
         pastMinuteString = pastMinute.toString();
@@ -63,6 +63,7 @@ function createURL() {
 // Send the request to the endpoint and return the result
 async function getValue(token) {
     const GET_VALUE_URL = createURL();
+    console.log(GET_VALUE_URL);
     return fetch(GET_VALUE_URL, {
         headers: {
             Authorization: `Bearer ${token}`,
@@ -85,7 +86,7 @@ handler.get(async (req, res) => {
 
     // Handle correct response
     const responseDoc = await response.json();
-    // console.log(responseDoc);
+    console.log(responseDoc);
     const values = responseDoc['activities-heart-intraday'].dataset;
     const mostRecentVal = values[values.length - 1].value;
     // console.log('backend response: ' + mostRecentVal);
