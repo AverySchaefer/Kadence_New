@@ -3,7 +3,7 @@ export default function playlistScreening(songItems, userData) {
 
     return songItems.filter((song) => {
         if (!allowExplicit && song.explicit) return false;
-        if (song.artists.some((artist) => blacklistedArtists.includes(artist)))
+        if (song.artists?.some((artist) => blacklistedArtists.includes(artist)))
             return false;
         if (blacklistedSongs.includes(song.name)) return false;
         return true;
