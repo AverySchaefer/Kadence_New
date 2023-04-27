@@ -3,87 +3,13 @@
 import { getSession } from 'next-auth/react';
 import nextConnect from 'next-connect';
 import { ObjectId } from 'mongodb';
-import refreshToken from '@/lib/spotify/refreshToken';
 import { shuffleArray } from '@/lib/arrayUtil';
+import playlistScreening from '@/lib/generation/playlistScreening';
+import getLocalRecommendations from '@/lib/generation/getLocalRecommendations';
 import middleware from '../../../middleware/database';
 
 const handler = nextConnect();
-
 handler.use(middleware);
-
-async function getCurrentSong(token) {
-    const { access_token: accessToken } = await refreshToken(token);
-    const CURRENT_SONG_ENDPOINT =
-        'https://api.spotify.com/v1/me/player/currently-playing';
-    return fetch(CURRENT_SONG_ENDPOINT, {
-        headers: {
-            Authorization: `Bearer ${accessToken}`,
-        },
-    });
-}
-
-async function generateSearchParams(
-    songSeedID,
-    prefData,
-) {
-    /* Generate the general search parameters */
-    const minSongLength = prefData.minSongLength * 1000; // convert to ms
-    const maxSongLength = prefData.maxSongLength * 1000; // convert to ms
-    const lyricalInstrumental = prefData.lyricalInstrumental / 100; // convert to 0-1 scale
-
-    return new URLSearchParams({
-        limit: 100,
-        seed_tracks: songSeedID,
-        target_instrumentalness: lyricalInstrumental,
-        min_duration_ms: minSongLength,
-        max_duration_ms: maxSongLength,
-        min_popularity: 0,
-        max_popularity: 20,
-    });
-}
-
-async function getLocalRecommendations(token, prefData) {
-    const { access_token: accessToken } = await refreshToken(token);
-    const response = await getCurrentSong(token);
-    const songItem = await response.json();
-    const songSeedID = songItem.item.id;
-    console.log(songSeedID);
-    const searchParameters = await generateSearchParams(
-        songSeedID,
-        prefData,
-    );
-
-    const RECOMMENDATIONS_ENDPOINT = `https://api.spotify.com/v1/recommendations?`;
-    try {
-        const recs = await fetch(
-            RECOMMENDATIONS_ENDPOINT + searchParameters,
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            }
-        );
-        const results = await recs.json();
-
-        return results.tracks;
-    } catch (err) {
-        console.log('Something went wrong fetching recs from Spotify');
-        console.log(err);
-        return null;
-    }
-}
-
-function playlistScreening(songItems, userData) {
-    const { allowExplicit, blacklistedArtists, blacklistedSongs } = userData;
-
-    return songItems.filter((song) => {
-        if (!allowExplicit && song.explicit) return false;
-        if (song.artists.some((artist) => blacklistedArtists.includes(artist)))
-            return false;
-        if (blacklistedSongs.includes(song.name)) return false;
-        return true;
-    });
-}
 
 handler.get(async (req, res) => {
     const {

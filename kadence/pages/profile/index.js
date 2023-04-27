@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import * as React from 'react';
 import Image from 'next/image';
 import styles from '@/styles/Profile.module.css';
@@ -132,10 +133,10 @@ function BasicTabs({ musicPlatform, deviceName, activityLog }) {
                                                 >
                                                     <p>
                                                         {`You`}
-                                                        {activity.actionType ===
-                                                        'gen'
+                                                        {activity.actionType === 'gen'
                                                             ? ` generated a playlist in ${activity.genMode} mode. ${activity.timestamp}`
-                                                            : ` became friends with ${activity.friend}. ${activity.timestamp}`}
+                                                            : activity.actionType === 'save' ? ` saved a playlist in ${activity.genMode} mode called ${activity.saved}. ${activity.timestamp}` :
+                                                                ` became friends with ${activity.friend}. ${activity.timestamp}`}
                                                     </p>
                                                 </div>
                                             ))}
