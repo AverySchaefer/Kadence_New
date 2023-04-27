@@ -12,7 +12,7 @@ describe('Home', () => {
         window.localStorage.clear();
     });
 
-    it('renders welcome message and mode buttons when logged in', () => {
+    it('renders welcome message and mode buttons when logged in', async () => {
         mockRouter.push('/home');
         useSession.mockReturnValue([{ user: { name: 'John Doe' } }, false]);
 
@@ -47,7 +47,7 @@ describe('Home', () => {
         expect(mockRouter).toMatchObject({ asPath: '/mode/preLocal' });
     });
 
-    it('redirects to login page when not logged in', () => {
+    it('redirects to login page when not logged in', async () => {
         mockRouter.push('/home');
         render(<Home />);
         expect(mockRouter).toMatchObject({ asPath: '/login' });

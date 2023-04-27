@@ -2,7 +2,7 @@ import { render, fireEvent } from '@testing-library/react';
 import Button from '@/components/Button';
 
 describe('Button', () => {
-    it('renders children and passes props', () => {
+    it('renders children and passes props', async () => {
         const onClickMock = jest.fn();
         const { getByText } = render(
             <Button onClick={onClickMock} data-testid="test-button">
