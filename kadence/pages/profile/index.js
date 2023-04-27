@@ -293,13 +293,14 @@ export default function Profile() {
                 if (state === sentState) {
                     const codeVerifier = localStorage.getItem('pkceVerifier');
                     try {
-                        const response = await NetworkAPI.post(
+                        const { data: response } = await NetworkAPI.post(
                             '/api/fitbit/getTokens',
                             {
                                 authorizationCode,
                                 codeVerifier,
                             }
                         );
+
                         localStorage.setItem(
                             'authorization_code',
                             authorizationCode

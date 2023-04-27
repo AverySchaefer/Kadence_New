@@ -8,6 +8,8 @@ import { StyledEngineProvider } from '@mui/material/styles';
 
 import { AppleMusicConfiguration } from '@/lib/apple/AppleAPI';
 
+import AppUrlListener from '@/components/AppUrlListener';
+
 export default function App({
     Component,
     pageProps: { session, ...pageProps },
@@ -27,6 +29,7 @@ export default function App({
 
     return (
         <MusicKitContext.Provider value={musicKit}>
+            <AppUrlListener></AppUrlListener>
             <SessionProvider session={session}>
                 <Script
                     src="https://js-cdn.music.apple.com/musickit/v1/musickit.js"
