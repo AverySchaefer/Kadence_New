@@ -27,7 +27,7 @@ function createURL() {
         pastMinute = 59;
         pastHour -= 1;
     }
-   
+
     // Make sure that times are in HH:MM format, even if hours or minutes are less than 10
     if (currHour < 10) {
         currHourString = currHourString.concat(currHour.toString());
@@ -63,7 +63,6 @@ function createURL() {
 // Send the request to the endpoint and return the result
 async function getValue(token) {
     const GET_VALUE_URL = createURL();
-    console.log(GET_VALUE_URL);
     return fetch(GET_VALUE_URL, {
         headers: {
             Authorization: `Bearer ${token}`,
@@ -75,14 +74,13 @@ async function getValue(token) {
 handler.get(async (req, res) => {
     const accessToken = req.query.access_token;
     const response = await getValue(accessToken);
-    console.log(response);
 
     // Check response
     if (response.status === 401) {
-        res.status(401).message('Authorization Token Expired');
+        res.status(401).send('Authorization Token Expired');
     }
     if (response.status === 400) {
-        res.status(400).message('Error in request syntax');
+        res.status(400).send('Error in request syntax');
     }
 
     // Handle correct response
@@ -91,7 +89,7 @@ handler.get(async (req, res) => {
     const values = responseDoc['activities-heart-intraday'].dataset;
     const mostRecentVal = values[values.length - 1].value;
     // console.log('backend response: ' + mostRecentVal);
-    res.status(200).json({value: mostRecentVal});
+    res.status(200).json({ value: mostRecentVal });
 });
 
 export default handler;

@@ -118,13 +118,12 @@ export default function FitnessPage() {
 
     const getHeartRate = useCallback(async () => {
         try {
-            // console.log("token: " + localStorage.getItem('access_token'));
             const heartValue = await NetworkAPI.get(
-                '/api/fitbit/getHeartValue?' + new URLSearchParams({
+                '/api/fitbit/getHeartValue',
+                {
                     access_token: localStorage.getItem('access_token'),
-                })
+                }
             );
-            // console.log(heartValue.data.value);
             setHeartRate(heartValue.data.value);
             return heartValue.data.value;
         } catch (err) {
@@ -132,7 +131,7 @@ export default function FitnessPage() {
             await Dialog.alert({
                 title: 'Error Occurred',
                 message:
-                    'Something went wrong getting your heart rate from your device. Please check your device and try again.',
+                    'Something went wrong getting your heart rate from your device. Please ensure your device is connected and synced before trying again.',
             });
             await handleEndSession();
             return null;
