@@ -145,8 +145,6 @@
     -   waitToSave: BOOLEAN
     -   intervalShort: INT
     -   intervalLong: INT
-    -   rampUpTime: INT
-    -   rampDownTime: INT
     -   mood: STRING
     -   zipCode: INT
     -   friendRequests: USER_ID[]
@@ -246,8 +244,6 @@
     -   lyricalLanguage: STRING
     -   minSongLength: INT
     -   maxSongLength: INT
-    -   minPlaylistLength: INT
-    -   maxPlaylistLength: INT
     -   faveGenres: STRING[]
     -   faveArtists: STRING[]
     -   blacklistedArtists: STRING[]
@@ -520,14 +516,14 @@
 
 ### GET `/api/fitbit/getHeartValue`
 
-- Request Query Elements
-    - access_token: STRING
-- Return Body:
-    - value: int
-- Response Status Codes
-    - 200: Request Successful
-    - 401: Authorization token expired
-    - 400: Bad request
+-   Request Query Elements
+    -   access_token: STRING
+-   Return Body:
+    -   value: int
+-   Response Status Codes
+    -   200: Request Successful
+    -   401: Authorization token expired
+    -   400: Bad request
 
 ### POST `/api/fitbit/getTokens`
 

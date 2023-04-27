@@ -2,7 +2,7 @@ import * as React from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import styles from '@/styles/Register.module.css';
-import Button from '@/components/Button';
+import { Button } from '@mui/material';
 import Switch from '@mui/material/Switch';
 import Slider from '@mui/material/Slider';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -15,7 +15,7 @@ import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import Textbox from '@/components/Textbox';
 import TextArea from '@/components/TextArea';
-import { languages, genres, moods } from '@/lib/promptOptions';
+import { genres, moods } from '@/lib/promptOptions';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { Inter } from '@next/font/google';
@@ -44,22 +44,13 @@ export default function Register() {
 
     const [allowExplicit, setAllowExplicit] = useState(false);
     const [lyricalInstrumental, setlyricalInstrumental] = useState(80);
-    const [lyricalLanguage, setlyricalLanguage] = useState('English');
     const [minSongLength, setMinSongLength] = useState(0);
-    const [maxSongLength, setMaxSongLength] = useState(300);
-    const [minPlaylistLength, setMinPlaylistLength] = useState(0);
-    const [maxPlaylistLength, setMaxPlaylistLength] = useState(60);
+    const [maxSongLength, setMaxSongLength] = useState(1800);
     const [faveGenres, setFaveGenres] = useState('jazz');
     const [faveArtists, setFaveArtists] = useState([]);
-    const [dislikeArtist, setDislikeArtist] = useState('');
-    const [dislikeSong, setDislikeSong] = useState('');
-    const [blacklistedArtists, setBlacklistedArtists] = useState([]);
-    const [blacklistedSongs, setBlacklistedSongs] = useState([]);
 
     const [intervalShort, setIntervalShort] = useState(5);
     const [intervalLong, setIntervalLong] = useState(10);
-    const [rampUpTime, setRampUpTime] = useState(0);
-    const [rampDownTime, setRampDownTime] = useState(0);
     const [mood, setMood] = useState('Happy');
     const [zipCode, setZipCode] = useState(47907);
 
@@ -67,28 +58,26 @@ export default function Register() {
 
     async function submitData(e) {
         e.preventDefault();
+
+        if (minSongLength >= maxSongLength) {
+            Dialog.alert({
+                title: 'Invalid Settings',
+                message:
+                    'Your minimum song length must be less than your maximum song length!',
+            });
+            return;
+        }
+
         setFaveArtists(faveArtists.push(favoriteArtist));
-        setBlacklistedArtists(blacklistedArtists.push(dislikeArtist));
-        setBlacklistedSongs(blacklistedSongs.push(dislikeSong));
 
         try {
             const musicPrefData = {
-                // Needs to be preference_id, can get that from getUsers api if the preference object
-                // already exists or create a new preference object here (might be better, but then
-                // must make updateUser api call to set the preference field to the inserted document
-                // id. Might just have to discuss tomorrow and see what everybody decides)
-                // Rest are fine
                 allowExplicit,
                 lyricalInstrumental,
-                lyricalLanguage,
                 minSongLength,
                 maxSongLength,
-                minPlaylistLength,
-                maxPlaylistLength,
                 faveGenres: [faveGenres],
                 faveArtists,
-                blacklistedArtists,
-                blacklistedSongs,
             };
 
             const { data } = await NetworkAPI.post(
@@ -104,8 +93,6 @@ export default function Register() {
                 musicPrefs: data.id,
                 intervalShort,
                 intervalLong,
-                rampUpTime,
-                rampDownTime,
                 mood,
                 zipCode,
                 favoriteArtist,
@@ -195,25 +182,9 @@ export default function Register() {
                             value={favoriteAlbum}
                             required
                         />
-                        <h3>{"Who is an artist you don't like?"}</h3>
-                        <Textbox
-                            name="dislikeArtist"
-                            type="text"
-                            placeholder="Artist"
-                            onChange={(e) => setDislikeArtist(e.target.value)}
-                            value={dislikeArtist}
-                            required
-                        />
-                        <h3>{"What is a song you don't like?"}</h3>
-                        <Textbox
-                            name="dislikeSong"
-                            type="text"
-                            placeholder="Song"
-                            onChange={(e) => setDislikeSong(e.target.value)}
-                            value={dislikeSong}
-                            required
-                        />
-                        <h2>Set your preferences!</h2>
+                        <h2 style={{ marginTop: '0.5rem' }}>
+                            Set your preferences!
+                        </h2>
                         <ThemeProvider theme={theme}>
                             <div className={styles.switch}>
                                 <FormControlLabel
@@ -312,12 +283,17 @@ export default function Register() {
                                                 </InputAdornment>
                                             ),
                                         }}
-                                        onChange={(e) =>
-                                            setMinSongLength(
-                                                parseInt(e.target.value, 10) %
-                                                    10000
-                                            )
-                                        }
+                                        onChange={(e) => {
+                                            let value = parseInt(
+                                                e.target.value,
+                                                10
+                                            );
+
+                                            if (value < 0) value = 0;
+                                            if (value > 1800) value = 1800;
+
+                                            setMinSongLength(value);
+                                        }}
                                     />
                                 </div>
                                 <div className={styles.subsetting}>
@@ -345,131 +321,21 @@ export default function Register() {
                                                 </InputAdornment>
                                             ),
                                         }}
-                                        onChange={(e) =>
-                                            setMaxSongLength(
-                                                parseInt(e.target.value, 10) %
-                                                    10000
-                                            )
-                                        }
+                                        onChange={(e) => {
+                                            let value = parseInt(
+                                                e.target.value,
+                                                10
+                                            );
+
+                                            if (value < 0) value = 0;
+                                            if (value > 1800) value = 1800;
+
+                                            setMaxSongLength(value);
+                                        }}
                                     />
                                 </div>
                             </div>
-                            <div>
-                                <h3>Playlist Length Preferences: </h3>
-                                <div className={styles.subsetting}>
-                                    <TextField
-                                        required
-                                        color="primary"
-                                        focused
-                                        label="Minimum"
-                                        type="number"
-                                        sx={{
-                                            m: 1,
-                                            width: '25ch',
-                                            input: { color: 'white' },
-                                        }}
-                                        value={minPlaylistLength}
-                                        InputProps={{
-                                            endAdornment: (
-                                                <InputAdornment
-                                                    position="end"
-                                                    sx={{
-                                                        color: 'primary.main',
-                                                    }}
-                                                >
-                                                    <p>minutes</p>
-                                                </InputAdornment>
-                                            ),
-                                        }}
-                                        onChange={(e) =>
-                                            setMinPlaylistLength(
-                                                parseInt(e.target.value, 10) %
-                                                    10000
-                                            )
-                                        }
-                                    />
-                                </div>
-                                <div className={styles.subsetting}>
-                                    <TextField
-                                        required
-                                        color="primary"
-                                        focused
-                                        label="Maximum"
-                                        type="number"
-                                        sx={{
-                                            m: 1,
-                                            width: '25ch',
-                                            input: { color: 'white' },
-                                        }}
-                                        value={maxPlaylistLength}
-                                        InputProps={{
-                                            endAdornment: (
-                                                <InputAdornment
-                                                    position="end"
-                                                    sx={{
-                                                        color: 'primary.main',
-                                                    }}
-                                                >
-                                                    <p>minutes</p>
-                                                </InputAdornment>
-                                            ),
-                                        }}
-                                        onChange={(e) =>
-                                            setMaxPlaylistLength(
-                                                parseInt(e.target.value, 10) %
-                                                    10000
-                                            )
-                                        }
-                                    />
-                                </div>
-                            </div>
-                            <div>
-                                <h3>Preferred Language: </h3>
-                                <div className={styles.subsetting}>
-                                    <FormControl
-                                        required
-                                        sx={{ m: 1, width: '25ch' }}
-                                    >
-                                        <InputLabel
-                                            id="language-select-input-label"
-                                            sx={{ color: 'primary.main' }}
-                                        >
-                                            Language
-                                        </InputLabel>
-                                        <Select
-                                            labelId="language-select-input-label"
-                                            id="language-select-input"
-                                            value={lyricalLanguage}
-                                            label="Language"
-                                            sx={{
-                                                color: 'white',
-                                                '& .MuiOutlinedInput-notchedOutline':
-                                                    {
-                                                        borderColor:
-                                                            'primary.main',
-                                                    },
-                                                '& .MuiSvgIcon-root': {
-                                                    color: 'primary.main',
-                                                },
-                                            }}
-                                            onChange={(e) =>
-                                                setlyricalLanguage(
-                                                    e.target.value
-                                                )
-                                            }
-                                        >
-                                            {languages.map((language) => (
-                                                <MenuItem
-                                                    value={language}
-                                                    key={language}
-                                                >
-                                                    {language}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                </div>
-                            </div>
+
                             <div>
                                 <h3>Preferred Genre:</h3>
                                 <div className={styles.subsetting}>
@@ -524,7 +390,7 @@ export default function Register() {
                                             required
                                             color="primary"
                                             focused
-                                            label="Short"
+                                            label="Low Energy"
                                             type="number"
                                             sx={{
                                                 m: 1,
@@ -544,14 +410,17 @@ export default function Register() {
                                                     </InputAdornment>
                                                 ),
                                             }}
-                                            onChange={(e) =>
-                                                setIntervalShort(
-                                                    parseInt(
-                                                        e.target.value,
-                                                        10
-                                                    ) % 10000
-                                                )
-                                            }
+                                            onChange={(e) => {
+                                                let value = parseInt(
+                                                    e.target.value,
+                                                    10
+                                                );
+
+                                                if (value < 0) value = 0;
+                                                if (value > 60) value = 60;
+
+                                                setIntervalShort(value);
+                                            }}
                                         />
                                     </div>
                                     <div className={styles.subsetting}>
@@ -559,7 +428,7 @@ export default function Register() {
                                             required
                                             color="primary"
                                             focused
-                                            label="Long"
+                                            label="High Energy"
                                             type="number"
                                             sx={{
                                                 m: 1,
@@ -579,90 +448,21 @@ export default function Register() {
                                                     </InputAdornment>
                                                 ),
                                             }}
-                                            onChange={(e) =>
-                                                setIntervalLong(
-                                                    parseInt(
-                                                        e.target.value,
-                                                        10
-                                                    ) % 10000
-                                                )
-                                            }
+                                            onChange={(e) => {
+                                                let value = parseInt(
+                                                    e.target.value,
+                                                    10
+                                                );
+
+                                                if (value < 0) value = 0;
+                                                if (value > 60) value = 60;
+
+                                                setIntervalLong(value);
+                                            }}
                                         />
                                     </div>
                                 </div>
-                                <div>
-                                    <h3>Fitness Mode Ramp Up/Down: </h3>
-                                    <div className={styles.subsetting}>
-                                        <TextField
-                                            required
-                                            color="primary"
-                                            focused
-                                            label="Ramp Up"
-                                            type="number"
-                                            sx={{
-                                                m: 1,
-                                                width: '25ch',
-                                                input: { color: 'white' },
-                                            }}
-                                            value={rampUpTime}
-                                            InputProps={{
-                                                endAdornment: (
-                                                    <InputAdornment
-                                                        position="end"
-                                                        sx={{
-                                                            color: 'primary.main',
-                                                        }}
-                                                    >
-                                                        <p>minutes</p>
-                                                    </InputAdornment>
-                                                ),
-                                            }}
-                                            onChange={(e) =>
-                                                setRampUpTime(
-                                                    parseInt(
-                                                        e.target.value,
-                                                        10
-                                                    ) % 10000
-                                                )
-                                            }
-                                        />
-                                    </div>
-                                    <div className={styles.subsetting}>
-                                        <TextField
-                                            required
-                                            color="primary"
-                                            focused
-                                            label="Ramp Down"
-                                            type="number"
-                                            sx={{
-                                                m: 1,
-                                                width: '25ch',
-                                                input: { color: 'white' },
-                                            }}
-                                            value={rampDownTime}
-                                            InputProps={{
-                                                endAdornment: (
-                                                    <InputAdornment
-                                                        position="end"
-                                                        sx={{
-                                                            color: 'primary.main',
-                                                        }}
-                                                    >
-                                                        <p>minutes</p>
-                                                    </InputAdornment>
-                                                ),
-                                            }}
-                                            onChange={(e) =>
-                                                setRampDownTime(
-                                                    parseInt(
-                                                        e.target.value,
-                                                        10
-                                                    ) % 10000
-                                                )
-                                            }
-                                        />
-                                    </div>
-                                </div>
+
                                 <div>
                                     <h3>Mood Mode Selection:</h3>
                                     <div className={styles.subsetting}>
@@ -705,7 +505,6 @@ export default function Register() {
                                         </FormControl>
                                     </div>
                                 </div>
-                                <br />
                                 <div>
                                     <h3>Local Mode Zip Code:</h3>
                                     <div className={styles.subsetting}>
@@ -737,11 +536,21 @@ export default function Register() {
                                         />
                                     </div>
                                 </div>
-                                <br />
                             </div>
                         </ThemeProvider>
                         <div className={styles.center}>
-                            <Button type="submit">Next</Button>
+                            <Button
+                                variant="contained"
+                                sx={{
+                                    backgroundColor: '#69e267',
+                                    color: '#242b2e',
+                                    width: '100%',
+                                    '&:active': { backgroundColor: '#69e267' },
+                                }}
+                                type="submit"
+                            >
+                                Next
+                            </Button>
                         </div>
                     </form>
                 </div>

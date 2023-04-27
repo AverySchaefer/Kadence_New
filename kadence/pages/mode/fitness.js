@@ -118,16 +118,20 @@ export default function FitnessPage() {
 
     const getHeartRate = useCallback(async () => {
         try {
-            // TODO: update this to use endpoint
-            const newHeartRate = Math.floor(Math.random() * 41 + 60);
-            setHeartRate(newHeartRate);
-            return newHeartRate;
+            const heartValue = await NetworkAPI.get(
+                '/api/fitbit/getHeartValue',
+                {
+                    access_token: localStorage.getItem('access_token'),
+                }
+            );
+            setHeartRate(heartValue.data.value);
+            return heartValue.data.value;
         } catch (err) {
             console.log('Fitbit Heart Rate Fetch Error', err);
             await Dialog.alert({
                 title: 'Error Occurred',
                 message:
-                    'Something went wrong getting your heart rate from your device. Please check your device and try again.',
+                    'Something went wrong getting your heart rate from your device. Please ensure your device is connected and synced before trying again.',
             });
             await handleEndSession();
             return null;
@@ -186,7 +190,7 @@ export default function FitnessPage() {
                 await Dialog.alert({
                     title: 'Spotify Error',
                     message:
-                        'Error occurred. Please make sure to leave Spotify open during the entirety of interval mode!',
+                        'Error occurred. Please make sure to leave Spotify open and active during the entirety of fitness mode!',
                 });
                 const validSongsToSave = filterSongs(songCache);
                 if (validSongsToSave.length >= 1) {
@@ -226,14 +230,42 @@ export default function FitnessPage() {
     useEffect(() => {
         async function updateState() {
             if (platform === 'Spotify') {
-                const currentSongData = await NetworkAPI.get(
-                    '/api/spotify/currentSong'
-                );
-                const newProgress = currentSongData?.data?.progress_ms;
-                setCurrentProgress(newProgress);
-                if (currentProgress > newProgress) {
-                    setCurrentProgress(0);
-                    await queueNewSong();
+                try {
+                    const currentSongData = await NetworkAPI.get(
+                        '/api/spotify/playerInfo'
+                    );
+                    // Check to make sure still playing
+                    if (!currentSongData?.data?.songURI)
+                        throw new Error('Stopped playing!');
+
+                    const newProgress = currentSongData?.data?.progressSeconds;
+                    setCurrentProgress(newProgress);
+                    if (currentProgress > newProgress) {
+                        setCurrentProgress(0);
+                        await queueNewSong();
+                    }
+                } catch (err) {
+                    await Dialog.alert({
+                        title: 'Spotify Error',
+                        message:
+                            'Error occurred. Please make sure to leave Spotify open and active during the entirety of fitness mode!',
+                    });
+                    const validSongsToSave = filterSongs(songCache);
+                    if (validSongsToSave.length >= 1) {
+                        const { value: saveToPlaylist } = await Dialog.confirm({
+                            title: 'What did you think?',
+                            message:
+                                'Would you like to save these songs to a playlist?',
+                            okButtonTitle: 'Yes',
+                            cancelButtonTitle: 'No',
+                        });
+                        if (saveToPlaylist) {
+                            await saveToProfile(validSongsToSave);
+                        }
+                        router.push('/home');
+                    } else {
+                        router.replace('/home');
+                    }
                 }
             } else if (platform === 'apple' && music) {
                 if (music.player.currentPlaybackTimeRemaining <= 0) {
@@ -266,12 +298,26 @@ export default function FitnessPage() {
         platform,
         queueNewSong,
         didInitialLoad,
+        filterSongs,
+        router,
+        saveToProfile,
+        songCache,
     ]);
 
     // Get heart rate and do first queue on page load
     useEffect(() => {
         async function onLoad() {
             if (!didInitialLoad && platform && music) {
+                // Add activity log record
+                await NetworkAPI.post('/api/activity/insert', {
+                    username: localStorage.getItem('username'),
+                    timestamp: new Date().toLocaleString(),
+                    actionType: 'gen',
+                    friend: null,
+                    genMode: 'fitness',
+                    saved: null,
+                });
+
                 // Get heart rate
                 const currentHeartRate = await getHeartRate();
                 setHeartRate(currentHeartRate);

@@ -26,8 +26,6 @@ handler.patch(async (req, res) => {
         waitToSave: req.body.waitToSave,
         intervalShort: req.body.intervalShort,
         intervalLong: req.body.intervalLong,
-        rampUpTime: req.body.rampUpTime,
-        rampDownTime: req.body.rampDownTime,
         mood: req.body.mood,
         zipCode: req.body.zipCode,
         friendRequests: req.body.friendRequests,

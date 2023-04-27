@@ -45,7 +45,7 @@ export default function PreIntervalScreen() {
             friend: null,
             genMode: 'interval',
             saved: null,
-        }); 
+        });
         // TODO: Generate playlist using specified
         // intervalLow and intervalHigh values
         router.push({
@@ -99,7 +99,7 @@ export default function PreIntervalScreen() {
                                 <div className={styles.slider}>
                                     <Slider
                                         min={0}
-                                        max={40}
+                                        max={60}
                                         step={1}
                                         value={intervalHigh}
                                         onChange={(e) =>
@@ -118,7 +118,7 @@ export default function PreIntervalScreen() {
                                 <div className={styles.slider}>
                                     <Slider
                                         min={0}
-                                        max={20}
+                                        max={60}
                                         step={1}
                                         value={intervalLow}
                                         onChange={(e) =>

@@ -1,6 +1,3 @@
-// Options for allowed song lyric languages
-export const languages = ['No Preference', 'English', 'Spanish', 'French'];
-
 // Options for favorite genres
 export const genres = [
     'alternative',

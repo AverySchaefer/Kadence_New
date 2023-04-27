@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import { PageLayout } from '@/components';
 import NetworkAPI from '@/lib/networkAPI';
 import styles from '@/styles/Social.module.css';
@@ -208,7 +209,8 @@ export default function Social() {
                                             {activity.username}
                                             {activity.actionType === 'gen'
                                                 ? ` generated a playlist in ${activity.genMode} mode. ${activity.timestamp}`
-                                                : ` became friends with ${activity.friend}. ${activity.timestamp}`}
+                                                : activity.actionType === 'save' ? ` saved a playlist in ${activity.genMode} mode called ${activity.saved}. ${activity.timestamp}` :
+                                                    ` became friends with ${activity.friend}. ${activity.timestamp}`}
                                         </p>
                                     </div>
                                 ))}

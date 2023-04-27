@@ -35,7 +35,7 @@
     flex-basis: 0;
     flex-grow: 1;
     flex-shrink: 0;
-    overflow: scroll;
+    overflow: auto;
     position: relative;
     padding-inline: 1rem;
     margin-block: 1rem;

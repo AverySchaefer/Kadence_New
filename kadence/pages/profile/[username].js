@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import Image from 'next/image';
 import styles from '@/styles/Profile.module.css';
 import { Dialog } from '@capacitor/dialog';
@@ -161,10 +162,10 @@ function BasicTabs({ userData, activityLog }) {
                                                                     {
                                                                         activity.username
                                                                     }
-                                                                    {activity.actionType ===
-                                                                    'gen'
+                                                                    {activity.actionType === 'gen'
                                                                         ? ` generated a playlist in ${activity.genMode} mode. ${activity.timestamp}`
-                                                                        : ` became friends with ${activity.friend}. ${activity.timestamp}`}
+                                                                        : activity.actionType === 'save' ? ` saved a playlist in ${activity.genMode} mode called ${activity.saved}. ${activity.timestamp}` :
+                                                                            ` became friends with ${activity.friend}. ${activity.timestamp}`}
                                                                 </p>
                                                             </div>
                                                         )

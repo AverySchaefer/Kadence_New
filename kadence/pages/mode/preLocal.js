@@ -102,8 +102,7 @@ export default function LocalModeSetup() {
 
         if (cancelled) return false;
 
-        const playlistName =
-            value.trim() || `Kadence Local Mode`;
+        const playlistName = value.trim() || `Kadence Local Mode`;
 
         await NetworkAPI.post('/api/activity/insert', {
             username: localStorage.getItem('username'),
@@ -112,7 +111,7 @@ export default function LocalModeSetup() {
             friend: null,
             genMode: 'local',
             saved: playlistName,
-        });    
+        });
 
         if (platform === 'Spotify') {
             const saveRoute = '/api/generation/save';
@@ -146,7 +145,7 @@ export default function LocalModeSetup() {
                 await Dialog.alert({
                     title: 'Spotify Error',
                     message:
-                        'Error occurred. Make sure Spotify is open before generating!',
+                        'Error occurred. Make sure Spotify is open and active before generating!',
                 });
                 return false;
             }
@@ -165,7 +164,7 @@ export default function LocalModeSetup() {
             friend: null,
             genMode: 'local',
             saved: null,
-        }); 
+        });
 
         const recommendations = await getRecommendedSongs();
 
