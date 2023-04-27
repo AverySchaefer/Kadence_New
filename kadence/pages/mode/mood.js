@@ -96,27 +96,39 @@ export default function MoodModePage() {
     const music = useMusicKit()?.getInstance();
 
     async function getRecommendedSongs() {
-        const { data: playlistObjs } = await NetworkAPI.get(
-            '/api/generation/mood',
-            {
-                platform,
-                chosenMood: activeMood,
-                playlistLength: numSongs,
-                username: localStorage.getItem('username'),
-            }
-        );
+        try {
+            const { data: playlistObjs } = await NetworkAPI.get(
+                '/api/generation/mood',
+                {
+                    platform,
+                    chosenMood: activeMood,
+                    playlistLength: numSongs,
+                    username: localStorage.getItem('username'),
+                }
+            );
 
-        if (platform === 'apple' && music !== undefined) {
-            const { data } = await NetworkAPI.get('/api/apple/conversion', {
-                spotifyURIs: JSON.stringify(playlistObjs.map((obj) => obj.uri)),
-                appleUserToken: music.musicUserToken,
+            if (platform === 'apple' && music !== undefined) {
+                const { data } = await NetworkAPI.get('/api/apple/conversion', {
+                    spotifyURIs: JSON.stringify(
+                        playlistObjs.map((obj) => obj.uri)
+                    ),
+                    appleUserToken: music.musicUserToken,
+                });
+                return data.appleURIs.map((uri) => ({ uri }));
+            }
+            if (platform === 'Spotify') {
+                return playlistObjs;
+            }
+
+            return null;
+        } catch (err) {
+            await Dialog.alert({
+                title: 'Something went wrong',
+                message:
+                    'An error occurred while fetching recommendations. If using Spotify, please ensure it is open and active.',
             });
-            return data.appleURIs.map((uri) => ({ uri }));
+            return null;
         }
-        if (platform === 'Spotify') {
-            return playlistObjs;
-        }
-        return null;
     }
 
     async function saveToPlaylist(playlistURIs) {
@@ -137,7 +149,7 @@ export default function MoodModePage() {
             friend: null,
             genMode: 'mood',
             saved: playlistName,
-        });  
+        });
 
         if (platform === 'Spotify') {
             const saveRoute = '/api/generation/save';
@@ -171,7 +183,7 @@ export default function MoodModePage() {
                 await Dialog.alert({
                     title: 'Spotify Error',
                     message:
-                        'Error occurred. Make sure Spotify is open before generating!',
+                        'Error occurred. Make sure Spotify is open and active before generating!',
                 });
                 return false;
             }
@@ -183,16 +195,8 @@ export default function MoodModePage() {
     }
 
     async function handleGenerateClick() {
-        await NetworkAPI.post('/api/activity/insert', {
-            username: localStorage.getItem('username'),
-            timestamp: new Date().toLocaleString(),
-            actionType: 'gen',
-            friend: null,
-            genMode: 'mood',
-            saved: null,
-        }); 
-
         const recommendations = await getRecommendedSongs();
+        if (!recommendations) return;
 
         const successfullyQueued = await queueURIs(
             recommendations.map((rec) => rec.uri)
@@ -245,6 +249,14 @@ export default function MoodModePage() {
             await NetworkAPI.put('/api/spotify/play');
         }
         setConfirmedPlaylist(true);
+        await NetworkAPI.post('/api/activity/insert', {
+            username: localStorage.getItem('username'),
+            timestamp: new Date().toLocaleString(),
+            actionType: 'gen',
+            friend: null,
+            genMode: 'mood',
+            saved: null,
+        });
     }
 
     return confirmedPlaylist ? (

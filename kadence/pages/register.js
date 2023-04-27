@@ -1,7 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from '@/styles/Register.module.css';
-import { Button, PageLayout, Textbox } from '@/components/';
+import { Button } from '@mui/material';
+import { PageLayout, Textbox } from '@/components/';
 import { Inter } from '@next/font/google';
 import { Dialog } from '@capacitor/dialog';
 import { useRouter } from 'next/router';
@@ -21,18 +22,30 @@ export default function Register() {
 
     async function handleSubmit(e) {
         const form = e.target;
-        const { email, username, password, confirmedPassword } = form;
+        const email = form.email.value.trim();
+        const password = form.password.value.trim();
+        const username = form.username.value.trim();
+        const confirmedPassword = form.confirmedPassword.value.trim();
+
         e.preventDefault();
 
         // Validate Fields
-        if (password.value !== confirmedPassword.value) {
+        if (!email || !password || !username || !confirmedPassword) {
+            Dialog.alert({
+                title: 'Error',
+                message: 'No fields can be left empty!',
+            });
+            return;
+        }
+
+        if (password !== confirmedPassword) {
             Dialog.alert({
                 title: 'Error',
                 message: 'Passwords do not match!',
             });
             return;
         }
-        if (!passwordIsStrong(password.value)) {
+        if (!passwordIsStrong(password)) {
             Dialog.alert({
                 title: 'Weak Password',
                 message: weakPasswordMessage,
@@ -40,13 +53,13 @@ export default function Register() {
             return;
         }
 
-        const hashedPassword = clientSideHash(username.value, password.value);
+        const hashedPassword = clientSideHash(username, password);
 
         // Send Request
         try {
             const { data } = await NetworkAPI.post('/api/users/signup', {
-                email: email.value,
-                username: username.value,
+                email,
+                username,
                 password: hashedPassword,
                 confirmedPassword: hashedPassword,
             });
@@ -57,7 +70,7 @@ export default function Register() {
                 });
                 const jwt = data.token;
                 localStorage.setItem('jwt', jwt);
-                localStorage.setItem('username', username.value);
+                localStorage.setItem('username', username);
                 router.push('/registerInfo');
             }
         } catch (err) {
@@ -112,8 +125,16 @@ export default function Register() {
                     <Link className={styles.note} href="/login">
                         Already have an account? Login here!
                     </Link>
-                    <Button type="submit">
-                        {/* <Link href="/home">Register</Link> */}
+                    <Button
+                        variant="contained"
+                        sx={{
+                            backgroundColor: '#69e267',
+                            color: '#242b2e',
+                            width: '100%',
+                            '&:active': { backgroundColor: '#69e267' },
+                        }}
+                        type="submit"
+                    >
                         Register
                     </Button>
                 </form>

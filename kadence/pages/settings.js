@@ -23,7 +23,7 @@ import { useRouter } from 'next/router';
 import styles from '@/styles/Settings.module.css';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-import { languages, genres, moods } from '@/lib/promptOptions';
+import { genres, moods } from '@/lib/promptOptions';
 import { removeFromArray, appendToArray } from '@/lib/arrayUtil';
 import NetworkAPI from '@/lib/networkAPI';
 import PageLayout from '@/components/PageLayout';
@@ -66,11 +66,8 @@ export default function Settings() {
 
     const [allowExplicit, setAllowExplicit] = useState(false);
     const [lyricalInstrumental, setLyricalInstrumental] = useState(80);
-    const [lyricalLanguage, setLyricalLanguage] = useState('English');
     const [minSongLength, setMinSongLength] = useState(0);
     const [maxSongLength, setMaxSongLength] = useState(300);
-    const [minPlaylistLength, setMinPlaylistLength] = useState(0);
-    const [maxPlaylistLength, setMaxPlaylistLength] = useState(60);
     const [faveGenres, setFaveGenres] = useState([]);
     const [hideFavArtists, setHideFavArtists] = useState(true);
     const [hideBlacklistedArtists, setHideBlacklistedArtists] = useState(true);
@@ -81,8 +78,6 @@ export default function Settings() {
 
     const [intervalShort, setIntervalShort] = useState(5);
     const [intervalLong, setIntervalLong] = useState(10);
-    const [rampUpTime, setRampUpTime] = useState(0);
-    const [rampDownTime, setRampDownTime] = useState(0);
     const [mood, setMood] = useState('Happy');
     const [zipCode, setZipCode] = useState(47907);
 
@@ -104,8 +99,6 @@ export default function Settings() {
                 setWaitToSave(userData.waitToSave ?? true);
                 setIntervalShort(userData.intervalShort ?? 5);
                 setIntervalLong(userData.intervalLong ?? 10);
-                setRampUpTime(userData.rampUpTime ?? 5);
-                setRampDownTime(userData.rampDownTime ?? 5);
                 setMood(userData.mood ?? 'Happy');
                 setZipCode(userData.zipCode ?? 47907);
                 setMusicPrefId(userData.musicPrefs);
@@ -119,11 +112,8 @@ export default function Settings() {
                 );
                 setAllowExplicit(prefData.allowExplicit ?? false);
                 setLyricalInstrumental(prefData.lyricalInstrumental ?? 50);
-                setLyricalLanguage(prefData.lyricalLanguage ?? 'English');
                 setMinSongLength(prefData.minSongLength ?? 60);
                 setMaxSongLength(prefData.maxSongLength ?? 360);
-                setMinPlaylistLength(prefData.minPlaylistLength ?? 10);
-                setMaxPlaylistLength(prefData.maxPlaylistLength ?? 120);
                 setFaveGenres(prefData.faveGenres ?? []);
                 setFaveArtists(prefData.faveArtists ?? []);
                 setBlacklistedArtists(prefData.blacklistedArtists ?? []);
@@ -183,15 +173,22 @@ export default function Settings() {
     }
 
     async function submitData() {
+        // validate values
+        if (minSongLength >= maxSongLength) {
+            Dialog.alert({
+                title: 'Invalid Settings',
+                message:
+                    'Your minimum song length must be less than your maximum song length!',
+            });
+            return;
+        }
+
         const musicPrefData = {
             _id: musicPrefId,
             allowExplicit,
             lyricalInstrumental,
-            lyricalLanguage,
             minSongLength,
             maxSongLength,
-            minPlaylistLength,
-            maxPlaylistLength,
             faveGenres,
             faveArtists,
             blacklistedArtists,
@@ -203,8 +200,6 @@ export default function Settings() {
             waitToSave,
             intervalShort,
             intervalLong,
-            rampUpTime,
-            rampDownTime,
             mood,
             zipCode,
         };
@@ -370,40 +365,14 @@ export default function Settings() {
                                 </div>
                             </div>
                             <div>
-                                <div className={styles.flexWrapper}>
-                                    Preferred Language
-                                    <Select
-                                        className={styles.select}
-                                        onChange={(e) =>
-                                            setLyricalLanguage(e.target.value)
-                                        }
-                                        value={lyricalLanguage}
-                                        input={
-                                            <InputBase
-                                                className={styles.selectInput}
-                                            />
-                                        }
-                                    >
-                                        {languages.map((language) => (
-                                            <MenuItem
-                                                value={language}
-                                                key={language}
-                                            >
-                                                {language}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                </div>
-                            </div>
-                            <div>
                                 Song Length Preferences
                                 <div className={styles.subsetting}>
                                     <div className={styles.flexWrapper}>
                                         Minimum: {minSongLength} seconds
                                         <Slider
                                             min={0}
-                                            max={7200}
-                                            step={1}
+                                            max={1800}
+                                            step={30}
                                             value={minSongLength}
                                             onChange={(e) =>
                                                 setMinSongLength(
@@ -416,44 +385,11 @@ export default function Settings() {
                                         Maximum: {maxSongLength} seconds
                                         <Slider
                                             min={0}
-                                            max={7200}
-                                            step={1}
+                                            max={1800}
+                                            step={30}
                                             value={maxSongLength}
                                             onChange={(e) =>
                                                 setMaxSongLength(
-                                                    parseInt(e.target.value, 10)
-                                                )
-                                            }
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                Playlist Length Preferences
-                                <div className={styles.subsetting}>
-                                    <div className={styles.flexWrapper}>
-                                        Minimum: {minPlaylistLength} minutes
-                                        <Slider
-                                            min={0}
-                                            max={300}
-                                            step={1}
-                                            value={minPlaylistLength}
-                                            onChange={(e) =>
-                                                setMinPlaylistLength(
-                                                    parseInt(e.target.value, 10)
-                                                )
-                                            }
-                                        />
-                                    </div>
-                                    <div className={styles.flexWrapper}>
-                                        Maximum: {maxPlaylistLength} minutes
-                                        <Slider
-                                            min={0}
-                                            max={300}
-                                            step={1}
-                                            value={maxPlaylistLength}
-                                            onChange={(e) =>
-                                                setMaxPlaylistLength(
                                                     parseInt(e.target.value, 10)
                                                 )
                                             }
@@ -644,7 +580,7 @@ export default function Settings() {
                                         Short: {intervalShort} minutes
                                         <Slider
                                             min={0}
-                                            max={300}
+                                            max={60}
                                             step={1}
                                             value={intervalShort}
                                             onChange={(e) =>
@@ -658,44 +594,11 @@ export default function Settings() {
                                         Long: {intervalLong} minutes
                                         <Slider
                                             min={0}
-                                            max={300}
+                                            max={60}
                                             step={1}
                                             value={intervalLong}
                                             onChange={(e) =>
                                                 setIntervalLong(
-                                                    parseInt(e.target.value, 10)
-                                                )
-                                            }
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                Fitness Mode Ramp Up/Down
-                                <div className={styles.subsetting}>
-                                    <div className={styles.flexWrapper}>
-                                        Ramp Up: {rampUpTime} minutes
-                                        <Slider
-                                            min={0}
-                                            max={300}
-                                            step={1}
-                                            value={rampUpTime}
-                                            onChange={(e) =>
-                                                setRampUpTime(
-                                                    parseInt(e.target.value, 10)
-                                                )
-                                            }
-                                        />
-                                    </div>
-                                    <div className={styles.flexWrapper}>
-                                        Ramp Down: {rampDownTime} minutes
-                                        <Slider
-                                            min={0}
-                                            max={300}
-                                            step={1}
-                                            value={rampDownTime}
-                                            onChange={(e) =>
-                                                setRampDownTime(
                                                     parseInt(e.target.value, 10)
                                                 )
                                             }

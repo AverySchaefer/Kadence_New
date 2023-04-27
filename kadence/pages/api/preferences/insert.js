@@ -9,15 +9,12 @@ handler.post(async (req, res) => {
     const doc = {
         allowExplicit: req.body.allowExplicit,
         lyricalInstrumental: req.body.lyricalInstrumental,
-        lyricalLanguage: req.body.lyricalLanguage,
         minSongLength: req.body.minSongLength,
         maxSongLength: req.body.maxSongLength,
-        minPlaylistLength: req.body.minPlaylistLength,
-        maxPlaylistLength: req.body.maxPlaylistLength,
         faveGenres: req.body.faveGenres,
         faveArtists: req.body.faveArtists,
-        blacklistedArtists: req.body.blacklistedArtists,
-        blacklistedSongs: req.body.blacklistedSongs,
+        blacklistedArtists: [],
+        blacklistedSongs: [],
     };
 
     const result = await req.db.collection('Preferences').insertOne(doc);
@@ -27,7 +24,6 @@ handler.post(async (req, res) => {
     } else {
         console.log('Document Created');
         res.status(200).json({ id: result.insertedId });
-        
     }
 });
 

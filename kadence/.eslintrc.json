@@ -29,7 +29,8 @@
     },
     "settings": {
         "import/resolver": {
-            "alias": [["@/*", "./"]]
+            "alias": [["@/*", "./"]],
+            "extensions": [".js", ".ts", ".d.ts", ".tsx"]
         }
     }
 }

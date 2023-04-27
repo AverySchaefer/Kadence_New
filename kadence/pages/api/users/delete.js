@@ -29,6 +29,9 @@ handler.delete(async (req, res) => {
             }
         );
 
+        // Delete this user's activities
+        await req.db.collection('Activities').deleteMany(query);
+
         res.status(200).json(result);
     } else {
         console.log('No documents matched the query. Deleted 0 documents.');

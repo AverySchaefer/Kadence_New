@@ -19,7 +19,6 @@ handler.get(async (req, res) => {
     const username = queryURL.get('username');
 
     if (platform === 'Spotify') {
-        console.log('swag');
         const {
             token: { accessToken },
         } = await getSession({ req });
@@ -29,7 +28,11 @@ handler.get(async (req, res) => {
             .collection('Preferences')
             .findOne({ _id: new ObjectId(userData.musicPrefs) });
 
-        const songItems = await getMoodRecommendationsSpotifyOnly(accessToken, chosenMood, prefData);
+        const songItems = await getMoodRecommendationsSpotifyOnly(
+            accessToken,
+            chosenMood,
+            prefData
+        );
         if (songItems) {
             const playlistObjs = playlistScreening(songItems, prefData);
             const playlistURIs = playlistObjs.map((obj) => ({
@@ -44,11 +47,12 @@ handler.get(async (req, res) => {
             const filteredURIs = shuffledURIs.filter((obj) => obj.name !== '');
             const urisToSend = filteredURIs.slice(0, playlistLength);
             res.status(200).json(urisToSend);
-        } else {
-            res.status(500).send(
-                'Something went wrong while connecting to Spotify'
-            );
+            return;
         }
+        res.status(500).send(
+            'Something went wrong while connecting to Spotify'
+        );
+        return;
     }
 
     const userData = await req.db.collection('Users').findOne({ username });

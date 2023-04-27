@@ -21,13 +21,13 @@ function createURL() {
     let pastHour = currHour;
 
     // *There is a 1-minute delay just to make sure that the app is using sync'd data
-    const currMinute = timeObj.getMinutes() - 1;
+    const currMinute = timeObj.getMinutes() - 5;
     let pastMinute = currMinute - 1;
     if (currMinute === 0) {
         pastMinute = 59;
         pastHour -= 1;
     }
-   
+
     // Make sure that times are in HH:MM format, even if hours or minutes are less than 10
     if (currHour < 10) {
         currHourString = currHourString.concat(currHour.toString());
@@ -53,13 +53,16 @@ function createURL() {
     const url = `${
         GET_VALUE_BASE_URL + pastHourString
     }:${pastMinuteString}/${currHourString}:${currMinuteString}.json`;
+    currHourString = '0';
+    currMinuteString = '0';
+    pastHourString = '0';
+    pastMinuteString = '0';
     return encodeURI(url);
 }
 
 // Send the request to the endpoint and return the result
 async function getValue(token) {
     const GET_VALUE_URL = createURL();
-    console.log(GET_VALUE_URL);
     return fetch(GET_VALUE_URL, {
         headers: {
             Authorization: `Bearer ${token}`,
@@ -74,17 +77,19 @@ handler.get(async (req, res) => {
 
     // Check response
     if (response.status === 401) {
-        res.status(401).message('Authorization Token Expired');
+        res.status(401).send('Authorization Token Expired');
     }
     if (response.status === 400) {
-        res.status(400).message('Error in request syntax');
+        res.status(400).send('Error in request syntax');
     }
 
     // Handle correct response
     const responseDoc = await response.json();
+    // console.log(responseDoc);
     const values = responseDoc['activities-heart-intraday'].dataset;
     const mostRecentVal = values[values.length - 1].value;
-    res.status(200).json({value: mostRecentVal});
+    // console.log('backend response: ' + mostRecentVal);
+    res.status(200).json({ value: mostRecentVal });
 });
 
 export default handler;

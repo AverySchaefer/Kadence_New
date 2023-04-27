@@ -306,10 +306,13 @@ export default function Profile() {
                             'authorization_code',
                             authorizationCode
                         );
+                        // console.log(response);
+                        // console.log(response.data.access_token);
                         localStorage.setItem(
                             'access_token',
-                            response.access_token
+                            response.data.access_token
                         );
+                        // console.log("localStorage: " + localStorage.getItem('access_token'));
                         localStorage.setItem(
                             'refresh_token',
                             response.refresh_token
