@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import styles from '@/styles/Interval.module.css';
 
@@ -34,8 +34,15 @@ export default function IntervalPage() {
     const [lowSongsToQueue, setLowSongsToQueue] = useState([]);
     const [highSongsToQueue, setHighSongsToQueue] = useState([]);
 
+    const [dislikedSongs, setDislikedSongs] = useState([]);
+
     const router = useRouter();
     const music = useMusicKit()?.getInstance();
+
+    const filterSongs = useCallback(
+        (songs) => songs.filter((uri) => !dislikedSongs.includes(uri)),
+        [dislikedSongs]
+    );
 
     // Initialize platform on page load
     useEffect(() => {
@@ -105,6 +112,73 @@ export default function IntervalPage() {
         onLoad();
     }, [router.query, ready, platform, music]);
 
+    // Save uris to profile with specified name
+    const saveToProfile = useCallback(
+        async (playlistURIs) => {
+            const { value, cancelled } = await Dialog.prompt({
+                title: 'Playlist Name',
+                message: 'What would you like to name your playlist?',
+            });
+
+            if (cancelled) return;
+
+            const playlistName = value.trim() || `Kadence Interval Mode`;
+
+            await NetworkAPI.post('/api/activity/insert', {
+                username: localStorage.getItem('username'),
+                timestamp: new Date().toLocaleString(),
+                actionType: 'save',
+                friend: null,
+                genMode: 'interval',
+                saved: playlistName,
+            });
+
+            if (platform === 'Spotify') {
+                const saveRoute = '/api/generation/save';
+                await fetch(saveRoute, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        playlistName,
+                        playlistArray: playlistURIs,
+                    }),
+                });
+            } else if (platform === 'apple') {
+                const saveRoute = '/api/apple/saveToPlaylist';
+                await NetworkAPI.post(saveRoute, {
+                    name: playlistName,
+                    appleURIs: playlistURIs,
+                    appleUserToken: music.musicUserToken,
+                });
+            }
+            await Dialog.alert({
+                title: 'Success',
+                message: 'Saved playlist successfully.',
+            });
+        },
+        [music, platform]
+    );
+
+    async function handleEndSession() {
+        // Last song is in queue, hasn't been played
+        const validSongsToSave = filterSongs(songCache.slice(0, -1));
+        if (validSongsToSave.length >= 1) {
+            const { value: saveToPlaylist } = await Dialog.confirm({
+                title: 'What did you think?',
+                message: 'Would you like to save these songs to a playlist?',
+                okButtonTitle: 'Yes',
+                cancelButtonTitle: 'No',
+            });
+            if (saveToPlaylist) {
+                await saveToProfile(validSongsToSave);
+            }
+        }
+        if (platform === 'apple' && music) {
+            // Clear queue
+            await queueSongs(music, []);
+        }
+        router.push('/home');
+    }
+
     useEffect(() => {
         async function queueNewSong() {
             if (
@@ -130,9 +204,37 @@ export default function IntervalPage() {
                 });
 
                 if (platform === 'Spotify') {
-                    await NetworkAPI.post('/api/spotify/queue', {
-                        songURI: newSong,
-                    });
+                    try {
+                        await NetworkAPI.post('/api/spotify/queue', {
+                            songURI: newSong,
+                        });
+                    } catch (err) {
+                        await Dialog.alert({
+                            title: 'Spotify Error',
+                            message:
+                                'Error occurred. Please make sure to leave Spotify open during the entirety of interval mode!',
+                        });
+                        // Last song is in queue, hasn't been played
+                        const validSongsToSave = filterSongs(
+                            songCache.slice(0, -1)
+                        );
+                        if (validSongsToSave.length >= 1) {
+                            const { value: saveToPlaylist } =
+                                await Dialog.confirm({
+                                    title: 'What did you think?',
+                                    message:
+                                        'Would you like to save these songs to a playlist?',
+                                    okButtonTitle: 'Yes',
+                                    cancelButtonTitle: 'No',
+                                });
+                            if (saveToPlaylist) {
+                                await saveToProfile(validSongsToSave);
+                            }
+                            router.push('/home');
+                        } else {
+                            router.replace('/mode/preInterval');
+                        }
+                    }
                 } else if (platform === 'apple') {
                     await queueSongs(music, [newSong]);
                     await music.play();
@@ -193,46 +295,11 @@ export default function IntervalPage() {
         music,
         currentSong,
         delayBeforeQueue,
+        router,
+        songCache,
+        saveToProfile,
+        filterSongs,
     ]);
-
-    async function saveToProfile(playlistURIs) {
-        if (platform === 'Spotify') {
-            const saveRoute = '/api/generation/save';
-            await fetch(saveRoute, {
-                method: 'POST',
-                body: JSON.stringify({
-                    playlistName: 'Kadence Interval Mode',
-                    playlistArray: playlistURIs,
-                }),
-            });
-        } else if (platform === 'apple') {
-            const saveRoute = '/api/apple/saveToPlaylist';
-            await NetworkAPI.post(saveRoute, {
-                name: 'Kadence Interval Mode',
-                appleURIs: playlistURIs,
-                appleUserToken: music.musicUserToken,
-            });
-        }
-    }
-
-    async function handleEndSession() {
-        if (songCache.length > 0) {
-            const { value: saveToPlaylist } = await Dialog.confirm({
-                title: 'What did you think?',
-                message: 'Would you like to save these songs to a playlist?',
-                okButtonTitle: 'Yes',
-                cancelButtonTitle: 'No',
-            });
-            if (saveToPlaylist) {
-                await saveToProfile(songCache);
-            }
-        }
-        if (platform === 'apple' && music) {
-            // Clear queue
-            await music.queueSongs([]);
-        }
-        router.push('/home');
-    }
 
     return (
         <PageLayout title="Interval Mode" includeNav={false}>
@@ -248,7 +315,17 @@ export default function IntervalPage() {
                         ? `${currentMode} Energy: ${secondsToTime(timer)}`
                         : `Fetching songs...`}
                 </p>
-                {ready && <MusicPlayer size="large" type="spotify" />}
+                {ready && (
+                    <MusicPlayer
+                        size="large"
+                        onDislike={(playerData) =>
+                            setDislikedSongs((prev) => [
+                                ...prev,
+                                playerData.songURI,
+                            ])
+                        }
+                    />
+                )}
                 <Button
                     variant="contained"
                     sx={{

@@ -2,7 +2,7 @@ import { PageLayout } from '@/components';
 import NetworkAPI from '@/lib/networkAPI';
 import styles from '@/styles/Social.module.css';
 
-import { Avatar } from '@mui/material/';
+import { Avatar, Button } from '@mui/material/';
 import Link from 'next/link';
 
 import { useState, useEffect } from 'react';
@@ -12,6 +12,7 @@ const opacityDiffPerLoop = 2; // Subtracted each interval
 
 export default function Social() {
     const [friendRequests, setFriendRequests] = useState([]);
+    const [friendActivity, setFriendActivity] = useState([]);
 
     // Fetch requests
     useEffect(() => {
@@ -19,6 +20,11 @@ export default function Social() {
             username: localStorage.getItem('username'),
         }).then(({ data }) => {
             setFriendRequests(data.requests.map((req) => ({ ...req })));
+        });
+        NetworkAPI.get('/api/activity/gatherLogs', {
+            username: localStorage.getItem('username'),
+        }).then((result) => {
+            setFriendActivity(result.data);
         });
     }, []);
 
@@ -41,11 +47,16 @@ export default function Social() {
         return () => clearInterval(transparentLoop);
     }, []);
 
-    function handleActivity() {
+    function refresh() {
+        NetworkAPI.get('/api/friends/getRequests', {
+            username: localStorage.getItem('username'),
+        }).then(({ data }) => {
+            setFriendRequests(data.requests.map((req) => ({ ...req })));
+        });
         NetworkAPI.get('/api/activity/gatherLogs', {
-            username: localStorage.getItem('username')
+            username: localStorage.getItem('username'),
         }).then((result) => {
-            console.log(result);
+            setFriendActivity(result.data);
         });
     }
 
@@ -185,12 +196,33 @@ export default function Social() {
                 </div>
                 <div className={styles.section}>
                     <h3>Friend Activity</h3>
-                    <div>Friend Activity Box</div>
-                    <button
-                        className={styles.denyRequestButton}
-                        onClick={handleActivity}
-                    >  Get Friend Activity
-                    </button>
+                    {friendActivity.length > 0 && (
+                        <div className={styles.activityContainer}>
+                            <div className={styles.activities}>
+                                {friendActivity.map((activity) => (
+                                    <div
+                                        key={activity.timestamp}
+                                        className={styles.activity}
+                                    >
+                                        <p>
+                                            {activity.username}
+                                            {activity.actionType === 'gen'
+                                                ? ` generated a playlist in ${activity.genMode} mode. ${activity.timestamp}`
+                                                : ` became friends with ${activity.friend}. ${activity.timestamp}`}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                    <Button
+                        variant="contained"
+                        size="large"
+                        className={styles.button}
+                        onClick={refresh}
+                    >
+                        Refresh
+                    </Button>
                 </div>
             </main>
         </PageLayout>

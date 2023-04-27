@@ -20,13 +20,7 @@ function a11yProps(index) {
     };
 }
 
-function BasicTabs({
-    favArtist,
-    favSong,
-    favAlbum,
-    musicPlatform,
-    deviceName,
-}) {
+function BasicTabs({ musicPlatform, deviceName, activityLog }) {
     const [value, setValue] = useState(0);
     const router = useRouter();
     const theme = createTheme({
@@ -43,6 +37,26 @@ function BasicTabs({
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
+
+    const handleDisconnect = () => {
+        console.log('hi');
+        try {
+            const userData = {
+                username: localStorage.getItem('username'),
+                deviceName: '',
+            };
+            NetworkAPI.patch('/api/users/update', userData);
+            localStorage.setItem('authorization_code', '');
+            localStorage.setItem('access_token', '');
+            localStorage.setItem('refresh_token', '');
+            router.reload();
+        } catch (err) {
+            Dialog.alert({
+                title: 'Error Occurred',
+                message: `Error occurred while saving: ${err.message}`,
+            });
+        }
+    }
 
     const handleClick = () => {
         const newPlatformData = {
@@ -100,7 +114,7 @@ function BasicTabs({
                                 style: { backgroundColor: '#69E267' },
                             }}
                         >
-                            <Tab label="About Me" {...a11yProps(0)} />
+                            <Tab label="Activity" {...a11yProps(0)} />
                             <Tab label="Platform" {...a11yProps(1)} />
                             <Tab label="Devices" {...a11yProps(2)} />
                         </Tabs>
@@ -108,37 +122,29 @@ function BasicTabs({
                     <Box sx={{ padding: 2 }}>
                         {value === 0 && (
                             <Box>
-                                <Stack spacing={2} alignItems="center">
-                                    <h4 className={styles.tabTitle}>
-                                        Favorite Artist
-                                    </h4>
-                                    <p>{favArtist}</p>
-                                    <br />
-                                    <h4 className={styles.tabTitle}>
-                                        Favorite Song
-                                    </h4>
-                                    <p>{favSong}</p>
-                                    <br />
-                                    <h4 className={styles.tabTitle}>
-                                        Favorite Album
-                                    </h4>
-                                    <p>{favAlbum}</p>
-                                    <br />
-                                    <br />
-                                    <Button
-                                        variant="contained"
-                                        sx={{
-                                            width: '25ch',
-                                            backgroundColor: 'button.primary',
-                                            color: '#242b2e',
-                                        }}
-                                        onClick={() =>
-                                            router.push('/changeProfile')
-                                        }
-                                    >
-                                        Edit
-                                    </Button>
-                                </Stack>
+                                {activityLog.length > 0 && (
+                                    <div className={styles.activityContainer}>
+                                        <div className={styles.activities}>
+                                            {activityLog.map((activity) => (
+                                                <div
+                                                    key={activity.timestamp}
+                                                    className={styles.activity}
+                                                >
+                                                    <p>
+                                                        {`You`}
+                                                        {activity.actionType ===
+                                                        'gen'
+                                                            ? ` generated a playlist in ${activity.genMode} mode. ${activity.timestamp}`
+                                                            : ` became friends with ${activity.friend}. ${activity.timestamp}`}
+                                                    </p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                                {activityLog.length === 0 && (
+                                    <p>No activity to display</p>
+                                )}
                             </Box>
                         )}
                         {value === 1 && (
@@ -156,12 +162,7 @@ function BasicTabs({
                                             />
                                             <Button
                                                 variant="contained"
-                                                sx={{
-                                                    width: '25ch',
-                                                    backgroundColor:
-                                                        'button.primary',
-                                                    color: '#242b2e',
-                                                }}
+                                                className={styles.button}
                                                 onClick={() =>
                                                     router.push(useLink)
                                                 }
@@ -170,14 +171,7 @@ function BasicTabs({
                                             </Button>
                                             <Button
                                                 variant="contained"
-                                                sx={{
-                                                    width: '25ch',
-                                                    backgroundColor:
-                                                        'button.primary',
-                                                    color: '#242b2e',
-                                                    textTransform:
-                                                        'none !important',
-                                                }}
+                                                className={styles.button}
                                                 href={accountLink}
                                                 target="_blank"
                                             >
@@ -187,11 +181,7 @@ function BasicTabs({
                                     )}
                                     <Button
                                         variant="contained"
-                                        sx={{
-                                            width: '25ch',
-                                            backgroundColor: 'button.primary',
-                                            color: '#242b2e',
-                                        }}
+                                        className={styles.button}
                                         onClick={handleClick}
                                     >
                                         {platform ? 'Change' : 'Choose'}{' '}
@@ -216,16 +206,8 @@ function BasicTabs({
                                             <p>{deviceName} is connected!</p>
                                             <Button
                                                 variant="contained"
-                                                sx={{
-                                                    width: '25ch',
-                                                    backgroundColor:
-                                                        'button.primary',
-                                                    color: '#242b2e',
-                                                    '&:active': {
-                                                        backgroundColor:
-                                                            'button.primary',
-                                                    },
-                                                }}
+                                                onClick={handleDisconnect}
+                                                className={styles.button}
                                             >
                                                 Disconnect
                                             </Button>
@@ -235,16 +217,7 @@ function BasicTabs({
                                         <>
                                             <Button
                                                 variant="contained"
-                                                sx={{
-                                                    width: '25ch',
-                                                    color: '#242b2e',
-                                                    backgroundColor:
-                                                        'button.primary',
-                                                    '&:active': {
-                                                        backgroundColor:
-                                                            'button.primary',
-                                                    },
-                                                }}
+                                                className={styles.button}
                                                 onClick={() =>
                                                     router.push('/fitbit')
                                                 }
@@ -264,13 +237,11 @@ function BasicTabs({
 }
 
 export default function Profile() {
-    const [faveArtist, setFaveArtist] = useState('Snarky Puppy');
-    const [faveAlbum, setFaveAlbum] = useState('Lingus');
-    const [faveSong, setFaveSong] = useState('What About Me?');
     const [bio, setBio] = useState('Something about me...');
     const [musicPlatform, setMusicPlatform] = useState('Spotify');
     const [profilePic, setProfilePic] = useState('');
     const [deviceName, setDeviceName] = useState('');
+    const [activity, setActivity] = useState([]);
 
     const [loaded, setLoaded] = useState(false);
 
@@ -285,9 +256,6 @@ export default function Profile() {
                         username: localStorage.getItem('username'),
                     }
                 );
-                setFaveArtist(userData.favoriteArtist);
-                setFaveAlbum(userData.favoriteAlbum);
-                setFaveSong(userData.favoriteSong);
                 setBio(userData.bio);
                 setMusicPlatform(userData.musicPlatform);
                 setProfilePic(userData.profilePic ?? '');
@@ -296,6 +264,19 @@ export default function Profile() {
                 Dialog.alert({
                     title: 'Error',
                     message: `An error occurred while fetching your data: ${err.message}. Some defaults have been set in their place.`,
+                });
+            }
+            try {
+                // Get activity data
+                NetworkAPI.get('/api/activity/getLogs', {
+                    username: localStorage.getItem('username'),
+                }).then((res) => {
+                    setActivity(res.data);
+                });
+            } catch (err) {
+                Dialog.alert({
+                    title: 'Error',
+                    message: `An error occurred while fetching activity data: ${err.message}.`,
                 });
             } finally {
                 setLoaded(true);
@@ -324,7 +305,13 @@ export default function Profile() {
                             'authorization_code',
                             authorizationCode
                         );
-                        localStorage.setItem('access_token', response.access_token);
+                        // console.log(response);
+                        // console.log(response.data.access_token);
+                        localStorage.setItem(
+                            'access_token',
+                            response.data.access_token
+                        );
+                        // console.log("localStorage: " + localStorage.getItem('access_token'));
                         localStorage.setItem(
                             'refresh_token',
                             response.refresh_token
@@ -391,7 +378,7 @@ export default function Profile() {
                         >
                             <Avatar
                                 src={profilePic}
-                                alt="NS"
+                                alt="profile picture"
                                 sx={{ width: 150, height: 150 }}
                                 style={{ objectFit: 'cover' }}
                             >
@@ -415,11 +402,9 @@ export default function Profile() {
                     </div>
                     <div className={styles.cardText}>{bio}</div>
                     <BasicTabs
-                        favArtist={faveArtist}
-                        favAlbum={faveAlbum}
-                        favSong={faveSong}
                         musicPlatform={musicPlatform}
                         deviceName={deviceName}
+                        activityLog={activity}
                     />
                 </main>
             )}

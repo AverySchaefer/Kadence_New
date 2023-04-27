@@ -145,6 +145,7 @@ export default function Settings() {
     async function logout() {
         localStorage.removeItem('jwt');
         localStorage.removeItem('username');
+        localStorage.removeItem('platform');
         try {
             const data = await NetworkAPI.get('/api/users/logout');
             if (data) {
@@ -163,7 +164,7 @@ export default function Settings() {
             });
 
             if (data) {
-                Dialog.alert({
+                await Dialog.alert({
                     title: 'Success',
                     message: `Account successfully deleted.`,
                 });
@@ -177,6 +178,7 @@ export default function Settings() {
         } finally {
             localStorage.removeItem('jwt');
             localStorage.removeItem('username');
+            localStorage.removeItem('platform');
         }
     }
 
@@ -296,6 +298,24 @@ export default function Settings() {
                                             'aria-label': 'controlled',
                                         }}
                                     ></Switch>
+                                </Box>
+                            </div>
+                            <div>
+                                <Box className={styles.flexWrapper}>
+                                    Edit your About Me
+                                    <Tooltip title="What people can see about you when they view your profile.">
+                                        <InfoIcon
+                                            className={styles.tooltip}
+                                        ></InfoIcon>
+                                    </Tooltip>
+                                    <Button
+                                        className={styles.sublistShowButton}
+                                        onClick={() =>
+                                            router.push('/changeProfile')
+                                        }
+                                    >
+                                        Edit
+                                    </Button>
                                 </Box>
                             </div>
                         </div>

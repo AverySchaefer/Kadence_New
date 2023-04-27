@@ -49,7 +49,7 @@ export default function Register() {
     const [maxSongLength, setMaxSongLength] = useState(300);
     const [minPlaylistLength, setMinPlaylistLength] = useState(0);
     const [maxPlaylistLength, setMaxPlaylistLength] = useState(60);
-    const [faveGenres, setFaveGenres] = useState('Lo-fi');
+    const [faveGenres, setFaveGenres] = useState('jazz');
     const [faveArtists, setFaveArtists] = useState([]);
     const [dislikeArtist, setDislikeArtist] = useState('');
     const [dislikeSong, setDislikeSong] = useState('');

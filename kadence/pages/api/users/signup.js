@@ -83,6 +83,7 @@ handler.post(async (req, res) => {
             friendRequests: [],
             friends: [],
             actions: [],
+            deviceName: null,
         };
 
         const result = await req.db.collection('Users').insertOne(doc);

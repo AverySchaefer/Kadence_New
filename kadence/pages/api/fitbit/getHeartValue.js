@@ -21,7 +21,7 @@ function createURL() {
     let pastHour = currHour;
 
     // *There is a 1-minute delay just to make sure that the app is using sync'd data
-    const currMinute = timeObj.getMinutes() - 1;
+    const currMinute = timeObj.getMinutes() - 5;
     let pastMinute = currMinute - 1;
     if (currMinute === 0) {
         pastMinute = 59;
@@ -53,6 +53,10 @@ function createURL() {
     const url = `${
         GET_VALUE_BASE_URL + pastHourString
     }:${pastMinuteString}/${currHourString}:${currMinuteString}.json`;
+    currHourString = '0';
+    currMinuteString = '0';
+    pastHourString = '0';
+    pastMinuteString = '0';
     return encodeURI(url);
 }
 
@@ -71,6 +75,7 @@ async function getValue(token) {
 handler.get(async (req, res) => {
     const accessToken = req.query.access_token;
     const response = await getValue(accessToken);
+    console.log(response);
 
     // Check response
     if (response.status === 401) {
@@ -82,8 +87,10 @@ handler.get(async (req, res) => {
 
     // Handle correct response
     const responseDoc = await response.json();
+    // console.log(responseDoc);
     const values = responseDoc['activities-heart-intraday'].dataset;
     const mostRecentVal = values[values.length - 1].value;
+    // console.log('backend response: ' + mostRecentVal);
     res.status(200).json({value: mostRecentVal});
 });
 
