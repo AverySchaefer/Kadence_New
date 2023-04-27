@@ -1,4 +1,4 @@
-export default async function generateSearchParams(
+export default function generateLocalParams(
     songSeedID,
     prefData,
 ) {

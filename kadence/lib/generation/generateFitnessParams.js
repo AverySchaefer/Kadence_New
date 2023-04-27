@@ -1,4 +1,4 @@
-export default async function generateSearchParams(prefData, heartrate) {
+export default function generateFitnessParams(prefData, heartrate) {
     /* Generate the general search parameters */
     const minSongLength = prefData.minSongLength * 1000; // convert to ms
     const maxSongLength = prefData.maxSongLength * 1000; // convert to ms
