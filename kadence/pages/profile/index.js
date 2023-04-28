@@ -1,4 +1,3 @@
-/* eslint-disable no-nested-ternary */
 import * as React from 'react';
 import Image from 'next/image';
 import styles from '@/styles/Profile.module.css';
@@ -93,6 +92,17 @@ function BasicTabs({ musicPlatform, deviceName, activityLog }) {
         useLink = '';
     }
 
+    const getActivityText = (activity) => {
+        switch (activity.actionType) {
+            case 'gen':
+                return ` generated a playlist in ${activity.genMode} mode. ${activity.timestamp}`;
+            case 'save':
+                return ` saved a playlist in ${activity.genMode} mode called ${activity.saved}. ${activity.timestamp}`;
+            default:
+                return ` became friends with ${activity.friend}. ${activity.timestamp}`;
+        }
+    };
+
     return (
         <ThemeProvider theme={theme}>
             <div className={styles.profileTabs}>
@@ -132,13 +142,9 @@ function BasicTabs({ musicPlatform, deviceName, activityLog }) {
                                                 >
                                                     <p>
                                                         {`You`}
-                                                        {activity.actionType ===
-                                                        'gen'
-                                                            ? ` generated a playlist in ${activity.genMode} mode. ${activity.timestamp}`
-                                                            : activity.actionType ===
-                                                              'save'
-                                                            ? ` saved a playlist in ${activity.genMode} mode called ${activity.saved}. ${activity.timestamp}`
-                                                            : ` became friends with ${activity.friend}. ${activity.timestamp}`}
+                                                        {getActivityText(
+                                                            activity
+                                                        )}
                                                     </p>
                                                 </div>
                                             ))}
