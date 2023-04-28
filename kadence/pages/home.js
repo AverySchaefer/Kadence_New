@@ -5,6 +5,7 @@ import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import IconButton from '@mui/material/IconButton';
 import Logout from '@mui/icons-material/Logout';
+import AndroidIcon from '@mui/icons-material/Android';
 import { useState, useEffect } from 'react';
 import NetworkAPI from '@/lib/networkAPI';
 import styles from '@/styles/Home.module.css';
@@ -14,6 +15,9 @@ export default function Home() {
 
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [username, setUsername] = useState('Unknown User');
+
+    const kadenceAPKLink =
+        'https://kadencestorage.blob.core.windows.net/kadence-apk/kadence.apk';
 
     useEffect(() => {
         setIsLoggedIn(!!localStorage.getItem('jwt'));
@@ -93,6 +97,21 @@ export default function Home() {
                             onClick={() => router.push(localModeRoute)}
                         >
                             Local Artist
+                        </Button>
+                    </Card>
+
+                    <Card className={styles.apkContainer}>
+                        Looking to use Kadence as a native Android app?
+                        <Button
+                            className={styles.apkButton}
+                            onClick={() =>
+                                window.location.assign(kadenceAPKLink)
+                            }
+                        >
+                            <AndroidIcon
+                                className={styles.androidIcon}
+                            ></AndroidIcon>
+                            Now available as an APK
                         </Button>
                     </Card>
                 </main>

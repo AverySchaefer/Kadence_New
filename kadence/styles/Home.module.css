@@ -16,6 +16,37 @@
     padding: 0.5rem;
 }
 
+.apkContainer {
+    text-align: center;
+    color: #ffffff;
+    margin-top: 1rem;
+    background-color: #222222;
+    gap: 10px;
+    padding: 0.5rem;
+    font-size: 90%;
+}
+
+.apkButton {
+    background-color: #69e267;
+    color: #222222;
+    margin-top: 0.5rem;
+    height: 5rem;
+    width: 100%;
+}
+
+.apkButton:hover {
+    background-color: #4aa048;
+}
+
+.androidIcon {
+    color: #222222;
+    /* transform: scale(1.8); */
+    margin-top: 1rem;
+    width: 150px;
+    height: 150px;
+    overflow: hidden;
+}
+
 .modeBtn {
     color: #ffffff;
     text-transform: none;
