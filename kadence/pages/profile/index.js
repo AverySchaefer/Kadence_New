@@ -132,10 +132,13 @@ function BasicTabs({ musicPlatform, deviceName, activityLog }) {
                                                 >
                                                     <p>
                                                         {`You`}
-                                                        {activity.actionType === 'gen'
+                                                        {activity.actionType ===
+                                                        'gen'
                                                             ? ` generated a playlist in ${activity.genMode} mode. ${activity.timestamp}`
-                                                            : activity.actionType === 'save' ? ` saved a playlist in ${activity.genMode} mode called ${activity.saved}. ${activity.timestamp}` :
-                                                                ` became friends with ${activity.friend}. ${activity.timestamp}`}
+                                                            : activity.actionType ===
+                                                              'save'
+                                                            ? ` saved a playlist in ${activity.genMode} mode called ${activity.saved}. ${activity.timestamp}`
+                                                            : ` became friends with ${activity.friend}. ${activity.timestamp}`}
                                                     </p>
                                                 </div>
                                             ))}
@@ -306,13 +309,10 @@ export default function Profile() {
                             'authorization_code',
                             authorizationCode
                         );
-                        // console.log(response);
-                        // console.log(response.data.access_token);
                         localStorage.setItem(
                             'access_token',
-                            response.data.access_token
+                            response.access_token
                         );
-                        // console.log("localStorage: " + localStorage.getItem('access_token'));
                         localStorage.setItem(
                             'refresh_token',
                             response.refresh_token
