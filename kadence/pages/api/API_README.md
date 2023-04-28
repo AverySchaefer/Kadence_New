@@ -557,10 +557,10 @@
 
 ## Apple `/api/apple/~`
 
-### GET `/api/apple/conversion`
+### POST `/api/apple/conversion`
 
--   Request Query Elements
-    -   spotifyURIs: JSON.stringify()ed array of Spotify URIs
+-   Request Body Elements
+    -   spotifyURIs: array of Spotify URIs
     -   appleUserToken: STRING
 -   Return Body
     -   appleURIs: STRING[]
