@@ -158,8 +158,8 @@ export default function FitnessPage() {
 
         // If apple, convert and then pick one
         if (platform === 'apple' && music) {
-            const { data } = await NetworkAPI.get('/api/apple/conversion', {
-                spotifyURIs: JSON.stringify(songURIs),
+            const { data } = await NetworkAPI.post('/api/apple/conversion', {
+                spotifyURIs: songURIs,
                 appleUserToken: music.musicUserToken,
             });
             return data.appleURIs[0];

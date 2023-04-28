@@ -54,10 +54,10 @@ async function getAppleURIFromSpotifyURI(
 }
 
 // Converts an array of Spotify URIs to an array of Apple Music URIs
-handler.get(async (req, res) => {
+handler.post(async (req, res) => {
     const accessToken = await getSpotifyAccessToken();
-    const spotifyURIs = JSON.parse(req.query.spotifyURIs) || [];
-    const { appleUserToken } = req.query;
+    const spotifyURIs = req.body.spotifyURIs || [];
+    const { appleUserToken } = req.body;
 
     try {
         const appleMusicURIs = await Promise.all(

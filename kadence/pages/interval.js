@@ -64,10 +64,13 @@ export default function IntervalPage() {
             const trackURIs = await response.json();
 
             if (platform === 'apple' && music !== undefined) {
-                const { data } = await NetworkAPI.get('/api/apple/conversion', {
-                    spotifyURIs: JSON.stringify(trackURIs),
-                    appleUserToken: music.musicUserToken,
-                });
+                const { data } = await NetworkAPI.post(
+                    '/api/apple/conversion',
+                    {
+                        spotifyURIs: trackURIs,
+                        appleUserToken: music.musicUserToken,
+                    }
+                );
                 return data.appleURIs;
             }
             if (platform === 'Spotify') {

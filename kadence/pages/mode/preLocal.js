@@ -82,8 +82,8 @@ export default function LocalModeSetup() {
         console.log(playlistObjs);
 
         if (platform === 'apple' && music !== undefined) {
-            const { data } = await NetworkAPI.get('/api/apple/conversion', {
-                spotifyURIs: JSON.stringify(playlistObjs.map((obj) => obj.uri)),
+            const { data } = await NetworkAPI.post('/api/apple/conversion', {
+                spotifyURIs: playlistObjs.map((obj) => obj.uri),
                 appleUserToken: music.musicUserToken,
             });
             return data.appleURIs.map((uri) => ({ uri }));
